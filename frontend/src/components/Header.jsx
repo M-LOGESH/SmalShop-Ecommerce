@@ -9,7 +9,7 @@ function Header({ user, onLoginClick }) {
     const location = useLocation();
 
     // Pages where desktop header should hide on mobile
-    const hideHeaderMobilePages = ["/profile", "/cart", "/orders"];
+    const hideHeaderMobilePages = ["/account", "/profile", "/cart", "/orders"];
     const hideHeaderOnMobile = hideHeaderMobilePages.includes(location.pathname);
 
     return (
@@ -53,7 +53,7 @@ function Header({ user, onLoginClick }) {
                             </button>
                         ) : (
                             <button
-                                onClick={() => navigate("/profile")}
+                                onClick={() => navigate("/account")}
                                 className="bg-gray-200 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-700 hover:bg-gray-300"
                             >
                                 {user.username[0].toUpperCase()}

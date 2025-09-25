@@ -13,7 +13,7 @@ function SearchBar({ onSearch }) {
         <form onSubmit={handleSubmit} className="relative flex">
             <input
                 type="text"
-                name="search"
+                name="query"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search..."

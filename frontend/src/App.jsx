@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout.jsx";
 import Header from "./components/Header.jsx";
 import Register from "./components/Register.jsx";
 import Login from "./components/Login.jsx";
 import Navbar from "./components/Navbar.jsx";
-import Profile from "./pages/Profile.jsx";
+import Account from "./pages/Account.jsx";
 import Home from "./pages/Home.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
+import ScrollToTop from "./ScrollToTop";
+
 
 function App() {
     // Initialize state from localStorage
@@ -33,8 +36,8 @@ function App() {
 
     return (
         <Router>
+            <ScrollToTop />
             <Header user={user} onLoginClick={() => handleSetShowLogin(true)} />
-
 
             {showRegister && (
                 <Register
@@ -67,23 +70,23 @@ function App() {
             {/* Always show mobile bottom navbar */}
             <Navbar user={user} />
 
-            <main className="pt-28 sm:pt-20 px-3">   {/* pushes content below header */}
-                <Routes>
+            {/* Routes directly without <main> */}
+            <Routes>
+                <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
                     <Route
-                        path="/profile"
+                        path="/account"
                         element={
                             <ProtectedRoute>
-                                <Profile user={user} onLogout={logout} />
+                                <Account user={user} onLogout={logout} />
                             </ProtectedRoute>
                         }
                     />
-                </Routes>
-            </main>
+                </Route>
+            </Routes>
 
         </Router>
     );
 }
-
 
 export default App;
