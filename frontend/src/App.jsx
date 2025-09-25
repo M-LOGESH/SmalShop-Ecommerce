@@ -10,6 +10,11 @@ import Home from "./pages/Home.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
 import ScrollToTop from "./ScrollToTop";
+import Profile from "./pages/Profile.jsx";
+import Orders from "./pages/Orders.jsx";
+import Wishlist from "./pages/Wishlist.jsx";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
 
 
 function App() {
@@ -70,18 +75,15 @@ function App() {
             {/* Always show mobile bottom navbar */}
             <Navbar user={user} />
 
-            {/* Routes directly without <main> */}
             <Routes>
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
-                    <Route
-                        path="/account"
-                        element={
-                            <ProtectedRoute>
-                                <Account user={user} onLogout={logout} />
-                            </ProtectedRoute>
-                        }
-                    />
+                    <Route path="/account" element={<ProtectedRoute><Account user={user} onLogout={logout} /></ProtectedRoute>} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile user={user} /></ProtectedRoute>} />
+                    <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+                    <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
                 </Route>
             </Routes>
 

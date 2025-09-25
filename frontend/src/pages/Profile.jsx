@@ -1,9 +1,13 @@
 // src/components/Profile.jsx
 import React from "react";
+import MobileHeader from "../components/MobileHeader";
 
 function Profile({ user }) {
     return (
         <div>
+            {/* Mobile Header */}
+            <MobileHeader title="profile" />
+            <div className="p-4 md:p-8">
             <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
             <div className="space-y-4">
                 <div>
@@ -26,6 +30,7 @@ function Profile({ user }) {
             <button className="mt-6 bg-violet-600 text-white py-2 px-6 rounded-lg hover:bg-violet-700">
                 Edit
             </button>
+            </div>
         </div>
     );
 }
