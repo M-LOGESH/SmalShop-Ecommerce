@@ -68,8 +68,9 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 username: data.username,
                 email: data.email,
                 is_staff: data.is_staff,
+                access: data.access,   // NEW
+                refresh: data.refresh, // NEW
             });
-
             onClose();
         } catch (error) {
             console.error("Network error:", error);

@@ -11,6 +11,7 @@ from .serializers import UserSerializer
 # JWT imports
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 #Custom JWT serializer: allow username OR email login
@@ -45,7 +46,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             "username": user.username,
             "email": user.email,
             "is_staff": user.is_staff,
+            "profile": {
+                "full_name": user.profile.full_name,
+                "dob": user.profile.dob,
+                "gender": user.profile.gender,
+                "mobile": user.profile.mobile,
+                "address": user.profile.address,
+            }
         }
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -57,11 +66,17 @@ def register_user(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+
+        # Issue tokens right after registration
+        refresh = RefreshToken.for_user(user)
+
         return Response({
             "message": "User registered successfully",
             "username": user.username,
             "email": user.email,
-            "is_staff": user.is_staff
+            "is_staff": user.is_staff,
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
         })
     return Response(serializer.errors, status=400)
 

@@ -38,7 +38,9 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 is_staff: data.is_staff,
                 access: data.access,
                 refresh: data.refresh,
+                profile: data.profile || {}  // include profile info
             });
+
 
             onClose();
         } catch (error) {
