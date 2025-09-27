@@ -1,27 +1,29 @@
-import React, { useState } from "react";
-import { FiUser, FiMail, FiLock } from "react-icons/fi";
+import React, { useState } from 'react';
+import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 
 function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
     const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
     });
 
     const [errors, setErrors] = useState({}); // field-wise errors
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" }); // clear error on typing
+        setErrors({ ...errors, [e.target.name]: '' }); // clear error on typing
     };
 
     // Frontend password validation mirroring Django AlphaNumericValidator
     const validatePassword = (password) => {
-        if (password.length < 8) return "Password must be at least 8 alphanumeric characters.";
-        if ((password.match(/[A-Za-z]/g) || []).length < 4) return "Password must contain at least 4 letters.";
-        if ((password.match(/\d/g) || []).length < 3) return "Password must contain at least 3 numbers.";
-        return ""; // No error
+        if (password.length < 8) return 'Password must be at least 8 alphanumeric characters.';
+        if ((password.match(/[A-Za-z]/g) || []).length < 4)
+            return 'Password must contain at least 4 letters.';
+        if ((password.match(/\d/g) || []).length < 3)
+            return 'Password must contain at least 3 numbers.';
+        return ''; // No error
     };
 
     const handleSubmit = async (e) => {
@@ -32,7 +34,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
 
         // Check if passwords match
         if (password !== confirmPassword) {
-            setErrors({ confirmPassword: "Passwords do not match!" });
+            setErrors({ confirmPassword: 'Passwords do not match!' });
             return;
         }
 
@@ -44,9 +46,9 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/users/register/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const response = await fetch('http://127.0.0.1:8000/api/users/register/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password }),
             });
 
@@ -57,7 +59,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 const formattedErrors = {};
                 Object.keys(data).forEach((key) => {
                     formattedErrors[key] = Array.isArray(data[key])
-                        ? data[key].join(", ")
+                        ? data[key].join(', ')
                         : data[key];
                 });
                 setErrors(formattedErrors);
@@ -68,24 +70,24 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 username: data.username,
                 email: data.email,
                 is_staff: data.is_staff,
-                access: data.access,   // NEW
-                refresh: data.refresh, // NEW
+                access: data.access, 
+                refresh: data.refresh,
             });
             onClose();
         } catch (error) {
-            console.error("Network error:", error);
-            setErrors({ general: "Error connecting to server." });
+            console.error('Network error:', error);
+            setErrors({ general: 'Error connecting to server.' });
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-md mx-4 sm:mx-auto relative"
+                className="relative mx-4 w-full max-w-md rounded bg-white p-6 shadow-md sm:mx-auto sm:p-8"
             >
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-center flex-1 text-violet-600">
+                <div className="mb-6 flex items-center justify-between">
+                    <h2 className="flex-1 text-center text-2xl font-bold text-violet-600">
                         Create Account
                     </h2>
                     <button
@@ -100,93 +102,113 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 {/* Username */}
                 <div className="mb-4">
                     <div className="relative">
-                        <FiUser className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" size={20} />
+                        <FiUser
+                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            size={20}
+                        />
                         <input
                             type="text"
                             name="username"
                             placeholder="Username"
                             value={formData.username}
                             onChange={handleChange}
-                            className={`w-full pl-10 px-3 py-2 border-2 rounded focus:outline-none ${errors.username ? "border-red-500" : "border-gray-400 focus:border-violet-600"}`}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.username ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
                             autoComplete="username"
                             required
                         />
                     </div>
-                    {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+                    {errors.username && (
+                        <p className="mt-1 text-sm text-red-500">{errors.username}</p>
+                    )}
                 </div>
 
                 {/* Email */}
                 <div className="mb-4">
                     <div className="relative">
-                        <FiMail className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" size={20} />
+                        <FiMail
+                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            size={20}
+                        />
                         <input
                             type="email"
                             name="email"
                             placeholder="Email"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full pl-10 px-3 py-2 border-2 rounded focus:outline-none ${errors.email ? "border-red-500" : "border-gray-400 focus:border-violet-600"}`}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
                             autoComplete="email"
                             required
                         />
                     </div>
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                    {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
                 </div>
 
                 {/* Password */}
                 <div className="mb-4">
                     <div className="relative">
-                        <FiLock className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" size={20} />
+                        <FiLock
+                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            size={20}
+                        />
                         <input
                             type="password"
                             name="password"
                             placeholder="Password"
                             value={formData.password}
                             onChange={handleChange}
-                            className={`w-full pl-10 px-3 py-2 border-2 rounded focus:outline-none ${errors.password ? "border-red-500" : "border-gray-400 focus:border-violet-600"}`}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.password ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
                             autoComplete="new-password"
                             required
                         />
                     </div>
-                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                    {errors.password && (
+                        <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                    )}
                 </div>
 
                 {/* Confirm Password */}
                 <div className="mb-6">
                     <div className="relative">
-                        <FiLock className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" size={20} />
+                        <FiLock
+                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            size={20}
+                        />
                         <input
                             type="password"
                             name="confirmPassword"
                             placeholder="Confirm Password"
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            className={`w-full pl-10 px-3 py-2 border-2 rounded focus:outline-none ${errors.confirmPassword ? "border-red-500" : "border-gray-400 focus:border-violet-600"}`}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.confirmPassword ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
                             autoComplete="new-password"
                             required
                         />
                     </div>
-                    {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && (
+                        <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
+                    )}
                 </div>
 
                 {/* General error */}
-                {errors.general && <p className="text-red-500 text-center mb-4">{errors.general}</p>}
+                {errors.general && (
+                    <p className="mb-4 text-center text-red-500">{errors.general}</p>
+                )}
 
                 <button
                     type="submit"
-                    className="w-full bg-violet-600 text-white py-2 rounded hover:bg-violet-700 transition"
+                    className="w-full rounded bg-violet-600 py-2 text-white transition hover:bg-violet-700"
                 >
                     Sign Up
                 </button>
 
                 <p className="mt-4 text-center text-gray-600">
-                    Already have an account?{" "}
+                    Already have an account?{' '}
                     <span
                         onClick={() => {
                             onClose();
                             onSwitchToLogin();
                         }}
-                        className="text-violet-600 font-medium cursor-pointer hover:underline"
+                        className="cursor-pointer font-medium text-violet-600 hover:underline"
                     >
                         Log In
                     </span>

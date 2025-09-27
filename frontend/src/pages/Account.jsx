@@ -1,37 +1,45 @@
-import { useNavigate } from "react-router-dom";
-import { FiShoppingBag, FiHeart, FiInfo, FiPhone, FiUser } from "react-icons/fi";
-import MobileHeader from "../components/MobileHeader";
-import Profile from "./Profile";
-import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import { FiShoppingBag, FiHeart, FiInfo, FiPhone, FiUser, FiBox, FiSettings } from 'react-icons/fi';
+import MobileHeader from '../components/MobileHeader';
+import Profile from './Profile';
+import { useState, useEffect } from 'react';
 
 function Account({ user, onLogout }) {
     const navigate = useNavigate();
-    const [activeKey, setActiveKey] = useState("profile");
-    const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+    const [activeKey, setActiveKey] = useState('profile');
+    const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 944);
 
     // Update isDesktop on window resize
     useEffect(() => {
-        const handleResize = () => setIsDesktop(window.innerWidth >= 768);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+        const handleResize = () => setIsDesktop(window.innerWidth >= 944);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const handleLogout = () => {
         onLogout();
     };
 
-    const menuItems = [
-        { key: "profile", icon: <FiUser />, label: "Profile", path: "/profile" },
-        { key: "orders", icon: <FiShoppingBag />, label: "My Orders", path: "/orders" },
-        { key: "wishlist", icon: <FiHeart />, label: "Wishlist", path: "/wishlist" },
-        { key: "about", icon: <FiInfo />, label: "About", path: "/about" },
-        { key: "contact", icon: <FiPhone />, label: "Contact", path: "/contact" },
-    ];
+    // Different menu for admin vs normal user
+    const menuItems = !user?.is_staff
+        ? [
+              { key: 'profile', icon: <FiUser />, label: 'Profile', path: '/profile' },
+              { key: 'orders', icon: <FiShoppingBag />, label: 'My Orders', path: '/orders' },
+              { key: 'wishlist', icon: <FiHeart />, label: 'Wishlist', path: '/wishlist' },
+              { key: 'about', icon: <FiInfo />, label: 'About', path: '/about' },
+              { key: 'contact', icon: <FiPhone />, label: 'Contact', path: '/contact' },
+          ]
+        : [
+              { key: 'profile', icon: <FiUser />, label: 'Profile', path: '/profile' },
+              { key: 'orders', icon: <FiBox />, label: 'Orders', path: '/view-orders' },
+              { key: 'manage', icon: <FiSettings />, label: 'Manage Items', path: '/manage-items' },
+              { key: 'about', icon: <FiInfo />, label: 'About', path: '/about' },
+              { key: 'contact', icon: <FiPhone />, label: 'Contact', path: '/contact' },
+          ];
 
     const handleMenuClick = (item) => {
-        if (item.key === "profile" && isDesktop) {
-            // Do nothing on desktop for Profile
-            setActiveKey("profile");
+        if (item.key === 'profile' && isDesktop) {
+            setActiveKey('profile');
             return;
         }
         setActiveKey(item.key);
@@ -43,12 +51,11 @@ function Account({ user, onLogout }) {
             {/* Mobile Header */}
             <MobileHeader title="My Account" />
 
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start gap-6 p-4 md:p-8">
-                
+            <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 p-4 md:flex-row md:p-8">
                 {/* Sidebar */}
-                <div className="p-4 w-full md:w-1/3 rounded-2xl shadow bg-white flex-shrink-0">
-                    <div className="flex items-center space-x-4 mb-6">
-                        <div className="w-12 h-12 rounded-full bg-violet-600 text-white flex items-center justify-center text-lg font-bold">
+                <div className="2md:w-1/3 w-full flex-shrink-0 rounded-2xl bg-white p-4 shadow">
+                    <div className="mb-6 flex items-center space-x-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-lg font-bold text-white">
                             {user.username?.[0]?.toUpperCase()}
                         </div>
                         <div>
@@ -62,8 +69,11 @@ function Account({ user, onLogout }) {
                         {menuItems.map((item) => (
                             <button
                                 key={item.key}
-                                className={`flex items-center space-x-2 w-full p-2 rounded-lg hover:bg-violet-100
-                                    ${isDesktop && activeKey === item.key ? "bg-violet-100 text-violet-700 font-semibold" : ""}`}
+                                className={`flex w-full items-center space-x-2 rounded-lg p-2 hover:bg-violet-100 ${
+                                    isDesktop && activeKey === item.key
+                                        ? 'bg-violet-100 font-semibold text-violet-700'
+                                        : ''
+                                }`}
                                 onClick={() => handleMenuClick(item)}
                             >
                                 {item.icon}
@@ -73,7 +83,7 @@ function Account({ user, onLogout }) {
                     </nav>
 
                     <button
-                        className="w-full mt-6 flex items-center justify-center space-x-2 bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700"
+                        className="mt-6 flex w-full items-center justify-center space-x-2 rounded-lg bg-violet-600 py-2 text-white hover:bg-violet-700"
                         onClick={handleLogout}
                     >
                         <span>Sign Out</span>
@@ -81,7 +91,7 @@ function Account({ user, onLogout }) {
                 </div>
 
                 {/* Profile Section (desktop only) */}
-                <div className="w-full md:w-2/3 hidden md:block">
+                <div className="2md:w-2/3 2md:block hidden w-full">
                     <Profile user={user} />
                 </div>
             </div>

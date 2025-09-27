@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { FiUser, FiLock } from "react-icons/fi";
+import React, { useState } from 'react';
+import { FiUser, FiLock } from 'react-icons/fi';
 
 function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
-    const [formData, setFormData] = useState({ username: "", password: "" });
+    const [formData, setFormData] = useState({ username: '', password: '' });
     const [errors, setErrors] = useState({}); // field-wise errors
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" }); // clear error on typing
+        setErrors({ ...errors, [e.target.name]: '' }); // clear error on typing
     };
 
     const handleSubmit = async (e) => {
@@ -15,9 +15,9 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
         setErrors({}); // reset errors
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/api/users/login/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const response = await fetch('http://127.0.0.1:8000/api/users/login/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
 
@@ -26,8 +26,8 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
             if (!response.ok) {
                 // backend sends { "username": [...], "password": [...] }
                 setErrors({
-                    username: data.username?.[0] || "",
-                    password: data.password?.[0] || "",
+                    username: data.username?.[0] || '',
+                    password: data.password?.[0] || '',
                 });
                 return;
             }
@@ -38,25 +38,24 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 is_staff: data.is_staff,
                 access: data.access,
                 refresh: data.refresh,
-                profile: data.profile || {}  // include profile info
+                profile: data.profile || {}, // include profile info
             });
-
 
             onClose();
         } catch (error) {
-            console.error("Network error:", error);
-            setErrors({ general: "Error connecting to server." });
+            console.error('Network error:', error);
+            setErrors({ general: 'Error connecting to server.' });
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-md mx-4 sm:mx-auto relative"
+                className="relative mx-4 w-full max-w-md rounded bg-white p-6 shadow-md sm:mx-auto sm:p-8"
             >
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-center flex-1 text-violet-600">
+                <div className="mb-6 flex items-center justify-between">
+                    <h2 className="flex-1 text-center text-2xl font-bold text-violet-600">
                         Log In
                     </h2>
                     <button
@@ -81,16 +80,17 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                             placeholder="Username or Email"
                             value={formData.username}
                             onChange={handleChange}
-                            className={`w-full pl-10 px-3 py-2 border-2 rounded focus:outline-none ${errors.username
-                                ? "border-red-500"
-                                : "border-gray-300 focus:border-violet-600"
-                                }`}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${
+                                errors.username
+                                    ? 'border-red-500'
+                                    : 'border-gray-300 focus:border-violet-600'
+                            }`}
                             autoComplete="username"
                             required
                         />
                     </div>
                     {errors.username && (
-                        <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+                        <p className="mt-1 text-sm text-red-500">{errors.username}</p>
                     )}
                 </div>
 
@@ -107,39 +107,40 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                             placeholder="Password"
                             value={formData.password}
                             onChange={handleChange}
-                            className={`w-full pl-10 px-3 py-2 border-2 rounded focus:outline-none ${errors.password
-                                ? "border-red-500"
-                                : "border-gray-300 focus:border-violet-600"
-                                }`}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${
+                                errors.password
+                                    ? 'border-red-500'
+                                    : 'border-gray-300 focus:border-violet-600'
+                            }`}
                             autoComplete="current-password"
                             required
                         />
                     </div>
                     {errors.password && (
-                        <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                        <p className="mt-1 text-sm text-red-500">{errors.password}</p>
                     )}
                 </div>
 
                 {/* General error */}
                 {errors.general && (
-                    <p className="text-red-500 text-center mb-4">{errors.general}</p>
+                    <p className="mb-4 text-center text-red-500">{errors.general}</p>
                 )}
 
                 <button
                     type="submit"
-                    className="w-full bg-violet-600 text-white py-2 rounded hover:bg-violet-700 transition"
+                    className="w-full rounded bg-violet-600 py-2 text-white transition hover:bg-violet-700"
                 >
                     Sign In
                 </button>
 
                 <p className="mt-4 text-center text-gray-600">
-                    Don’t have an account?{" "}
+                    Don’t have an account?{' '}
                     <span
                         onClick={() => {
                             onClose();
                             onSwitchToRegister();
                         }}
-                        className="text-violet-600 font-medium cursor-pointer hover:underline"
+                        className="cursor-pointer font-medium text-violet-600 hover:underline"
                     >
                         Register
                     </span>

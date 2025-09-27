@@ -1,4 +1,4 @@
-import MobileHeader from "../components/MobileHeader";
+import MobileHeader from '../components/MobileHeader';
 
 function Orders() {
     return (
@@ -6,7 +6,7 @@ function Orders() {
             {/* Mobile Header */}
             <MobileHeader title="Orders" />
             <div className="p-4 md:p-8">
-                <h1 className="text-2xl font-bold mb-4">My Orders</h1>
+                <h1 className="mb-4 text-2xl font-bold">My Orders</h1>
                 <p>No orders yet.</p>
             </div>
         </div>
