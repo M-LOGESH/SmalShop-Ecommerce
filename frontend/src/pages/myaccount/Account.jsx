@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiHeart, FiInfo, FiPhone, FiUser, FiBox, FiSettings } from 'react-icons/fi';
-import MobileHeader from '../components/MobileHeader';
+import MobileHeader from '../../components/MobileHeader';
 import Profile from './Profile';
 import { useState, useEffect } from 'react';
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import MobileHeader from '../components/MobileHeader';
-import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify'; 
+import MobileHeader from '../../components/MobileHeader';
+import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 function Profile({ onCancel }) {
     const { user, fetchWithAuth, login } = useAuth();
