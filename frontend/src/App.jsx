@@ -15,6 +15,7 @@ import Orders from './pages/Orders.jsx';
 import Wishlist from './pages/Wishlist.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
+import ManageItems from './pages/admin/inventory/ManageItems.jsx';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -94,6 +95,15 @@ function App() {
                         }
                     />
                     <Route
+                        path="/manage-items"
+                        element={
+                            <ProtectedRoute adminOnly={true}>
+                                <ManageItems />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
                         path="/orders"
                         element={
                             <ProtectedRoute>
@@ -133,7 +143,7 @@ function App() {
                             ? 'bg-green-500 text-white'
                             : type === 'error'
                               ? 'bg-red-500 text-white'
-                              : 'bg-blue-800 text-white'
+                              : 'bg-black text-white'
                     }`
                 }
                 containerClassName="p-2 md:p-0"

@@ -1,3 +1,18 @@
-from django.shortcuts import render
+from rest_framework import viewsets, permissions
+from .models import Category, SubCategory, Product
+from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
 
-# Create your views here.
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class SubCategoryViewSet(viewsets.ModelViewSet):
+    queryset = SubCategory.objects.all()
+    serializer_class = SubCategorySerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by("-created_at")
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAdminUser]
