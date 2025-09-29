@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
-import Header from './components/Header.jsx';
-import Register from './components/Register.jsx';
-import Login from './components/Login.jsx';
-import Navbar from './components/Navbar.jsx';
-import Account from './pages/myaccount/Account.jsx';
-import Home from './pages/Home.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import ScrollToTop from './ScrollToTop';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import Header from './components/header/Header.jsx';
+import Register from './components/Register.jsx';
+import Login from './components/Login.jsx';
+import Navbar from './components/Navbar.jsx';
+import Home from './pages/Home.jsx';
+
+import Account from './pages/myaccount/Account.jsx';
 import Profile from './pages/myaccount/Profile.jsx';
 import Orders from './pages/Orders.jsx';
 import Wishlist from './pages/Wishlist.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
-import ManageItems from './pages/admin/inventory/ManageItems.jsx';
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import AdminPanel from './pages/admin/AdminPanel.jsx';
+import ManageItems from './pages/admin/products/ManageItems.jsx';
 
 function App() {
     const [showRegister, setShowRegister] = useState(() => {
@@ -95,15 +99,6 @@ function App() {
                         }
                     />
                     <Route
-                        path="/manage-items"
-                        element={
-                            <ProtectedRoute adminOnly={true}>
-                                <ManageItems />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
                         path="/orders"
                         element={
                             <ProtectedRoute>
@@ -121,10 +116,26 @@ function App() {
                     />
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
+
+                    {/* NESTED ADMIN ROUTES */}
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute adminOnly={true}>
+                                <AdminPanel />
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route path="dashboard" element={<h2>Dashboard Page</h2>} />
+                        <Route path="products" element={<ManageItems />} />
+                        <Route path="orders" element={<h2>Orders Page</h2>} />
+                        <Route path="customers" element={<h2>Customers Page</h2>} />
+                        <Route path="sales" element={<h2>Sales Page</h2>} />
+                        <Route path="settings" element={<h2>Settings Page</h2>} />
+                    </Route>
                 </Route>
             </Routes>
 
-            {/*Toast Container at root */}
             <ToastContainer
                 position="top-center"
                 autoClose={2000}

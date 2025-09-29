@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiHeart, FiInfo, FiPhone, FiUser, FiBox, FiSettings } from 'react-icons/fi';
-import MobileHeader from '../../components/MobileHeader';
+import MobileHeader from '../../components/header/MobileHeader';
 import Profile from './Profile';
 import { useState, useEffect } from 'react';
 
@@ -32,7 +32,7 @@ function Account({ user, onLogout }) {
         : [
               { key: 'profile', icon: <FiUser />, label: 'Profile', path: '/profile' },
               { key: 'orders', icon: <FiBox />, label: 'Orders', path: '/view-orders' },
-              { key: 'manage', icon: <FiSettings />, label: 'Manage Items', path: '/manage-items' },
+              { key: 'manage', icon: <FiSettings />, label: 'Manage Items', path: '/admin/dashboard' },
               { key: 'about', icon: <FiInfo />, label: 'About', path: '/about' },
               { key: 'contact', icon: <FiPhone />, label: 'Contact', path: '/contact' },
           ];

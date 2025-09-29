@@ -1,13 +1,21 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 function MainLayout() {
     const location = useLocation();
     const mobileHeaderPages = ['/account', '/profile', '/cart', '/orders'];
+
+    const isAdminPage = location.pathname.startsWith('/admin');
     const needsPadding = !mobileHeaderPages.includes(location.pathname);
 
     return (
-        <div className={needsPadding ? 'px-3 pt-24 pb-23 sm:pt-20' : 'pb-18 sm:pt-20 lg:pb-10'}>
+        <div
+            className={`sm:pt-18 pb-18 lg:pb-0 ${
+                needsPadding ? (isAdminPage ? 'pt-14' : 'pt-24 sm:pt-18') : ''
+            }`}
+        >
             <Outlet />
+            <Footer />
         </div>
     );
 }

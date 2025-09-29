@@ -43,7 +43,7 @@ function Navbar({ user, isDesktop = false }) {
                         <NavLink to="/view-orders" className={getLinkClass}>
                             <FiBox /> Orders
                         </NavLink>
-                        <NavLink to="/manage-items" className={getLinkClass}>
+                        <NavLink to="/admin/dashboard" className={getLinkClass}>
                             <FiSettings /> Manage
                         </NavLink>
                     </>
@@ -88,7 +88,7 @@ function Navbar({ user, isDesktop = false }) {
                         <FiBox size={20} />
                         <span>Orders</span>
                     </NavLink>
-                    <NavLink to="/manage-items" className={getMobileLinkClass}>
+                    <NavLink to="/admin/dashboard" className={getMobileLinkClass}>
                         <FiSettings size={20} />
                         <span>Manage</span>
                     </NavLink>

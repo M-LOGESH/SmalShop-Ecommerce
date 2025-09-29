@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext.jsx';
 import { toast } from 'react-toastify';
+import { showConfirmToast } from '../../../utils/toastHelpers.jsx';
+
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 function ManageItems() {
@@ -145,40 +147,13 @@ function ManageItems() {
     };
 
     const handleDelete = (id) => {
-        toast(
-            ({ closeToast }) => (
-                <div>
-                    <p>Are you sure you want to delete this product?</p>
-                    <div className="mt-2 flex gap-2">
-                        <button
-                            onClick={async () => {
-                                try {
-                                    await fetchWithAuth(
-                                        `http://127.0.0.1:8000/api/products/${id}/`,
-                                        { method: 'DELETE' }
-                                    );
-                                    toast.success('Product deleted!');
-                                    loadProducts();
-                                } catch (err) {
-                                    toast.error('Error deleting product');
-                                }
-                                closeToast();
-                            }}
-                            className="rounded bg-red-600 px-3 py-1 text-white"
-                        >
-                            Yes
-                        </button>
-                        <button
-                            onClick={closeToast}
-                            className="rounded bg-gray-400 px-3 py-1 text-white"
-                        >
-                            No
-                        </button>
-                    </div>
-                </div>
-            ),
-            { autoClose: false, closeOnClick: false, draggable: false }
-        );
+        showConfirmToast('Are you sure you want to delete this product?', async () => {
+            await fetchWithAuth(`http://127.0.0.1:8000/api/products/${id}/`, {
+                method: 'DELETE',
+            });
+            toast.success('Product deleted!');
+            loadProducts();
+        });
     };
 
     const handleEdit = (product) => {
@@ -400,9 +375,13 @@ function ManageItems() {
                             <td className="p-2">{p.selling_price ?? '-'}</td>
                             <td className="p-2 text-center">
                                 {p.stock_status === 'in_stock' ? (
-                                    <span className="text-xl text-green-600">✅</span>
+                                    <span className="text-xl text-green-600">
+                                        <FaCheckCircle />
+                                    </span>
                                 ) : (
-                                    <span className="text-xl text-red-600">❌</span>
+                                    <span className="text-xl text-red-600">
+                                        <FaTimesCircle />
+                                    </span>
                                 )}
                             </td>
 

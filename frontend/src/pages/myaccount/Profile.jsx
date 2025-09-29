@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MobileHeader from '../../components/MobileHeader';
+import MobileHeader from '../../components/header/MobileHeader';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 

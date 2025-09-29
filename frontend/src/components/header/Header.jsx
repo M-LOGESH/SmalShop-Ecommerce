@@ -1,14 +1,15 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Navbar from './Navbar.jsx';
-import SearchBar from './SearchBar.jsx';
-import { FiShoppingCart } from 'react-icons/fi';
+import Navbar from '../Navbar.jsx';
+import SearchBar from '../SearchBar.jsx';
+import { FiShoppingCart, FiMenu } from 'react-icons/fi';
 
 function Header({ user, onLoginClick }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Pages where desktop header should hide on mobile
+    const isAdminPage = location.pathname.startsWith('/admin');
+
     const hideHeaderMobilePages = ['/account', '/profile', '/cart', '/orders'];
     const hideHeaderOnMobile = hideHeaderMobilePages.includes(location.pathname);
 
@@ -18,11 +19,24 @@ function Header({ user, onLoginClick }) {
                 hideHeaderOnMobile ? 'hidden sm:block' : 'block'
             }`}
         >
-            <div className="flex flex-col items-center justify-between px-4 py-3 sm:flex-row sm:px-6 sm:py-4">
+            <div className="flex flex-col items-center justify-between px-3 py-3 sm:flex-row sm:px-6 sm:py-4">
                 <div className="flex w-full items-center justify-between">
+                    {isAdminPage && (
+                        <button
+                            className="pr-4 text-2xl text-white lg:hidden"
+                            onClick={() => {
+                                const event = new CustomEvent('toggleSidebar', {
+                                    detail: { toggle: true },
+                                });
+                                window.dispatchEvent(event);
+                            }}
+                        >
+                            <FiMenu />
+                        </button>
+                    )}
+
                     <div className="text-2xl font-bold text-white">SmalShop</div>
 
-                    {/* Desktop Navbar */}
                     <div className="flex flex-1 justify-center">
                         <Navbar user={user} isDesktop />
                     </div>
@@ -32,7 +46,6 @@ function Header({ user, onLoginClick }) {
                             <SearchBar onSearch={(query) => console.log('Search for:', query)} />
                         </div>
 
-                        {/* Cart Icon - visible for guests and normal users, hidden for staff */}
                         {(!user || (user && !user.is_staff)) && (
                             <button
                                 onClick={() => navigate('/cart')}
@@ -63,9 +76,11 @@ function Header({ user, onLoginClick }) {
                     </div>
                 </div>
 
-                <div className="mt-2 w-full sm:hidden">
-                    <SearchBar onSearch={(query) => console.log('Search for:', query)} />
-                </div>
+                {!isAdminPage && (
+                    <div className="mt-2 w-full sm:hidden">
+                        <SearchBar onSearch={(query) => console.log('Search for:', query)} />
+                    </div>
+                )}
             </div>
         </header>
     );
