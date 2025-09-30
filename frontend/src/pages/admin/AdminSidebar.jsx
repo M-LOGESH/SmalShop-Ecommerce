@@ -1,34 +1,37 @@
 import React, { forwardRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { FiGrid, FiPackage, FiClipboard, FiUsers, FiBarChart2, FiSettings } from 'react-icons/fi';
 
 const AdminSidebar = forwardRef(({ isOpen, onClose }, ref) => {
     const location = useLocation();
 
     const menuItems = [
-        { name: 'Dashboard', path: '/admin/dashboard' },
-        { name: 'Products', path: '/admin/products' },
-        { name: 'Orders', path: '/admin/orders' },
-        { name: 'Customers', path: '/admin/customers' },
-        { name: 'Sales', path: '/admin/sales' },
-        { name: 'Settings', path: '/admin/settings' },
+        { name: 'Dashboard', path: '/admin/dashboard', icon: <FiGrid /> },
+        { name: 'Products', path: '/admin/products', icon: <FiPackage /> },
+        { name: 'Orders', path: '/admin/orders', icon: <FiClipboard /> },
+        { name: 'Customers', path: '/admin/customers', icon: <FiUsers /> },
+        { name: 'Sales', path: '/admin/sales', icon: <FiBarChart2 /> },
+        { name: 'Settings', path: '/admin/settings', icon: <FiSettings /> },
     ];
 
     return (
         <>
             {/* Desktop Sidebar */}
-            <div className="hidden w-64 flex-col bg-gray-200 text-black lg:flex ">
+            <div className="hidden w-60 flex-col bg-gray-200 text-black lg:flex">
                 <nav className="flex-1 p-4">
                     {menuItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
-                            className={`mb-2 block rounded px-3 py-2 ${
+                            onClick={onClose}
+                            className={`mb-2 flex items-center gap-2 rounded px-3 py-2 ${
                                 location.pathname === item.path
                                     ? 'bg-violet-700 text-white'
                                     : 'hover:bg-violet-500 hover:text-white'
                             }`}
                         >
-                            {item.name}
+                            {item.icon}
+                            <span>{item.name}</span>
                         </Link>
                     ))}
                 </nav>
@@ -45,13 +48,14 @@ const AdminSidebar = forwardRef(({ isOpen, onClose }, ref) => {
                             key={item.path}
                             to={item.path}
                             onClick={onClose}
-                            className={`mb-2 block rounded px-3 py-2 ${
+                            className={`mb-2 flex items-center gap-2 rounded px-3 py-2 ${
                                 location.pathname === item.path
                                     ? 'bg-violet-700 text-white'
                                     : 'hover:bg-violet-500 hover:text-white'
                             }`}
                         >
-                            {item.name}
+                            {item.icon}
+                            <span>{item.name}</span>
                         </Link>
                     ))}
                 </nav>

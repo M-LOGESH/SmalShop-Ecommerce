@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'is_staff']
+        fields = ['id', 'username', 'email', 'password', 'is_staff','is_superuser']
         
     def validate_password(self, value):
         validate_password(value) 

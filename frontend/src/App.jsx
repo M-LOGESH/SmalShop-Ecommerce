@@ -12,6 +12,7 @@ import Header from './components/header/Header.jsx';
 import Register from './components/Register.jsx';
 import Login from './components/Login.jsx';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 import Home from './pages/Home.jsx';
 
 import Account from './pages/myaccount/Account.jsx';
@@ -159,6 +160,7 @@ function App() {
                 }
                 containerClassName="p-2 md:p-0"
             />
+            <Footer />
         </Router>
     );
 }

@@ -70,6 +70,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 username: data.username,
                 email: data.email,
                 is_staff: data.is_staff,
+                is_superuser: data.is_superuser,
                 access: data.access, 
                 refresh: data.refresh,
             });

@@ -43,7 +43,7 @@ function AdminPanel() {
       ></div>
 
       {/* Main content */}
-      <div className="flex-1 overflow-y-auto bg-gray-100 p-6 z-0">
+      <div className="flex-1 overflow-y-auto p-6 z-0">
         <Outlet />
       </div>
     </div>

@@ -12,11 +12,11 @@ class Category(models.Model):
 
 # Subcategories (linked to category, can be multiple per product)
 class SubCategory(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="subcategories")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)  # make unique globally
 
     def __str__(self):
-        return f"{self.category.name} - {self.name}"
+        return self.name
+
 
 
 # Function to define dynamic image upload path

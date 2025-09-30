@@ -8,8 +8,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(SubCategory)
 class SubCategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "category")
-    list_filter = ("category",)
+    list_display = ("id", "name")
+    list_filter = ()
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

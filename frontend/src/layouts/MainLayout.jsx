@@ -1,5 +1,4 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import Footer from '../components/Footer';
 
 function MainLayout() {
     const location = useLocation();
@@ -15,7 +14,6 @@ function MainLayout() {
             }`}
         >
             <Outlet />
-            <Footer />
         </div>
     );
 }
