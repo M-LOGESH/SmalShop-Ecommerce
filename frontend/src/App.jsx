@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext.jsx';
-import ScrollToTop from './ScrollToTop';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,7 +23,7 @@ import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
 
 import AdminPanel from './pages/admin/AdminPanel.jsx';
-import ManageItems from './pages/admin/products/ManageItems.jsx';
+import ManageItems from './pages/admin/products/ManageProducts.jsx';
 
 function App() {
     const [showRegister, setShowRegister] = useState(() => {

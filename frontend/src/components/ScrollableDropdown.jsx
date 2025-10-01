@@ -6,8 +6,11 @@ function ScrollableDropdown({
     onChange,
     placeholder = 'Select',
     allLabel = 'All',
-    className = 'w-48',
+    className = 'w-40',
     disabled = false,
+    buttonPadding = 'px-2 py-2',
+    itemPadding = 'px-2 py-2',  
+    maxHeight = '10rem',       
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -28,17 +31,18 @@ function ScrollableDropdown({
             <button
                 type="button"
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full border px-2 py-2 text-left ${
-                    disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'
-                }`}
+                className={`w-full border text-left ${buttonPadding} ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
             >
                 {value || placeholder}
             </button>
 
             {isOpen && (
-                <ul className="absolute z-10 max-h-40 w-full overflow-y-auto rounded border bg-white shadow-md">
+                <ul
+                    className="absolute z-10 w-full overflow-y-auto rounded border bg-white shadow-md"
+                    style={{ maxHeight }}
+                >
                     <li
-                        className="cursor-pointer px-2 hover:bg-violet-200"
+                        className={`cursor-pointer ${itemPadding} hover:bg-violet-200`}
                         onClick={() => {
                             onChange('');
                             setIsOpen(false);
@@ -49,7 +53,7 @@ function ScrollableDropdown({
                     {options.map((opt, idx) => (
                         <li
                             key={idx}
-                            className="cursor-pointer p-2 hover:bg-violet-200"
+                            className={`cursor-pointer ${itemPadding} hover:bg-violet-200`}
                             onClick={() => {
                                 onChange(opt);
                                 setIsOpen(false);

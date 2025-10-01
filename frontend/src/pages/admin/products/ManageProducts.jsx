@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import { toast } from 'react-toastify';
 import { showConfirmToast } from '../../../utils/toastHelpers.jsx';
@@ -7,6 +7,7 @@ import ProductTable from './ProductTable.jsx';
 
 function ManageItems() {
     const { fetchWithAuth, user } = useAuth();
+    const headingRef = useRef(null); // <-- Ref for scrolling to the heading
 
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -160,11 +161,17 @@ function ManageItems() {
             subcategories_ids: product.subcategories.map((s) => s.id),
             image: null,
         });
+
+        // Scroll to heading
+        headingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
     return (
         <div>
-            <h2 className="mb-4 text-xl font-bold">Manage Products</h2>
+            {/* Heading with ref */}
+            <h2 ref={headingRef} className="mb-4 text-xl font-bold">
+                Manage Products
+            </h2>
 
             {/* Form Component */}
             <ProductForm
@@ -185,12 +192,13 @@ function ManageItems() {
                 setFormData={setFormData}
             />
 
+            <h2 className="mt-8 mb-4 text-xl font-bold">Products List</h2>
+
             {/* Table Component */}
             <ProductTable
                 products={products}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                onView={null}
                 user={user}
             />
         </div>

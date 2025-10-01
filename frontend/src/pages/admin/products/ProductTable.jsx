@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaEdit, FaTrash } from 'react-icons/fa';
 import ScrollableDropdown from '../../../components/ScrollableDropdown';
 
-function ProductTable({ products, onEdit, onDelete, onView, user }) {
+function ProductTable({ products, onEdit, onDelete, user }) {
     const [activeTable, setActiveTable] = useState('default');
     const [searchTerm, setSearchTerm] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
@@ -22,17 +22,10 @@ function ProductTable({ products, onEdit, onDelete, onView, user }) {
 
         if (!matchesSearch) return false;
 
-        if (activeTable === 'default' && filterCategory) {
-            return p.category?.name === filterCategory;
-        }
-
-        if (activeTable === 'subcategories' && filterSubcategory) {
+        if (activeTable === 'default' && filterCategory) return p.category?.name === filterCategory;
+        if (activeTable === 'subcategories' && filterSubcategory)
             return p.subcategories?.some((sc) => sc.name === filterSubcategory);
-        }
-
-        if (activeTable === 'extra' && filterBrand) {
-            return p.brand === filterBrand;
-        }
+        if (activeTable === 'extra' && filterBrand) return p.brand === filterBrand;
 
         return true;
     });
@@ -61,39 +54,54 @@ function ProductTable({ products, onEdit, onDelete, onView, user }) {
             {/* Search and Filters */}
             <div className="mb-4 flex flex-wrap items-center gap-2">
                 <input
+                    name="searchProducts"
                     type="text"
-                    placeholder="Search by name or category..."
-                    className="min-w-[200px] flex-1 rounded border p-1"
+                    placeholder="Search"
+                    className="min-w-32 max-w-64 flex-1 rounded border p-1 pl-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
 
                 {activeTable === 'default' && (
-                    <ScrollableDropdown
-                        options={uniqueCategories}
-                        value={filterCategory}
-                        onChange={setFilterCategory}
-                        placeholder="Filter by Category"
-                        className="w-48"
-                    />
+                    <div className="ml-auto">
+                        <ScrollableDropdown
+                            options={uniqueCategories}
+                            value={filterCategory}
+                            onChange={setFilterCategory}
+                            placeholder="Select Category"
+                            buttonPadding="px-2 py-1"
+                            itemPadding="px-2 py-1"
+                            maxHeight="12rem"
+                        />
+                    </div>
                 )}
 
                 {activeTable === 'subcategories' && (
-                    <ScrollableDropdown
-                        options={uniqueSubcategories}
-                        value={filterSubcategory}
-                        onChange={setFilterSubcategory}
-                        placeholder="Select Subcategory"
-                    />
+                    <div className="ml-auto">
+                        <ScrollableDropdown
+                            options={uniqueSubcategories}
+                            value={filterSubcategory}
+                            onChange={setFilterSubcategory}
+                            placeholder="Select Subcategory"
+                            buttonPadding="px-2 py-1"
+                            itemPadding="px-2 py-1"
+                            maxHeight="12rem"
+                        />
+                    </div>
                 )}
 
                 {activeTable === 'extra' && (
-                    <ScrollableDropdown
-                        options={uniqueBrands}
-                        value={filterBrand}
-                        onChange={setFilterBrand}
-                        placeholder="Select Brand"
-                    />
+                    <div className="ml-auto">
+                        <ScrollableDropdown
+                            options={uniqueBrands}
+                            value={filterBrand}
+                            onChange={setFilterBrand}
+                            placeholder="Select Brand"
+                            buttonPadding="px-2 py-1"
+                            itemPadding="px-2 py-1"
+                            maxHeight="12rem"
+                        />
+                    </div>
                 )}
             </div>
 
@@ -184,24 +192,19 @@ function ProductTable({ products, onEdit, onDelete, onView, user }) {
                                 <td className="border p-2 text-center">
                                     <div className="inline-flex gap-2">
                                         <button
-                                            onClick={() => onView?.(p)}
-                                            className="flex items-center gap-1 rounded bg-blue-500 px-2 py-1 text-white"
-                                        >
-                                            <FaEye />
-                                            <span className="hidden xl:inline">View</span>
-                                        </button>
-
-                                        <button
-                                            onClick={() => onEdit(p)}
+                                            onClick={() => {
+                                                onEdit(p);
+                                                window.scrollTo({ top: 0, behavior: 'smooth' }); // scroll to top
+                                            }}
                                             className="flex items-center gap-1 rounded bg-yellow-500 px-2 py-1 text-white"
                                         >
                                             <FaEdit />
-                                            <span className="hidden xl:inline">Edit</span>
+                                            <span className="2md:inline hidden">Edit</span>
                                         </button>
 
                                         <button
                                             onClick={() => onDelete(p.id)}
-                                            disabled={!user?.is_superuser} // 👈 disable if not superuser
+                                            disabled={!user?.is_superuser}
                                             className={`flex items-center gap-1 rounded px-2 py-1 text-white ${
                                                 user?.is_superuser
                                                     ? 'bg-red-500 hover:bg-red-600'
@@ -209,7 +212,7 @@ function ProductTable({ products, onEdit, onDelete, onView, user }) {
                                             }`}
                                         >
                                             <FaTrash />
-                                            <span className="hidden xl:inline">Delete</span>
+                                            <span className="2md:inline hidden">Delete</span>
                                         </button>
                                     </div>
                                 </td>

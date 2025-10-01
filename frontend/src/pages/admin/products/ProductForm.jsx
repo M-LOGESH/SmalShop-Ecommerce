@@ -24,52 +24,58 @@ function ProductForm({
     const isSuperuser = user?.is_superuser;
 
     return (
-        <form onSubmit={handleSubmit} className="mx-auto mb-6 max-w-4xl">
+        <form onSubmit={handleSubmit} className="mx-auto mb-6 max-w-6xl">
             {/* Row 1: Name, Quantity, Stock Status */}
+            {/* Row 1 & 2 */}
             <div className="flex flex-col gap-3 md:flex-row">
+                {/* Name: full row on mobile, inline at md+ */}
                 <input
                     name="name"
                     placeholder="Product Name"
                     value={formData.name ?? ''}
                     onChange={handleChange}
                     className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    autoComplete="name"
                     required
                 />
-                <input
-                    name="quantity"
-                    placeholder="Quantity (e.g. 1kg, 500ml)"
-                    value={formData.quantity ?? ''}
-                    onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
-                />
 
-                {/* ScrollableDropdown for Stock Status */}
-                <ScrollableDropdown
-                    options={['In Stock', 'Out of Stock']}
-                    value={formData.stock_status === 'in_stock' ? 'In Stock' : 'Out of Stock'}
-                    onChange={(val) =>
-                        handleChange({
-                            target: {
-                                name: 'stock_status',
-                                value: val === 'In Stock' ? 'in_stock' : 'out_of_stock',
-                            },
-                        })
-                    }
-                    placeholder="Select Stock Status"
-                    className="flex-1"
-                    allLabel={null}
-                />
+                {/* Quantity + Stock Status → same line on mobile */}
+                <div className="flex flex-1 flex-row flex-wrap gap-3">
+                    <input
+                        name="quantity"
+                        placeholder="Quantity"
+                        value={formData.quantity ?? ''}
+                        onChange={handleChange}
+                        className="order-2 min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    />
+
+                    <ScrollableDropdown
+                        options={['In Stock', 'Out of Stock']}
+                        value={formData.stock_status === 'in_stock' ? 'In Stock' : 'Out of Stock'}
+                        onChange={(val) =>
+                            handleChange({
+                                target: {
+                                    name: 'stock_status',
+                                    value: val === 'In Stock' ? 'in_stock' : 'out_of_stock',
+                                },
+                            })
+                        }
+                        placeholder="Select Stock Status"
+                        className="order-3 flex-1"
+                        allLabel={null}
+                    />
+                </div>
             </div>
 
             {/* Row 2: Cost Price, Retail Price, Selling Price */}
-            <div className="mt-3 flex flex-col gap-3 md:flex-row">
+            <div className="mt-3 flex flex-row flex-wrap gap-3">
                 <input
                     type="number"
                     name="cost_price"
                     placeholder="Cost Price"
                     value={formData.cost_price ?? ''}
                     onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
                 <input
                     type="number"
@@ -77,7 +83,7 @@ function ProductForm({
                     placeholder="Retail Price"
                     value={formData.retail_price ?? ''}
                     onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
                 <input
                     type="number"
@@ -85,12 +91,12 @@ function ProductForm({
                     placeholder="Selling Price"
                     value={formData.selling_price ?? ''}
                     onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
             </div>
 
             {/* Row 3 & 4: Category and Subcategory sections */}
-            <div className="mt-3 flex flex-col gap-6 md:flex-row">
+            <div className="mt-3 flex flex-col gap-3 md:flex-row">
                 {/* Category Section */}
                 <div className="flex flex-1 flex-col gap-2">
                     <Select
@@ -147,6 +153,7 @@ function ProductForm({
                     />
                     <div className="flex gap-2">
                         <input
+                            name="newCategory"
                             placeholder="Add new category"
                             value={newCategory}
                             onChange={(e) => setNewCategory(e.target.value)}
@@ -238,6 +245,7 @@ function ProductForm({
                     />
                     <div className="flex gap-2">
                         <input
+                            name="newSubcategory"
                             placeholder="Add new subcategory"
                             value={newSubcategory}
                             onChange={(e) => setNewSubcategory(e.target.value)}
