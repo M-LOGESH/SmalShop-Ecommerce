@@ -146,7 +146,7 @@ function App() {
                 pauseOnFocusLoss={false}
                 draggable={false}
                 pauseOnHover={false}
-                theme="colored"
+                theme="dark"
                 closeButton={false}
                 toastClassName={({ type }) =>
                     `flex items-center max-w-xs md:max-w-sm rounded-lg shadow-lg p-3 space-x-3

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'users',
     "myaccount",
     'products',
+    'cart',
     'orders',
 ]
 
@@ -123,8 +124,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # for production
 # -------------------------
 # Media files
 # -------------------------
-MEDIA_URL = '/products/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'products')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # -------------------------
 # Default primary key field type

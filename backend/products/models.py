@@ -22,7 +22,7 @@ class SubCategory(models.Model):
 # Function to define dynamic image upload path
 def product_image_path(instance, filename):
     category_name = instance.category.name if instance.category else "uncategorized"
-    return os.path.join("images", category_name, filename)
+    return os.path.join("Products", category_name, filename)
 
 
 # Product Model
