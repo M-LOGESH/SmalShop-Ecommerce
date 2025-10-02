@@ -54,7 +54,7 @@ function Navbar({ user, isDesktop = false }) {
 
     // Mobile Bottom Navbar (always visible)
     return (
-        <nav className="fixed bottom-0 left-0 z-50 flex w-full justify-around border-t border-zinc-200 bg-zinc-100 py-2 shadow-md lg:hidden">
+        <nav className="fixed bottom-0 left-0 z-40 flex w-full justify-around border-t border-zinc-200 bg-zinc-100 py-2 shadow-md lg:hidden">
             {!user?.is_staff ? (
                 <>
                     <NavLink to="/" className={getMobileLinkClass}>

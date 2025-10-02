@@ -2,7 +2,7 @@ import MobileHeader from '../components/header/MobileHeader';
 
 function Orders() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div>
             {/* Mobile Header */}
             <MobileHeader title="Orders" />
             <div className="p-4 md:p-8">

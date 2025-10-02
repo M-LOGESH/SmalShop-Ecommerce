@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../Navbar.jsx';
 import SearchBar from '../SearchBar.jsx';
+import Cart from '../../pages/users/Cart.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 import { FiShoppingCart, FiMenu } from 'react-icons/fi';
 
 function Header({ user, onLoginClick }) {
     const navigate = useNavigate();
     const location = useLocation();
+    const { cart } = useAuth();
 
+    const [cartOpen, setCartOpen] = useState(false);
     const isAdminPage = location.pathname.startsWith('/admin');
 
-    const hideHeaderMobilePages = ['/account', '/profile', '/cart', '/orders'];
+    const hideHeaderMobilePages = ['/account', '/profile', '/orders'];
     const hideHeaderOnMobile = hideHeaderMobilePages.includes(location.pathname);
 
     return (
@@ -41,21 +45,26 @@ function Header({ user, onLoginClick }) {
                         <Navbar user={user} isDesktop />
                     </div>
 
-                    <div className="flex items-center space-x-6">
-                        <div className="hidden sm:flex">
+                    <div className="flex items-center">
+                        <div className="mr-4 hidden sm:flex">
                             <SearchBar onSearch={(query) => console.log('Search for:', query)} />
                         </div>
 
                         {(!user || (user && !user.is_staff)) && (
-                            <button
-                                onClick={() => navigate('/cart')}
-                                className="relative text-white transition hover:text-violet-200"
-                            >
-                                <FiShoppingCart size={22} />
-                                <span className="absolute -top-2 -right-2 rounded-full bg-red-500 px-1 text-xs text-white">
-                                    4
-                                </span>
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => setCartOpen(true)}
+                                    className="relative mr-4 text-white transition hover:text-violet-200"
+                                >
+                                    <FiShoppingCart size={22} />
+                                    <span className="absolute -top-2 -right-2 rounded-full bg-red-500 px-1 text-xs text-white">
+                                        {cart.length}
+                                    </span>
+                                </button>
+
+                                {/* Cart overlay */}
+                                <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+                            </>
                         )}
 
                         {!user ? (

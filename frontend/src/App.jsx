@@ -12,7 +12,6 @@ import Header from './components/header/Header.jsx';
 import Register from './components/Register.jsx';
 import Login from './components/Login.jsx';
 import Navbar from './components/Navbar.jsx';
-import Footer from './components/Footer.jsx';
 import Home from './pages/Home.jsx';
 
 import Account from './pages/myaccount/Account.jsx';
@@ -146,7 +145,7 @@ function App() {
                 pauseOnFocusLoss={false}
                 draggable={false}
                 pauseOnHover={false}
-                theme="dark"
+                theme="colored"
                 closeButton={false}
                 toastClassName={({ type }) =>
                     `flex items-center max-w-xs md:max-w-sm rounded-lg shadow-lg p-3 space-x-3
@@ -160,7 +159,6 @@ function App() {
                 }
                 containerClassName="p-2 md:p-0"
             />
-            <Footer />
         </Router>
     );
 }
