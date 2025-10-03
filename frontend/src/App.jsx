@@ -12,7 +12,10 @@ import Header from './components/header/Header.jsx';
 import Register from './components/Register.jsx';
 import Login from './components/Login.jsx';
 import Navbar from './components/Navbar.jsx';
+
 import Home from './pages/Home.jsx';
+import Category from './pages/Category.jsx';
+import CategoryPage from './pages/CategoryPage.jsx';
 
 import Account from './pages/myaccount/Account.jsx';
 import Profile from './pages/myaccount/Profile.jsx';
@@ -82,6 +85,8 @@ function App() {
             <Routes>
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
+                    <Route path="/category" element={<Category />} />
+                    <Route path="/category/:slug" element={<CategoryPage />} />
                     <Route
                         path="/account"
                         element={
