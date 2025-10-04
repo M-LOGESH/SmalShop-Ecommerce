@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaHeart, FaPlus, FaMinus } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 function CategoryPage() {
     const { slug } = useParams();
-    const { user, fetchWithAuth, cart, setCart, toggleWishlist } = useAuth();
+    const { user, fetchWithAuth, cart, setCart } = useAuth();
 
     const [products, setProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
@@ -35,7 +36,6 @@ function CategoryPage() {
                 const data = await res.json();
                 if (!Array.isArray(data)) return;
 
-                // Use slug-based filtering if your backend has slug field
                 const filtered = data.filter((p) => p.category?.slug === slug);
                 setProducts(filtered);
             } catch (err) {
@@ -62,8 +62,41 @@ function CategoryPage() {
         loadWishlist();
     }, [user]);
 
+    // --- Wishlist toggle (same logic as CategoryProducts) ---
+    const toggleWishlist = async (productId) => {
+        if (!user) return toast.error('Login to add to wishlist');
+
+        try {
+            const existingItem = wishlistData.find((w) => w.product === productId);
+
+            if (existingItem) {
+                // Remove from wishlist
+                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, {
+                    method: 'DELETE',
+                });
+                setWishlist((prev) => prev.filter((pid) => pid !== productId));
+                setWishlistData((prev) => prev.filter((w) => w.product !== productId));
+            } else {
+                // Add to wishlist
+                const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product: productId }),
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    setWishlist((prev) => [...prev, productId]);
+                    setWishlistData((prev) => [...prev, data]);
+                }
+            }
+        } catch (err) {
+            console.error('Wishlist error:', err);
+        }
+    };
+
     const addToCart = async (productId) => {
-        if (!user) return alert('Login to add to cart');
+        if (!user) return toast.error('Login to add to cart');
 
         try {
             const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
@@ -111,9 +144,9 @@ function CategoryPage() {
     return (
         <div className="min-h-screen bg-gray-50 px-4 py-4 sm:px-8">
             <div className="mx-auto max-w-6xl">
-                <h1 className="mb-4 text-2xl font-bold">{categoryName}</h1>
+                <h1 className="mb-4 text-xl font-bold">{categoryName}</h1>
 
-                {/* Responsive grid: mobile 1 col, small 2, medium 3, large 5 */}
+                {/* Grid Layout */}
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
                     {products.map((p) => {
                         const cartItem = getCartItem(p.id);
@@ -124,7 +157,7 @@ function CategoryPage() {
                                 key={p.id}
                                 className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2 shadow-md"
                             >
-                                {/* Image */}
+                                {/* Product Image */}
                                 <div className="relative flex h-32 w-full items-center justify-center bg-gray-100">
                                     {p.image ? (
                                         <img
@@ -137,6 +170,7 @@ function CategoryPage() {
                                             No Image
                                         </div>
                                     )}
+
                                     <button
                                         onClick={() => toggleWishlist(p.id)}
                                         className="absolute top-2 right-2"
@@ -150,11 +184,12 @@ function CategoryPage() {
                                     </button>
                                 </div>
 
-                                {/* Details */}
+                                {/* Product Info */}
                                 <div className="flex flex-1 flex-col justify-between p-1">
                                     <div>
                                         <h3 className="truncate text-sm font-semibold">{p.name}</h3>
                                         <p className="text-xs text-gray-500">{p.quantity}</p>
+
                                         <div className="mt-1">
                                             {p.retail_price && p.retail_price > p.selling_price ? (
                                                 <div className="flex items-baseline gap-2">
@@ -183,7 +218,7 @@ function CategoryPage() {
                                         </div>
                                     </div>
 
-                                    {/* Add / Quantity */}
+                                    {/* Cart Section */}
                                     {cartItem ? (
                                         <div className="mt-2 flex items-center justify-between rounded bg-violet-900 px-2 py-1 text-sm font-bold text-white">
                                             <button
@@ -208,6 +243,13 @@ function CategoryPage() {
                                                 <FaPlus />
                                             </button>
                                         </div>
+                                    ) : p.stock_status === 'out_of_stock' ? (
+                                        <button
+                                            disabled
+                                            className="w-full cursor-not-allowed rounded bg-gray-400 px-2 py-1 text-sm font-semibold text-white"
+                                        >
+                                            Out of Stock
+                                        </button>
                                     ) : (
                                         <button
                                             className="mt-2 w-full rounded bg-violet-900 px-2 py-1 text-sm text-white hover:bg-violet-800"

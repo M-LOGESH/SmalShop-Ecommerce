@@ -15,7 +15,7 @@ function Wishlist() {
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="mx-auto max-w-6xl">
-                <h1 className="mb-4 text-2xl font-bold">My Wishlist</h1>
+                <h1 className="mb-4 text-xl font-bold">My Wishlist</h1>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5">
                     {wishlistData.map((w) => {
                         const p = w.product_detail;
@@ -58,12 +58,12 @@ function Wishlist() {
                                             {p.retail_price && p.retail_price > p.selling_price ? (
                                                 <div className="flex items-baseline gap-2">
                                                     <div className="flex flex-col">
-                                                    <span className="text-md font-bold text-violet-600">
-                                                        ₹{p.selling_price}
-                                                    </span>
-                                                    <span className="text-xs text-gray-500 line-through">
-                                                        ₹{p.retail_price}
-                                                    </span>
+                                                        <span className="text-md font-bold text-violet-600">
+                                                            ₹{p.selling_price}
+                                                        </span>
+                                                        <span className="text-xs text-gray-500 line-through">
+                                                            ₹{p.retail_price}
+                                                        </span>
                                                     </div>
                                                     <span className="rounded bg-green-300/20 px-1 text-sm font-semibold text-green-600">
                                                         {Math.round(
@@ -74,7 +74,6 @@ function Wishlist() {
                                                         % OFF
                                                     </span>
                                                 </div>
-                                                
                                             ) : (
                                                 <span className="text-md font-bold text-violet-600">
                                                     ₹{p.selling_price ?? '-'}
@@ -108,6 +107,13 @@ function Wishlist() {
                                                 <FaPlus />
                                             </button>
                                         </div>
+                                    ) : p.stock_status === 'out_of_stock' ? (
+                                        <button
+                                            disabled
+                                            className="w-full cursor-not-allowed rounded bg-gray-400 px-2 py-1 text-sm font-semibold text-white"
+                                        >
+                                            Out of Stock
+                                        </button>
                                     ) : (
                                         <button
                                             className="mt-2 w-full rounded bg-violet-900 px-2 py-1 text-sm text-white hover:bg-violet-800 sm:w-auto"

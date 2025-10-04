@@ -350,6 +350,13 @@ function CategoryProducts({ categoryName, title, slug }) {
                                                     <FaPlus />
                                                 </button>
                                             </div>
+                                        ) : p.stock_status === 'out_of_stock' ? (
+                                            <button
+                                                disabled
+                                                className="w-full cursor-not-allowed rounded bg-gray-400 px-2 py-1 text-sm font-semibold text-white"
+                                            >
+                                                Out of Stock
+                                            </button>
                                         ) : (
                                             <button
                                                 className="w-full rounded bg-violet-900 px-2 py-1 text-sm text-white hover:bg-violet-800"
