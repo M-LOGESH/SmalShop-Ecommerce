@@ -14,7 +14,7 @@ function Header({ user, onLoginClick }) {
     const [cartOpen, setCartOpen] = useState(false);
     const isAdminPage = location.pathname.startsWith('/admin');
 
-    const hideHeaderMobilePages = ['/account', '/profile', '/orders'];
+    const hideHeaderMobilePages = ['/account', '/profile', '/my-orders', '/view-orders'];
     const hideHeaderOnMobile = hideHeaderMobilePages.includes(location.pathname);
 
     return (

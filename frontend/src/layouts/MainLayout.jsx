@@ -3,7 +3,7 @@ import Footer from "../components/Footer.jsx";
 
 function MainLayout() {
     const location = useLocation();
-    const mobileHeaderPages = ["/account", "/profile", "/orders"];
+    const mobileHeaderPages = ["/account", "/profile", "/my-orders", "/view-orders"];
 
     const isAdminPage = location.pathname.startsWith("/admin");
     const needsPadding = !mobileHeaderPages.includes(location.pathname);

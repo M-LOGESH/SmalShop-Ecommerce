@@ -19,10 +19,11 @@ import CategoryPage from './pages/CategoryPage.jsx';
 
 import Account from './pages/myaccount/Account.jsx';
 import Profile from './pages/myaccount/Profile.jsx';
-import Orders from './pages/Orders.jsx';
+import MyOrders from './pages/users/myorders/MyOrders.jsx';
 import Wishlist from './pages/Wishlist.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
+import OrdersPage from './pages/admin/OrdersPage.jsx';
 
 import AdminPanel from './pages/admin/AdminPanel.jsx';
 import ManageItems from './pages/admin/products/ManageProducts.jsx';
@@ -104,10 +105,10 @@ function App() {
                         }
                     />
                     <Route
-                        path="/orders"
+                        path="/my-orders"
                         element={
                             <ProtectedRoute>
-                                <Orders />
+                                <MyOrders />
                             </ProtectedRoute>
                         }
                     />
@@ -119,6 +120,14 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/view-orders"
+                        element={
+                            <ProtectedRoute adminOnly={true}>
+                                <OrdersPage />
+                            </ProtectedRoute>
+                        }
+                    ></Route>
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
 

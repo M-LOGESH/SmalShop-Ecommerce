@@ -24,7 +24,7 @@ function Account({ user, onLogout }) {
     const menuItems = !user?.is_staff
         ? [
               { key: 'profile', icon: <FiUser />, label: 'Profile', path: '/profile' },
-              { key: 'orders', icon: <FiShoppingBag />, label: 'My Orders', path: '/orders' },
+              { key: 'orders', icon: <FiShoppingBag />, label: 'My Orders', path: '/my-orders' },
               { key: 'wishlist', icon: <FiHeart />, label: 'Wishlist', path: '/wishlist' },
               { key: 'about', icon: <FiInfo />, label: 'About', path: '/about' },
               { key: 'contact', icon: <FiPhone />, label: 'Contact', path: '/contact' },

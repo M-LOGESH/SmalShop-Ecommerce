@@ -8,7 +8,9 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path("api/users/", include("myaccount.urls")),
     path('api/', include('products.urls')),
-    path('api/', include('cart.urls')),   # <-- fix here
+    path('api/', include('cart.urls')),
+    path('api/', include('orders.urls')),
+   
 ]
 
 if settings.DEBUG:

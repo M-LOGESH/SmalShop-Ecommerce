@@ -28,8 +28,8 @@ function Navbar({ user, isDesktop = false }) {
                         <NavLink to="/wishlist" className={getLinkClass}>
                             <FiHeart /> Wishlist
                         </NavLink>
-                        <NavLink to="/orders" className={getLinkClass}>
-                            <FiShoppingBag /> Order
+                        <NavLink to="/my-orders" className={getLinkClass}>
+                            <FiShoppingBag /> Orders
                         </NavLink>
                     </>
                 ) : (
@@ -69,9 +69,9 @@ function Navbar({ user, isDesktop = false }) {
                         <FiHeart size={20} />
                         <span>Wishlist</span>
                     </NavLink>
-                    <NavLink to="/orders" className={getMobileLinkClass}>
+                    <NavLink to="/my-orders" className={getMobileLinkClass}>
                         <FiShoppingBag size={20} />
-                        <span>Order</span>
+                        <span>Orders</span>
                     </NavLink>
                 </>
             ) : (

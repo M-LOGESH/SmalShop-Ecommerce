@@ -70,6 +70,25 @@ function Cart({ isOpen, onClose }) {
         (sum, item) => sum + (item.product_detail?.selling_price || 0) * item.quantity,
         0
     );
+    const placeOrder = async () => {
+        try {
+            const res = await fetchWithAuth('http://127.0.0.1:8000/api/orders/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({}), // backend creates order from cart
+            });
+            if (res.ok) {
+                alert('Order placed successfully!');
+                setCart([]); // clear cart on frontend
+                onClose();
+            } else {
+                const err = await res.json();
+                alert('Error: ' + JSON.stringify(err));
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+        }
+    };
 
     return (
         <>
@@ -181,7 +200,10 @@ function Cart({ isOpen, onClose }) {
                         <span>Total</span>
                         <span>₹{total}</span>
                     </div>
-                    <button className="w-full rounded bg-violet-900 py-2 text-white hover:bg-violet-800">
+                    <button
+                        onClick={placeOrder}
+                        className="w-full rounded bg-violet-900 py-2 text-white hover:bg-violet-800"
+                    >
                         Place Order
                     </button>
                 </div>
