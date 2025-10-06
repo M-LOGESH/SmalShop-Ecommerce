@@ -61,7 +61,7 @@ export default function PendingOrders({ orders, cancelOrder }) {
                                                 className="relative flex w-full flex-col items-center"
                                             >
                                                 <div
-                                                    className={`z-10 flex h-6 w-6 items-center justify-center rounded-full text-white sm:h-8 sm:w-8 ${
+                                                    className={`z-10 flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full text-white  ${
                                                         completed ? 'bg-green-600' : 'bg-gray-300'
                                                     }`}
                                                 >
@@ -72,7 +72,7 @@ export default function PendingOrders({ orders, cancelOrder }) {
                                                 </span>
                                                 {idx < STATUS_STEPS.length - 1 && (
                                                     <div
-                                                        className={`absolute top-[0.6rem] left-1/2 h-1 w-full sm:top-3.5 ${
+                                                        className={`absolute top-[0.6rem] sm:top-3.5 left-1/2 h-1 w-full  ${
                                                             idx < stepIndex
                                                                 ? 'bg-green-600'
                                                                 : 'bg-gray-300'

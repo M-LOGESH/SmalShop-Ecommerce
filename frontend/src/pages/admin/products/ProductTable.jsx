@@ -69,7 +69,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                             value={filterCategory}
                             onChange={setFilterCategory}
                             placeholder="Select Category"
-                            buttonPadding="px-2 py-1"
+                            buttonPadding="px-2 py-1 rounded"
                             itemPadding="px-2 py-1"
                             maxHeight="12rem"
                         />
@@ -83,7 +83,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                             value={filterSubcategory}
                             onChange={setFilterSubcategory}
                             placeholder="Select Subcategory"
-                            buttonPadding="px-2 py-1"
+                            buttonPadding="px-2 py-1 rounded"
                             itemPadding="px-2 py-1"
                             maxHeight="12rem"
                         />
@@ -97,7 +97,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                             value={filterBrand}
                             onChange={setFilterBrand}
                             placeholder="Select Brand"
-                            buttonPadding="px-2 py-1"
+                            buttonPadding="px-2 py-1 rounded"
                             itemPadding="px-2 py-1"
                             maxHeight="12rem"
                         />

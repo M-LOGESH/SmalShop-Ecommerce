@@ -43,13 +43,13 @@ export default function MyOrders() {
             <div className="w-full max-w-6xl">
                 <MobileHeader title="My Orders" />
                 <div className="p-4 md:p-8">
-                    <h1 className="mb-6 text-xl font-bold">My Orders</h1>
+                    <h1 className="mb-6 text-xl hidden sm:block font-bold">My Orders</h1>
                     {loading ? (
                         <p className="text-gray-500">Loading orders...</p>
                     ) : (
                         <PendingOrders orders={orders} cancelOrder={cancelOrder} />
                     )}
-                    <h1 className="mt-8 mb-6 text-xl font-bold">Completed Orders</h1>
+                    
                     <CompletedOrders orders={orders} />
                 </div>
             </div>

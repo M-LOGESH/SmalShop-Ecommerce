@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FaChevronDown } from 'react-icons/fa';
 
 function ScrollableDropdown({
     options = [],
@@ -6,7 +7,7 @@ function ScrollableDropdown({
     onChange,
     placeholder = 'Select',
     allLabel = 'All',
-    className = 'w-40',
+    className = 'min-w-40 max-w-45',
     disabled = false,
     buttonPadding = 'px-2 py-2',
     itemPadding = 'px-2 py-2',  
@@ -31,9 +32,10 @@ function ScrollableDropdown({
             <button
                 type="button"
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full border text-left ${buttonPadding} ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
+                className={`w-full border flex items-center justify-between ${buttonPadding} ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
             >
-                {value || placeholder}
+                <span>{value || placeholder}</span>
+                <FaChevronDown className={`ml-2 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && (

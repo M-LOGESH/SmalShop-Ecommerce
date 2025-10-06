@@ -24,6 +24,7 @@ import Wishlist from './pages/Wishlist.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
 import OrdersPage from './pages/admin/OrdersPage.jsx';
+import OrderDetails from './pages/users/myorders/OrderDetails.jsx';
 
 import AdminPanel from './pages/admin/AdminPanel.jsx';
 import ManageItems from './pages/admin/products/ManageProducts.jsx';
@@ -128,6 +129,15 @@ function App() {
                             </ProtectedRoute>
                         }
                     ></Route>
+                    <Route
+                        path="/my-orders/:id"
+                        element={
+                            <ProtectedRoute>
+                                <OrderDetails />
+                            </ProtectedRoute>
+                        }
+                    />
+
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
 
