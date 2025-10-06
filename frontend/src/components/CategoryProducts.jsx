@@ -3,6 +3,7 @@ import { FaHeart, FaChevronRight, FaChevronLeft, FaPlus, FaMinus } from 'react-i
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import ProductActionButton from './ProductActionButton';
 
 function CategoryProducts({ categoryName, title, slug }) {
     const { user, fetchWithAuth, cart, setCart } = useAuth();
@@ -323,49 +324,13 @@ function CategoryProducts({ categoryName, title, slug }) {
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* Button pinned to bottom */}
-                                    <div className="mt-2">
-                                        {cartItem ? (
-                                            <div className="flex items-center justify-between rounded bg-violet-900 px-2 py-1 text-sm font-bold text-white">
-                                                <button
-                                                    onClick={() =>
-                                                        updateCartQuantity(
-                                                            cartItem.id,
-                                                            cartItem.quantity - 1
-                                                        )
-                                                    }
-                                                >
-                                                    <FaMinus />
-                                                </button>
-                                                <span>{cartItem.quantity}</span>
-                                                <button
-                                                    onClick={() =>
-                                                        updateCartQuantity(
-                                                            cartItem.id,
-                                                            cartItem.quantity + 1
-                                                        )
-                                                    }
-                                                >
-                                                    <FaPlus />
-                                                </button>
-                                            </div>
-                                        ) : p.stock_status === 'out_of_stock' ? (
-                                            <button
-                                                disabled
-                                                className="w-full cursor-not-allowed rounded bg-gray-400 px-2 py-1 text-sm font-semibold text-white"
-                                            >
-                                                Out of Stock
-                                            </button>
-                                        ) : (
-                                            <button
-                                                className="w-full rounded bg-violet-900 px-2 py-1 text-sm text-white hover:bg-violet-800"
-                                                onClick={() => addToCart(p.id)}
-                                            >
-                                                Add
-                                            </button>
-                                        )}
-                                    </div>
+                                    <ProductActionButton
+                                        product={p}
+                                        cartItem={cartItem}
+                                        addToCart={addToCart}
+                                        updateCartQuantity={updateCartQuantity}
+                                        className="mt-2"
+                                    />
                                 </div>
                             );
                         })}

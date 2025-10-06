@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaHeart, FaPlus, FaMinus } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import ProductActionButton from '../components/ProductActionButton';
 
 function Wishlist() {
     const { user, wishlistData, cart, toggleWishlist, addToCart, updateCartQuantity } = useAuth();
@@ -82,46 +83,13 @@ function Wishlist() {
                                         </div>
                                     </div>
 
-                                    {/* Add / Quantity */}
-                                    {cartItem ? (
-                                        <div className="mt-2 flex items-center justify-between rounded bg-violet-900 px-2 py-1 text-sm font-bold text-white">
-                                            <button
-                                                onClick={() =>
-                                                    updateCartQuantity(
-                                                        cartItem.id,
-                                                        cartItem.quantity - 1
-                                                    )
-                                                }
-                                            >
-                                                <FaMinus />
-                                            </button>
-                                            <span>{cartItem.quantity}</span>
-                                            <button
-                                                onClick={() =>
-                                                    updateCartQuantity(
-                                                        cartItem.id,
-                                                        cartItem.quantity + 1
-                                                    )
-                                                }
-                                            >
-                                                <FaPlus />
-                                            </button>
-                                        </div>
-                                    ) : p.stock_status === 'out_of_stock' ? (
-                                        <button
-                                            disabled
-                                            className="w-full cursor-not-allowed rounded bg-gray-400 px-2 py-1 text-sm font-semibold text-white"
-                                        >
-                                            Out of Stock
-                                        </button>
-                                    ) : (
-                                        <button
-                                            className="mt-2 w-full rounded bg-violet-900 px-2 py-1 text-sm text-white hover:bg-violet-800 sm:w-auto"
-                                            onClick={() => addToCart(p.id)}
-                                        >
-                                            Add to Cart
-                                        </button>
-                                    )}
+                                    <ProductActionButton
+                                        product={p}
+                                        cartItem={cartItem}
+                                        addToCart={addToCart}
+                                        updateCartQuantity={updateCartQuantity}
+                                        className="mt-2"
+                                    />
                                 </div>
                             </div>
                         );

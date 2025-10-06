@@ -6,12 +6,11 @@ import { useAuth } from '../../context/AuthContext';
 function Cart({ isOpen, onClose }) {
     const { user, fetchWithAuth, cart, setCart } = useAuth();
 
-    // Lock/unlock background scroll
     useEffect(() => {
         if (isOpen) {
             const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
             document.body.style.overflow = 'hidden';
-            document.body.style.paddingRight = `${scrollBarWidth}px`; // prevent layout shift
+            document.body.style.paddingRight = `${scrollBarWidth}px`;
         } else {
             document.body.style.overflow = '';
             document.body.style.paddingRight = '';
@@ -66,29 +65,43 @@ function Cart({ isOpen, onClose }) {
         }
     };
 
-    const total = cart.reduce(
-        (sum, item) => sum + (item.product_detail?.selling_price || 0) * item.quantity,
-        0
-    );
+    const total = cart
+        .filter((item) => item.product_detail?.stock_status !== 'out_of_stock')
+        .reduce((sum, item) => sum + (item.product_detail?.selling_price || 0) * item.quantity, 0);
+
     const placeOrder = async () => {
         try {
             const res = await fetchWithAuth('http://127.0.0.1:8000/api/orders/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({}), // backend creates order from cart
+                body: JSON.stringify({}),
             });
+
             if (res.ok) {
-                alert('Order placed successfully!');
-                setCart([]); // clear cart on frontend
+                const data = await res.json();
+                alert(data.message || 'Order placed successfully!');
+
+                // Update cart - remove only in-stock items
+                setCart((prevCart) =>
+                    prevCart.filter((item) => item.product_detail?.stock_status === 'out_of_stock')
+                );
                 onClose();
             } else {
                 const err = await res.json();
-                alert('Error: ' + JSON.stringify(err));
+                alert('Error: ' + (err.error || JSON.stringify(err)));
             }
         } catch (error) {
             console.error('Error placing order:', error);
+            alert('Error placing order. Please try again.');
         }
     };
+
+    const inStockItems = cart.filter(
+        (item) => item.product_detail?.stock_status !== 'out_of_stock'
+    );
+    const outOfStockItems = cart.filter(
+        (item) => item.product_detail?.stock_status === 'out_of_stock'
+    );
 
     return (
         <>
@@ -114,84 +127,111 @@ function Cart({ isOpen, onClose }) {
                     <span className="w-5" />
                 </div>
 
-                {/* Cart items (hidden scrollbar) */}
+                {/* Cart items */}
                 <div className="flex-1 overflow-y-auto p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {cart.length === 0 ? (
                         <p className="text-center text-gray-500">Your cart is empty.</p>
                     ) : (
-                        cart.map((item) => {
-                            const p = item.product_detail;
-                            return (
-                                <div
-                                    key={item.id}
-                                    className="flex items-center justify-between rounded bg-white p-2 text-xs"
-                                >
-                                    {/* Product image */}
-                                    <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded bg-gray-100">
-                                        {p.image ? (
-                                            <img
-                                                src={p.image}
-                                                alt={p.name}
-                                                className="h-full w-auto object-contain"
-                                            />
-                                        ) : (
-                                            'No Img'
-                                        )}
-                                    </div>
-
-                                    {/* Product details */}
-                                    <div className="flex flex-1 flex-col justify-center gap-0.5 px-2">
-                                        <h3 className="truncate text-xs font-medium">{p.name}</h3>
-                                        <p className="text-2xs text-gray-500">{p.quantity}</p>
-                                        <div className="mt-0.5">
-                                            {p.retail_price && p.retail_price > p.selling_price ? (
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className="text-xs font-bold">
-                                                        ₹{p.selling_price}
-                                                    </span>
-                                                    <span className="text-[10px] text-gray-500 line-through">
-                                                        ₹{p.retail_price}
-                                                    </span>
-                                                    <span className="rounded bg-green-300/20 px-1 text-[10px] font-semibold text-green-600">
-                                                        {Math.round(
-                                                            ((p.retail_price - p.selling_price) /
-                                                                p.retail_price) *
-                                                                100
-                                                        )}
-                                                        % OFF
-                                                    </span>
-                                                </div>
+                        <>
+                            {/* In-stock items */}
+                            {inStockItems.map((item) => {
+                                const p = item.product_detail;
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="mb-2 flex items-center justify-between rounded bg-white p-2 text-xs"
+                                    >
+                                        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded bg-gray-100">
+                                            {p.image ? (
+                                                <img
+                                                    src={p.image}
+                                                    alt={p.name}
+                                                    className="h-full w-auto object-contain"
+                                                />
                                             ) : (
-                                                <span className="text-xs font-bold">
-                                                    ₹{p.selling_price ?? '-'}
-                                                </span>
+                                                'No Img'
                                             )}
                                         </div>
-                                    </div>
 
-                                    {/* Quantity controls */}
-                                    <div className="flex items-center gap-1 rounded bg-violet-500 px-2 py-1 text-white">
-                                        <button
-                                            onClick={() =>
-                                                updateCartQuantity(item.id, item.quantity - 1)
-                                            }
-                                        >
-                                            <FaMinus size={10} />
-                                        </button>
-                                        <span className="min-w-[20px] text-center font-semibold">
-                                            {item.quantity}
-                                        </span>
-                                        <button
-                                            onClick={() =>
-                                                updateCartQuantity(item.id, item.quantity + 1)
-                                            }
-                                        >
-                                            <FaPlus size={10} />
-                                        </button>
+                                        <div className="flex flex-1 flex-col justify-center gap-0.5 px-2">
+                                            <h3 className="truncate text-xs font-medium">
+                                                {p.name}
+                                            </h3>
+                                            <p className="text-2xs text-gray-500">{p.quantity}</p>
+                                            <span className="text-xs font-bold">
+                                                ₹{p.selling_price ?? '-'}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-1 rounded bg-violet-500 px-2 py-1 text-white">
+                                            <button
+                                                onClick={() =>
+                                                    updateCartQuantity(item.id, item.quantity - 1)
+                                                }
+                                            >
+                                                <FaMinus size={10} />
+                                            </button>
+                                            <span className="min-w-[20px] text-center font-semibold">
+                                                {item.quantity}
+                                            </span>
+                                            <button
+                                                onClick={() =>
+                                                    updateCartQuantity(item.id, item.quantity + 1)
+                                                }
+                                            >
+                                                <FaPlus size={10} />
+                                            </button>
+                                        </div>
                                     </div>
+                                );
+                            })}
+
+                            {/* Out-of-stock items below */}
+                            {outOfStockItems.length > 0 && (
+                                <div className="mt-4">
+                                    <h4 className="mb-2 ml-2 text-xs font-semibold text-gray-800">
+                                        Out of Stock
+                                    </h4>
+                                    {outOfStockItems.map((item) => {
+                                        const p = item.product_detail;
+                                        return (
+                                            <div
+                                                key={item.id}
+                                                className="mb-2 flex items-center justify-between rounded bg-gray-100 p-2 text-xs opacity-70"
+                                            >
+                                                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded bg-gray-200">
+                                                    {p.image ? (
+                                                        <img
+                                                            src={p.image}
+                                                            alt={p.name}
+                                                            className="h-full w-auto object-contain"
+                                                        />
+                                                    ) : (
+                                                        'No Img'
+                                                    )}
+                                                </div>
+
+                                                <div className="flex flex-1 flex-col justify-center gap-0.5 px-2">
+                                                    <h3 className="truncate text-xs font-medium">
+                                                        {p.name}
+                                                    </h3>
+                                                    <p className="text-2xs text-gray-500">
+                                                        {p.quantity}
+                                                    </p>
+                                                    <span className="text-xs font-bold">
+                                                        ₹{p.selling_price ?? '-'}
+                                                    </span>
+                                                </div>
+
+                                                <div className="flex items-center gap-1 rounded bg-gray-400 px-2 py-1 text-white">
+                                                    Out of Stock
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })
+                            )}
+                        </>
                     )}
                 </div>
 
