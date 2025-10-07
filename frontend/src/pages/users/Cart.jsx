@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 function Cart({ isOpen, onClose }) {
     const { user, fetchWithAuth, cart, setCart } = useAuth();
@@ -79,7 +80,7 @@ function Cart({ isOpen, onClose }) {
 
             if (res.ok) {
                 const data = await res.json();
-                alert(data.message || 'Order placed successfully!');
+                toast.success(data.message || 'Order placed successfully!');
 
                 // Update cart - remove only in-stock items
                 setCart((prevCart) =>
@@ -88,11 +89,11 @@ function Cart({ isOpen, onClose }) {
                 onClose();
             } else {
                 const err = await res.json();
-                alert('Error: ' + (err.error || JSON.stringify(err)));
+                toast.error('Error: ' + (err.error || JSON.stringify(err)));
             }
         } catch (error) {
             console.error('Error placing order:', error);
-            alert('Error placing order. Please try again.');
+            toast.error('Error placing order. Please try again.');
         }
     };
 

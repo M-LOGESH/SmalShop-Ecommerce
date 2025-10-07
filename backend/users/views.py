@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db.models import Q
@@ -12,6 +12,8 @@ from .serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from myaccount.serializers import UserProfileSerializer
 
 
 #Custom JWT serializer: allow username OR email login
@@ -87,4 +89,15 @@ def register_user(request):
 @permission_classes([IsAuthenticated])
 def user_profile(request):
     serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def get_all_users(request):
+    """
+    Get all users with their profile data (admin only)
+    """
+    users = User.objects.all().select_related('profile').order_by('-date_joined')
+    serializer = UserProfileSerializer(users, many=True)
     return Response(serializer.data)

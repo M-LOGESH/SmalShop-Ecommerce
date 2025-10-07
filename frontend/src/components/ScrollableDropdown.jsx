@@ -7,10 +7,10 @@ function ScrollableDropdown({
     onChange,
     placeholder = 'Select',
     allLabel = 'All',
-    className = 'min-w-40 max-w-45',
+    className = 'min-w-40 max-w-50',
     disabled = false,
     buttonPadding = 'px-2 py-2',
-    itemPadding = 'px-2 py-2',  
+    itemPadding = 'px-2 py-1',  
     maxHeight = '10rem',       
 }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +32,7 @@ function ScrollableDropdown({
             <button
                 type="button"
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full border flex items-center justify-between ${buttonPadding} ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
+                className={`w-full border flex items-center rounded justify-between ${buttonPadding} ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
             >
                 <span>{value || placeholder}</span>
                 <FaChevronDown className={`ml-2 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />

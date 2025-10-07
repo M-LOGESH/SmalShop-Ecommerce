@@ -47,7 +47,7 @@ export default function CompletedOrders({ orders }) {
         filteredOrders = [...filteredOrders].sort((a, b) => b.total_price - a.total_price);
     }
 
-    if (!completedOrders.length) return <p className="text-gray-500">No completed orders.</p>;
+    if (!completedOrders.length) return <p className="text-gray-500"></p>;
 
     return (
         <div className="flex flex-col gap-2">

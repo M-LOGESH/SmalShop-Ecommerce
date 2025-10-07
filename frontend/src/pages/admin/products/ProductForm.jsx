@@ -34,7 +34,7 @@ function ProductForm({
                     placeholder="Product Name"
                     value={formData.name ?? ''}
                     onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                     autoComplete="name"
                     required
                 />
@@ -46,7 +46,7 @@ function ProductForm({
                         placeholder="Quantity"
                         value={formData.quantity ?? ''}
                         onChange={handleChange}
-                        className="order-2 min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                        className="order-2 min-w-16 rounded flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                     />
 
                     <ScrollableDropdown
@@ -75,7 +75,7 @@ function ProductForm({
                     placeholder="Cost Price"
                     value={formData.cost_price ?? ''}
                     onChange={handleChange}
-                    className="min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-16 flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
                 <input
                     type="number"
@@ -83,7 +83,7 @@ function ProductForm({
                     placeholder="Retail Price"
                     value={formData.retail_price ?? ''}
                     onChange={handleChange}
-                    className="min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-16 flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
                 <input
                     type="number"
@@ -91,7 +91,7 @@ function ProductForm({
                     placeholder="Selling Price"
                     value={formData.selling_price ?? ''}
                     onChange={handleChange}
-                    className="min-w-16 flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-16 flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
             </div>
 
@@ -157,7 +157,7 @@ function ProductForm({
                             placeholder="Add new category"
                             value={newCategory}
                             onChange={(e) => setNewCategory(e.target.value)}
-                            className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                            className="flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                         />
                         <button
                             type="button"
@@ -249,7 +249,7 @@ function ProductForm({
                             placeholder="Add new subcategory"
                             value={newSubcategory}
                             onChange={(e) => setNewSubcategory(e.target.value)}
-                            className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                            className="flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                         />
                         <button
                             type="button"
@@ -274,14 +274,14 @@ function ProductForm({
                     placeholder="Brand"
                     value={formData.brand ?? ''}
                     onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
                 <input
                     name="manufacturer"
                     placeholder="Manufacturer"
                     value={formData.manufacturer ?? ''}
                     onChange={handleChange}
-                    className="flex-1 border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="flex-1 border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                 />
             </div>
 
@@ -291,7 +291,7 @@ function ProductForm({
                 placeholder="Description"
                 value={formData.description ?? ''}
                 onChange={handleChange}
-                className="mt-3 w-full border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                className="mt-3 w-full border rounded p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
             />
 
             {editingProduct && editingProduct.image && !formData.image && (

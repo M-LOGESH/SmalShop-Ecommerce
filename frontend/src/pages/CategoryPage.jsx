@@ -41,7 +41,7 @@ function CategoryPage() {
 
   useEffect(() => {
     const loadWishlist = async () => {
-      if (!user?.access) return;
+      if (!user?.access || user?.is_staff) return; // Don't load wishlist for staff
       try {
         const res = await fetchWithAuth("http://127.0.0.1:8000/api/wishlist/");
         if (!res.ok) return;
@@ -57,6 +57,8 @@ function CategoryPage() {
 
   const toggleWishlist = async (productId) => {
     if (!user) return toast.error("Login to add to wishlist");
+    if (user?.is_staff) return; // Prevent staff from using wishlist
+
     try {
       const existingItem = wishlistData.find((w) => w.product === productId);
       if (existingItem) {
@@ -85,6 +87,8 @@ function CategoryPage() {
 
   const addToCart = async (productId) => {
     if (!user) return toast.error("Login to add to cart");
+    if (user?.is_staff) return; // Prevent staff from adding to cart
+
     try {
       const res = await fetchWithAuth("http://127.0.0.1:8000/api/cart/", {
         method: "POST",
@@ -101,6 +105,8 @@ function CategoryPage() {
   };
 
   const updateCartQuantity = async (cartId, newQty) => {
+    if (user?.is_staff) return; // Prevent staff from updating cart
+
     try {
       if (newQty <= 0) {
         await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
@@ -159,15 +165,18 @@ function CategoryPage() {
                   ) : (
                     <div className="text-xs text-gray-500">No Image</div>
                   )}
-                  <button
-                    onClick={() => toggleWishlist(p.id)}
-                    className="absolute top-2 right-2"
-                  >
-                    <FaHeart
-                      size={16}
-                      className={isWishlisted ? "text-red-500" : "text-gray-400"}
-                    />
-                  </button>
+                  {/* Hide wishlist button for staff */}
+                  {!user?.is_staff && (
+                    <button
+                      onClick={() => toggleWishlist(p.id)}
+                      className="absolute top-2 right-2"
+                    >
+                      <FaHeart
+                        size={16}
+                        className={isWishlisted ? "text-red-500" : "text-gray-400"}
+                      />
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex flex-1 flex-col justify-between p-1">

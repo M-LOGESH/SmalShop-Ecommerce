@@ -1,5 +1,6 @@
 import React from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProductActionButton({
   product,
@@ -9,10 +10,24 @@ export default function ProductActionButton({
   size = "normal", // new prop: "normal" or "small"
   className = "",
 }) {
+  const { user } = useAuth(); // Get user from auth context
+  
   const baseBtn =
     size === "small"
       ? "px-2 py-1 text-xs gap-2 max-w-21"
       : "px-2 py-1 text-sm"; // adjusts padding & text size
+
+  // If user is staff, show disabled state
+  if (user?.is_staff) {
+    return (
+      <button
+        disabled
+        className={`w-full cursor-not-allowed rounded bg-gray-400 font-semibold text-white ${baseBtn} ${className}`}
+      >
+        Staff View
+      </button>
+    );
+  }
 
   // Out of stock
   if (product.stock_status === "out_of_stock") {

@@ -49,7 +49,7 @@ function CategoryProducts({ categoryName, title, slug }) {
 
     // --- Load wishlist & cart ---
     useEffect(() => {
-        if (user?.access) {
+        if (user?.access && !user?.is_staff) { // Only load wishlist for non-staff users
             loadWishlist();
             loadCart();
         } else {
@@ -86,6 +86,7 @@ function CategoryProducts({ categoryName, title, slug }) {
     // --- Wishlist toggle ---
     const toggleWishlist = async (productId) => {
         if (!user) return toast.error('Login to add to wishlist');
+        if (user?.is_staff) return; // Prevent staff from using wishlist
 
         try {
             const existingItem = wishlistData.find((w) => w.product === productId);
@@ -117,6 +118,7 @@ function CategoryProducts({ categoryName, title, slug }) {
     // --- Cart actions ---
     const addToCart = async (productId) => {
         if (!user) return toast.error('Login to add to cart');
+        if (user?.is_staff) return; // Prevent staff from adding to cart
 
         try {
             const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
@@ -134,6 +136,8 @@ function CategoryProducts({ categoryName, title, slug }) {
     };
 
     const updateCartQuantity = async (cartId, newQty) => {
+        if (user?.is_staff) return; // Prevent staff from updating cart
+
         try {
             if (newQty <= 0) {
                 await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
@@ -277,19 +281,22 @@ function CategoryProducts({ categoryName, title, slug }) {
                                                     No Image
                                                 </div>
                                             )}
-                                            <button
-                                                onClick={() => toggleWishlist(p.id)}
-                                                className="absolute top-2 right-2"
-                                            >
-                                                <FaHeart
-                                                    size={14}
-                                                    className={
-                                                        wishlist.includes(p.id)
-                                                            ? 'text-red-500'
-                                                            : 'text-gray-400'
-                                                    }
-                                                />
-                                            </button>
+                                            {/* Hide wishlist button for staff */}
+                                            {!user?.is_staff && (
+                                                <button
+                                                    onClick={() => toggleWishlist(p.id)}
+                                                    className="absolute top-2 right-2"
+                                                >
+                                                    <FaHeart
+                                                        size={14}
+                                                        className={
+                                                            wishlist.includes(p.id)
+                                                                ? 'text-red-500'
+                                                                : 'text-gray-400'
+                                                        }
+                                                    />
+                                                </button>
+                                            )}
                                         </div>
 
                                         <h3 className="truncate text-sm font-medium sm:font-semibold">

@@ -152,9 +152,9 @@ export default function OrderDetails() {
 
                 {/* RIGHT SIDE - Product Details */}
                 <div className="flex-1">
-                    <div className="rounded-lg p-4 shadow">
+                    <div className="rounded-lg p-4 shadow bg-white">
                         <h3 className="mb-3 font-medium">Products Details</h3>
-                        <div className="max-h-80 space-y-3 overflow-y-auto bg-violet-50 p-2">
+                        <div className="max-h-80 space-y-3 overflow-y-auto rounded bg-violet-50 p-2">
                             {order.items.map((item) => (
                                 <div key={item.id} className="flex items-center gap-4 pb-2">
                                     <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-purple-200">

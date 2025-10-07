@@ -52,13 +52,21 @@ const updateStatus = async (orderId, newStatus) => {
 // Get today's date in YYYY-MM-DD format
 const today = new Date().toISOString().split("T")[0];
 
+// Calculate order counts for each tab
+const prepOrdersCount = orders.filter(order => ["pending", "preparing"].includes(order.status)).length;
+const pickupOrdersCount = orders.filter(order => order.status === "ready").length;
+const cancelledOrdersCount = orders.filter(order => {
+  const orderDate = order.updated_at?.split("T")[0] || order.created_at?.split("T")[0];
+  return order.status === "cancelled" && orderDate === today;
+}).length;
+
 const filteredOrders = orders
   .filter((order) => {
     if (category === "Prep") return ["pending", "preparing"].includes(order.status);
     if (category === "Pickup") return order.status === "ready";
     if (category === "cancelled") {
-      // Only today's cancelled orders
-      const orderDate = order.created_at?.split("T")[0]; // adjust the field name if different
+      // Only today's cancelled orders - check both updated_at and created_at
+      const orderDate = order.updated_at?.split("T")[0] || order.created_at?.split("T")[0];
       return order.status === "cancelled" && orderDate === today;
     }
     return true;
@@ -73,20 +81,27 @@ const filteredOrders = orders
         <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 flex-wrap">
-          {["Prep", "Pickup", "cancelled"].map((cat) => (
+        <div className="flex gap-3 mb-6 flex-wrap">
+          {[
+            { key: "Prep", label: "Prep", count: prepOrdersCount },
+            { key: "Pickup", label: "Pickup", count: pickupOrdersCount },
+            { key: "cancelled", label: "Cancel", count: cancelledOrdersCount }
+          ].map((tab) => (
             <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                category === cat
+              key={tab.key}
+              onClick={() => setCategory(tab.key)}
+              className={`flex items-center gap-2 px-2 sm:px-4 py-2 text-md rounded-lg font-medium transition ${
+                category === tab.key
                   ? "bg-violet-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              {cat === "Prep" && "Prep Orders"}
-              {cat === "Pickup" && "Pickup Orders"}
-              {cat === "cancelled" && "Cancelled Orders"}
+              <span>{tab.label}</span>
+              <span className={`flex items-center justify-center w-5 sm:w-6 h-5 sm:h-6 rounded-full text-xs sm:text-sm font-bold ${
+                category === tab.key ? "bg-white text-violet-600" : "bg-gray-500 text-white"
+              }`}>
+                {tab.count}
+              </span>
             </button>
           ))}
         </div>
@@ -111,9 +126,9 @@ const filteredOrders = orders
                 <div className="flex gap-2 mt-2 md:mt-0">
                     <button
                     onClick={() => updateStatus(order.id, "completed")}
-                    className="px-3 py-1.5 bg-violet-600 text-white rounded hover:bg-violet-700 text-sm"
+                    className="px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
                     >
-                    Mark as Completed
+                    Completed
                     </button>
                     <button
                     onClick={() => updateStatus(order.id, "cancelled")}

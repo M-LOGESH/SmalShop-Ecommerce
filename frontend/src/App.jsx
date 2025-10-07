@@ -21,6 +21,11 @@ import OrdersPage from './pages/admin/OrdersPage.jsx';
 import OrderDetails from './pages/users/myorders/OrderDetails.jsx';
 import AdminPanel from './pages/admin/AdminPanel.jsx';
 import ManageItems from './pages/admin/products/ManageProducts.jsx';
+import ManageOrders from './pages/admin/orders/ManageOrders.jsx';
+import ManageCustomers from './pages/admin/customers/ManageCustomers.jsx';
+import CustomerView from './pages/admin/customers/CustomerView.jsx';
+import OrderView from './pages/admin/orders/OrderView.jsx';
+import Dashboard from './pages/admin/DashBoard.jsx';
 
 function App() {
     const { user, logout } = useAuth();
@@ -28,7 +33,7 @@ function App() {
     return (
         <Router>
             <ScrollToTop />
-            
+
             <Routes>
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
@@ -95,12 +100,28 @@ function App() {
                             </ProtectedRoute>
                         }
                     >
-                        <Route path="dashboard" element={<h2>Dashboard Page</h2>} />
+                        <Route path="dashboard" element={<Dashboard />} />
                         <Route path="products" element={<ManageItems />} />
-                        <Route path="orders" element={<h2>Orders Page</h2>} />
-                        <Route path="customers" element={<h2>Customers Page</h2>} />
+                        <Route path="orders" element={<ManageOrders />} />
+                        <Route path="customers" element={<ManageCustomers />} />
                         <Route path="sales" element={<h2>Sales Page</h2>} />
                         <Route path="settings" element={<h2>Settings Page</h2>} />
+                        <Route
+                            path="/admin/customers/:id"
+                            element={
+                                <ProtectedRoute adminOnly={true}>
+                                    <CustomerView />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin/orders/:id"
+                            element={
+                                <ProtectedRoute adminOnly={true}>
+                                    <OrderView />
+                                </ProtectedRoute>
+                            }
+                        />
                     </Route>
                 </Route>
             </Routes>
