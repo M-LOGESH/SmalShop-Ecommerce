@@ -105,17 +105,17 @@ function Cart({ isOpen, onClose }) {
 
     return (
         <>
-            {/* Dim background overlay */}
+            {/* Dim background overlay with high z-index */}
             <div
-                className={`fixed inset-0 bg-black transition-opacity duration-300 ${
+                className={`fixed inset-0 bg-black transition-opacity duration-300 z-[10000] ${
                     isOpen ? 'opacity-50' : 'pointer-events-none opacity-0'
                 }`}
                 onClick={onClose}
             />
 
-            {/* Cart sidebar */}
+            {/* Cart sidebar with even higher z-index */}
             <div
-                className={`fixed inset-y-0 right-0 z-[9999] w-full max-w-full transform transition-transform duration-300 sm:w-90 ${
+                className={`fixed inset-y-0 right-0 z-[10001] w-full max-w-full transform transition-transform duration-300 sm:w-90 ${
                     isOpen ? 'translate-x-0' : 'translate-x-full'
                 } flex flex-col bg-zinc-200 shadow-lg`}
             >

@@ -57,7 +57,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                     name="searchProducts"
                     type="text"
                     placeholder="Search"
-                    className="min-w-32 max-w-64 flex-1 rounded border p-1 pl-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="min-w-31 max-w-60 flex-1 rounded border p-1 pl-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -8,15 +8,9 @@ import ScrollToTop from './components/ScrollToTop.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Header from './components/header/Header.jsx';
-import Register from './components/Register.jsx';
-import Login from './components/Login.jsx';
-import Navbar from './components/Navbar.jsx';
-
 import Home from './pages/Home.jsx';
 import Category from './pages/Category.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
-
 import Account from './pages/myaccount/Account.jsx';
 import Profile from './pages/myaccount/Profile.jsx';
 import MyOrders from './pages/users/myorders/MyOrders.jsx';
@@ -25,65 +19,16 @@ import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
 import OrdersPage from './pages/admin/OrdersPage.jsx';
 import OrderDetails from './pages/users/myorders/OrderDetails.jsx';
-
 import AdminPanel from './pages/admin/AdminPanel.jsx';
 import ManageItems from './pages/admin/products/ManageProducts.jsx';
 
 function App() {
-    const [showRegister, setShowRegister] = useState(() => {
-        return localStorage.getItem('showRegister') === 'true';
-    });
-    const [showLogin, setShowLogin] = useState(() => {
-        return localStorage.getItem('showLogin') === 'true';
-    });
-
-    const { user, login, register, logout } = useAuth();
-
-    const handleSetShowRegister = (val) => {
-        setShowRegister(val);
-        localStorage.setItem('showRegister', val);
-    };
-
-    const handleSetShowLogin = (val) => {
-        setShowLogin(val);
-        localStorage.setItem('showLogin', val);
-    };
+    const { user, logout } = useAuth();
 
     return (
         <Router>
             <ScrollToTop />
-            <Header user={user} onLoginClick={() => handleSetShowLogin(true)} />
-
-            {showRegister && (
-                <Register
-                    onClose={() => handleSetShowRegister(false)}
-                    onRegisterSuccess={(u) => {
-                        register(u);
-                        handleSetShowRegister(false);
-                    }}
-                    onSwitchToLogin={() => {
-                        handleSetShowRegister(false);
-                        handleSetShowLogin(true);
-                    }}
-                />
-            )}
-
-            {showLogin && (
-                <Login
-                    onClose={() => handleSetShowLogin(false)}
-                    onLoginSuccess={(u) => {
-                        login(u);
-                        handleSetShowLogin(false);
-                    }}
-                    onSwitchToRegister={() => {
-                        handleSetShowLogin(false);
-                        handleSetShowRegister(true);
-                    }}
-                />
-            )}
-
-            <Navbar user={user} />
-
+            
             <Routes>
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
@@ -128,7 +73,7 @@ function App() {
                                 <OrdersPage />
                             </ProtectedRoute>
                         }
-                    ></Route>
+                    />
                     <Route
                         path="/my-orders/:id"
                         element={

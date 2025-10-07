@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../Navbar.jsx';
 import SearchBar from '../SearchBar.jsx';
-import Cart from '../../pages/users/Cart.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { FiShoppingCart, FiMenu } from 'react-icons/fi';
 
-function Header({ user, onLoginClick }) {
+function Header({ user, onLoginClick, cartOpen, setCartOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { cart } = useAuth();
 
-    const [cartOpen, setCartOpen] = useState(false);
     const isAdminPage = location.pathname.startsWith('/admin');
 
     const hideHeaderMobilePages = ['/account', '/profile', '/my-orders', '/view-orders'];
@@ -53,20 +51,15 @@ function Header({ user, onLoginClick }) {
                         </div>
 
                         {(!user || (user && !user.is_staff)) && (
-                            <>
-                                <button
-                                    onClick={() => setCartOpen(true)}
-                                    className="relative mr-4 text-white transition hover:text-violet-200"
-                                >
-                                    <FiShoppingCart size={22} />
-                                    <span className="absolute -top-2 -right-2 rounded-full bg-red-500 px-1 text-xs text-white">
-                                        {cart.length}
-                                    </span>
-                                </button>
-
-                                {/* Cart overlay */}
-                                <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-                            </>
+                            <button
+                                onClick={() => setCartOpen(true)}
+                                className="relative mr-4 text-white transition hover:text-violet-200"
+                            >
+                                <FiShoppingCart size={22} />
+                                <span className="absolute -top-2 -right-2 rounded-full bg-red-500 px-1 text-xs text-white">
+                                    {cart.length}
+                                </span>
+                            </button>
                         )}
 
                         {!user ? (

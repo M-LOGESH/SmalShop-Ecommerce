@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import MobileHeader from '../../../components/header/MobileHeader';
 import {
     FaShoppingCart,
     FaClock,
@@ -67,7 +66,6 @@ export default function OrderDetails() {
 
     return (
         <div className="mx-auto max-w-6xl min-h-screen">
-            <MobileHeader title="My Orders" />
             <div className="p-3 sm:p-6 md:flex md:gap-6">
                 {/* LEFT SIDE */}
                 <div className="flex-1 space-y-2 sm:space-y-4">

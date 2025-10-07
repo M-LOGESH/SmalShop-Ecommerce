@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { FiShoppingBag, FiHeart, FiInfo, FiPhone, FiUser, FiBox, FiSettings } from 'react-icons/fi';
-import MobileHeader from '../../components/header/MobileHeader';
 import Profile from './Profile';
 import { useState, useEffect } from 'react';
 
@@ -48,9 +47,6 @@ function Account({ user, onLogout }) {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Mobile Header */}
-            <MobileHeader title="My Account" />
-
             <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 p-4 md:flex-row md:p-8">
                 {/* Sidebar */}
                 <div className="2md:w-1/3 w-full flex-shrink-0 rounded-2xl bg-white p-4 shadow">

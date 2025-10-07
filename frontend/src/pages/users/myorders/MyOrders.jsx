@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import MobileHeader from '../../../components/header/MobileHeader';
 import { useAuth } from '../../../context/AuthContext';
 import PendingOrders from './PendingOrders';
 import CompletedOrders from './CompletedOrders';
@@ -41,7 +40,6 @@ export default function MyOrders() {
     return (
         <div className="flex min-h-screen justify-center bg-gray-100">
             <div className="w-full max-w-6xl">
-                <MobileHeader title="My Orders" />
                 <div className="p-4 md:p-8">
                     <h1 className="mb-6 text-xl hidden sm:block font-bold">My Orders</h1>
                     {loading ? (

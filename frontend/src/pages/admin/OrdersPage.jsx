@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import MobileHeader from "../../components/header/MobileHeader";
 
 const STATUS_STEPS = ["pending", "preparing", "ready"];
 
@@ -8,7 +7,7 @@ function OrderPage() {
   const { fetchWithAuth } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("kitchen");
+  const [category, setCategory] = useState("Prep");
 
   useEffect(() => {
     loadOrders();
@@ -36,7 +35,7 @@ const updateStatus = async (orderId, newStatus) => {
     });
     if (res.ok) {
       loadOrders();
-      // Removed auto-switch to direct tab
+      // Removed auto-switch to Pickup tab
     } else {
       alert("Failed to update status");
     }
@@ -55,8 +54,8 @@ const today = new Date().toISOString().split("T")[0];
 
 const filteredOrders = orders
   .filter((order) => {
-    if (category === "kitchen") return ["pending", "preparing"].includes(order.status);
-    if (category === "direct") return order.status === "ready";
+    if (category === "Prep") return ["pending", "preparing"].includes(order.status);
+    if (category === "Pickup") return order.status === "ready";
     if (category === "cancelled") {
       // Only today's cancelled orders
       const orderDate = order.created_at?.split("T")[0]; // adjust the field name if different
@@ -70,13 +69,12 @@ const filteredOrders = orders
 
   return (
     <div className="max-w-4xl min-h-screen mx-auto">
-      <MobileHeader title="My Orders" />
       <div className="p-4 md:p-8">
         <h1 className="text-2xl font-bold mb-6">My Orders</h1>
 
         {/* Tabs */}
-        <div className="flex gap-3 mb-6 flex-wrap">
-          {["kitchen", "direct", "cancelled"].map((cat) => (
+        <div className="flex gap-2 mb-6 flex-wrap">
+          {["Prep", "Pickup", "cancelled"].map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
@@ -86,8 +84,8 @@ const filteredOrders = orders
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              {cat === "kitchen" && "Kitchen Orders"}
-              {cat === "direct" && "Direct Orders"}
+              {cat === "Prep" && "Prep Orders"}
+              {cat === "Pickup" && "Pickup Orders"}
               {cat === "cancelled" && "Cancelled Orders"}
             </button>
           ))}
@@ -108,8 +106,8 @@ const filteredOrders = orders
                     </p>
                   </div>
 
-                {/* Direct Orders → Mark as Completed & Cancel buttons */}
-                {category === "direct" && order.status === "ready" && (
+                {/* Pickup Orders → Mark as Completed & Cancel buttons */}
+                {category === "Pickup" && order.status === "ready" && (
                 <div className="flex gap-2 mt-2 md:mt-0">
                     <button
                     onClick={() => updateStatus(order.id, "completed")}
@@ -127,8 +125,8 @@ const filteredOrders = orders
                 )}
                 </div>
 
-                {/* Kitchen Orders → Progress Bar */}
-                {category === "kitchen" && (
+                {/* Prep Orders → Progress Bar */}
+                {category === "Prep" && (
                 <div className="relative flex items-center justify-between mb-8">
                     {/* Base line */}
                     <div className="absolute top-2/7 sm:top-2/6 left-5 right-5 h-0.5 bg-gray-300"></div>
