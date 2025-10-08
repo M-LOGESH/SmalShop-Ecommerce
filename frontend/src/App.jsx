@@ -26,6 +26,7 @@ import ManageCustomers from './pages/admin/customers/ManageCustomers.jsx';
 import CustomerView from './pages/admin/customers/CustomerView.jsx';
 import OrderView from './pages/admin/orders/OrderView.jsx';
 import Dashboard from './pages/admin/DashBoard.jsx';
+import ProductView from './pages/ProductView.jsx';
 
 function App() {
     const { user, logout } = useAuth();
@@ -39,6 +40,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/category" element={<Category />} />
                     <Route path="/category/:slug" element={<CategoryPage />} />
+                    <Route path="/product/:id" element={<ProductView />} />
                     <Route
                         path="/account"
                         element={
@@ -57,18 +59,14 @@ function App() {
                     />
                     <Route
                         path="/my-orders"
-                        element={
-                            <ProtectedRoute>
-                                <MyOrders />
-                            </ProtectedRoute>
+                        element={                           
+                                <MyOrders />                           
                         }
                     />
                     <Route
                         path="/wishlist"
-                        element={
-                            <ProtectedRoute>
-                                <Wishlist />
-                            </ProtectedRoute>
+                        element={                            
+                                <Wishlist />                            
                         }
                     />
                     <Route
@@ -87,10 +85,8 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
-
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
-
                     {/* NESTED ADMIN ROUTES */}
                     <Route
                         path="/admin"

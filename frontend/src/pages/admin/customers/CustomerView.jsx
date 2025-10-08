@@ -8,7 +8,7 @@ import {
     FaPhone,
     FaVenusMars,
     FaCalendar,
-    FaMapMarker,
+    FaMapMarkerAlt,
     FaShoppingBag,
     FaCheckCircle,
     FaTimesCircle,
@@ -315,7 +315,7 @@ function CustomerView() {
                         {/* Address Information */}
                         <div className="rounded-lg border border-gray-200 bg-white p-6">
                             <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-                                <FaMapMarker className="text-violet-500" />
+                                <FaMapMarkerAlt className="text-violet-500" />
                                 Address Information
                             </h2>
 

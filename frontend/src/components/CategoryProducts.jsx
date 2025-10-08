@@ -49,7 +49,8 @@ function CategoryProducts({ categoryName, title, slug }) {
 
     // --- Load wishlist & cart ---
     useEffect(() => {
-        if (user?.access && !user?.is_staff) { // Only load wishlist for non-staff users
+        if (user?.access && !user?.is_staff) {
+            // Only load wishlist for non-staff users
             loadWishlist();
             loadCart();
         } else {
@@ -97,6 +98,7 @@ function CategoryProducts({ categoryName, title, slug }) {
                 });
                 setWishlist((prev) => prev.filter((pid) => pid !== productId));
                 setWishlistData((prev) => prev.filter((w) => w.product !== productId));
+                toast.success('Removed from Wishlist');
             } else {
                 const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
                     method: 'POST',
@@ -108,6 +110,7 @@ function CategoryProducts({ categoryName, title, slug }) {
                     const data = await res.json();
                     setWishlist((prev) => [...prev, productId]);
                     setWishlistData((prev) => [...prev, data]);
+                    toast.success('Added to Wishlist');
                 }
             }
         } catch (err) {
@@ -267,8 +270,11 @@ function CategoryProducts({ categoryName, title, slug }) {
                                     key={p.id}
                                     className="relative flex w-35 flex-shrink-0 snap-start flex-col justify-between rounded-lg border border-gray-300 p-2 shadow-md sm:w-40 lg:w-45"
                                 >
-                                    {/* Card content */}
-                                    <div>
+                                    {/* Make image and product info clickable */}
+                                    <div
+                                        className="cursor-pointer"
+                                        onClick={() => navigate(`/product/${p.id}`)}
+                                    >
                                         <div className="relative mb-2 flex h-24 w-full items-center justify-center rounded bg-gray-100 sm:h-32">
                                             {p.image ? (
                                                 <img
@@ -284,7 +290,10 @@ function CategoryProducts({ categoryName, title, slug }) {
                                             {/* Hide wishlist button for staff */}
                                             {!user?.is_staff && (
                                                 <button
-                                                    onClick={() => toggleWishlist(p.id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleWishlist(p.id);
+                                                    }}
                                                     className="absolute top-2 right-2"
                                                 >
                                                     <FaHeart
@@ -299,12 +308,12 @@ function CategoryProducts({ categoryName, title, slug }) {
                                             )}
                                         </div>
 
-                                        <h3 className="truncate text-sm font-medium sm:font-semibold">
+                                        <h3 className="truncate text-sm  pl-2 font-medium sm:font-semibold">
                                             {p.name}
                                         </h3>
-                                        <p className="text-xs text-gray-500">{p.quantity}</p>
+                                        <p className="text-xs text-gray-500 pl-2">{p.quantity}</p>
 
-                                        <div className="mt-1">
+                                        <div className="mt-1 pl-2">
                                             {p.retail_price && p.retail_price > p.selling_price ? (
                                                 <div className="flex items-baseline gap-2">
                                                     <div className="flex flex-col">
@@ -331,6 +340,8 @@ function CategoryProducts({ categoryName, title, slug }) {
                                             )}
                                         </div>
                                     </div>
+
+                                    {/* Cart buttons - prevent navigation when clicking */}
                                     <ProductActionButton
                                         product={p}
                                         cartItem={cartItem}

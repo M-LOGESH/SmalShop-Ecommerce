@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaPlus, FaMinus } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import ProductActionButton from '../components/ProductActionButton';
 
 function Wishlist() {
     const { user, wishlistData, cart, toggleWishlist, addToCart, updateCartQuantity } = useAuth();
+    const navigate = useNavigate();
 
     if (!user) return <p className="min-h-screen p-4 text-center">Login to view your wishlist.</p>;
 
@@ -30,7 +32,10 @@ function Wishlist() {
                                 className="flex flex-row overflow-hidden rounded-lg border border-gray-200 bg-white p-2 shadow-md sm:flex-col"
                             >
                                 {/* Image */}
-                                <div className="relative flex h-28 w-28 flex-shrink-0 items-center justify-center bg-gray-100 sm:h-32 sm:w-full">
+                                <div 
+                                    className="relative flex h-28 w-28 flex-shrink-0 items-center justify-center bg-gray-100 sm:h-32 sm:w-full cursor-pointer"
+                                    onClick={() => navigate(`/product/${p.id}`)}
+                                >
                                     {p.image ? (
                                         <img
                                             src={p.image}
@@ -43,7 +48,10 @@ function Wishlist() {
                                         </div>
                                     )}
                                     <button
-                                        onClick={() => toggleWishlist(p.id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleWishlist(p.id);
+                                        }}
                                         className="absolute top-2 right-2"
                                     >
                                         <FaHeart size={16} className="text-red-500" />
@@ -51,8 +59,11 @@ function Wishlist() {
                                 </div>
 
                                 {/* Details */}
-                                <div className="flex flex-1 flex-col justify-between p-2">
-                                    <div>
+                                <div 
+                                    className="flex flex-1 flex-col pl-2 sm:pl-0 justify-between p-2 cursor-pointer"
+                                    onClick={() => navigate(`/product/${p.id}`)}
+                                >
+                                    <div className='pl-2'>
                                         <h3 className="truncate text-sm font-semibold">{p.name}</h3>
                                         <p className="text-xs text-gray-500">{p.quantity}</p>
                                         <div className="mt-1">
@@ -83,13 +94,15 @@ function Wishlist() {
                                         </div>
                                     </div>
 
-                                    <ProductActionButton
-                                        product={p}
-                                        cartItem={cartItem}
-                                        addToCart={addToCart}
-                                        updateCartQuantity={updateCartQuantity}
-                                        className="mt-2"
-                                    />
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <ProductActionButton
+                                            product={p}
+                                            cartItem={cartItem}
+                                            addToCart={addToCart}
+                                            updateCartQuantity={updateCartQuantity}
+                                            className="mt-2"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         );
