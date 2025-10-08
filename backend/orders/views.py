@@ -26,7 +26,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         # Check if there are any in-stock items to order
         if not in_stock_items:
             # You might want to raise an exception or return an error response
-            raise serializers.ValidationError("No in-stock items in cart to place order.")
+            raise serializer.ValidationError("No in-stock items in cart to place order.")
         
         # Create order with only in-stock items
         order = serializer.save(user=user, status="pending")
