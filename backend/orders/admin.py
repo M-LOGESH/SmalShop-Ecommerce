@@ -15,7 +15,6 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
 
     def get_queryset(self, request):
-        # Superusers see all orders, staff see all orders, normal users see their own
         qs = super().get_queryset(request)
         if request.user.is_superuser or request.user.is_staff:
             return qs

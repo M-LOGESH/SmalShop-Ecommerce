@@ -25,7 +25,6 @@ class Order(models.Model):
         if not self.order_number:
             today_str = timezone.now().strftime("%Y%m%d")
 
-            # Get all today's orders
             orders_today = Order.objects.filter(order_number__startswith=f"ORD-{today_str}")
 
             # Extract last sequence numbers (#### at end)

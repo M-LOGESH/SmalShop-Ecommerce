@@ -19,7 +19,7 @@ from myaccount.serializers import UserProfileSerializer
 #Custom JWT serializer: allow username OR email login
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        identifier = attrs.get("username")  # frontend sends "username" field
+        identifier = attrs.get("username")
         password = attrs.get("password")
 
         # Try finding user by username OR email (case-insensitive)
@@ -27,7 +27,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             user_obj = User.objects.get(Q(username__iexact=identifier) | Q(email__iexact=identifier))
         except User.DoesNotExist:
             raise serializers.ValidationError({
-                "username": ["Invalid username or email"],  # field-specific
+                "username": ["Invalid username or email"], 
                 "password": []
             })
 
@@ -36,7 +36,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not user:
             raise serializers.ValidationError({
                 "username": [],
-                "password": ["Incorrect password"]  # field-specific
+                "password": ["Incorrect password"]
             })
 
         # Generate tokens
@@ -95,9 +95,6 @@ def user_profile(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdminUser])
 def get_all_users(request):
-    """
-    Get all users with their profile data (admin only)
-    """
     users = User.objects.all().select_related('profile').order_by('-date_joined')
     serializer = UserProfileSerializer(users, many=True)
     return Response(serializer.data)

@@ -15,7 +15,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
         "id", "name", "category", "quantity",
-        "cost_price", "retail_price", "selling_price",  # show in admin
+        "cost_price", "retail_price", "selling_price",
         "stock_status", "created_at"
     )
     list_filter = ("category", "stock_status", "brand")

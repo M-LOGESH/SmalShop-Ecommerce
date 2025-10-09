@@ -7,7 +7,6 @@ class AlphaNumericValidator:
         if len(password) < 8:
             raise ValidationError(_("Password must contain at least 8 alphanumeric characters."))
 
-        # Count letters and numbers
         letters = len(re.findall(r"[A-Za-z]", password))
         numbers = len(re.findall(r"\d", password))
 

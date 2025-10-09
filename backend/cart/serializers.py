@@ -5,9 +5,7 @@ from products.models import Product
 
 class WishlistSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
-    # writable ID for POST/PUT
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-    # read-only nested data for GET
     product_detail = ProductSerializer(source='product', read_only=True)
 
     class Meta:

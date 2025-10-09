@@ -1,7 +1,6 @@
 import os
 from django.db import models
 
-# Main Category (e.g. Fruits, Vegetables, Snacks, Soaps, etc.)
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True)
@@ -10,9 +9,8 @@ class Category(models.Model):
         return self.name
 
 
-# Subcategories (linked to category, can be multiple per product)
 class SubCategory(models.Model):
-    name = models.CharField(max_length=100, unique=True)  # make unique globally
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -25,7 +23,7 @@ def product_image_path(instance, filename):
     return os.path.join("Products", category_name, filename)
 
 
-# Product Model
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to=product_image_path, blank=True, null=True)
@@ -42,7 +40,6 @@ class Product(models.Model):
         default="in_stock"
     )
 
-    # Relationships
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
     subcategories = models.ManyToManyField(SubCategory, blank=True, related_name="products")
 
