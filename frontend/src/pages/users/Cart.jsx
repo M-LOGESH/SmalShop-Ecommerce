@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
 function Cart({ isOpen, onClose }) {
-    const { user, fetchWithAuth, cart, setCart } = useAuth();
+    const { user, cart, updateCartQuantity, fetchWithAuth, setCart } = useAuth();
 
     useEffect(() => {
         if (isOpen) {
@@ -36,33 +36,6 @@ function Cart({ isOpen, onClose }) {
             }
         } catch (err) {
             console.error('Error loading cart:', err);
-        }
-    };
-
-    const updateCartQuantity = async (id, quantity) => {
-        try {
-            if (quantity < 1) {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${id}/`, {
-                    method: 'DELETE',
-                });
-                if (res.ok) setCart((prev) => prev.filter((item) => item.id !== id));
-            } else {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${id}/`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity }),
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setCart((prev) =>
-                        prev.map((item) =>
-                            item.id === id ? { ...item, quantity: data.quantity } : item
-                        )
-                    );
-                }
-            }
-        } catch (err) {
-            console.error('Error updating cart:', err);
         }
     };
 
@@ -108,7 +81,7 @@ function Cart({ isOpen, onClose }) {
         <>
             {/* Dim background overlay with high z-index */}
             <div
-                className={`fixed inset-0 bg-black transition-opacity duration-300 z-[10000] ${
+                className={`fixed inset-0 z-[10000] bg-black transition-opacity duration-300 ${
                     isOpen ? 'opacity-50' : 'pointer-events-none opacity-0'
                 }`}
                 onClick={onClose}
@@ -131,7 +104,18 @@ function Cart({ isOpen, onClose }) {
                 {/* Cart items */}
                 <div className="flex-1 overflow-y-auto p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {cart.length === 0 ? (
-                        <p className="text-center text-gray-500">Your cart is empty.</p>
+                        <div className="flex min-h-screen flex-col items-center justify-center p-4">
+                            <div className="-mt-55">
+                                <img
+                                    src="/src/assets/img/emptycart.png"
+                                    alt="Empt Cart"
+                                    className="h-40 w-40"
+                                />
+                                <p className="text-center text-lg font-semibold text-gray-600">
+                                    Your Cart Is Empty
+                                </p>
+                            </div>
+                        </div>
                     ) : (
                         <>
                             {/* In-stock items */}
@@ -166,8 +150,12 @@ function Cart({ isOpen, onClose }) {
 
                                         <div className="flex items-center gap-1 rounded bg-violet-500 px-2 py-1 text-white">
                                             <button
-                                                onClick={() =>
-                                                    updateCartQuantity(item.id, item.quantity - 1)
+                                                onClick={
+                                                    () =>
+                                                        updateCartQuantity(
+                                                            item.id,
+                                                            item.quantity - 1
+                                                        ) // Using context function
                                                 }
                                             >
                                                 <FaMinus size={10} />
@@ -176,8 +164,12 @@ function Cart({ isOpen, onClose }) {
                                                 {item.quantity}
                                             </span>
                                             <button
-                                                onClick={() =>
-                                                    updateCartQuantity(item.id, item.quantity + 1)
+                                                onClick={
+                                                    () =>
+                                                        updateCartQuantity(
+                                                            item.id,
+                                                            item.quantity + 1
+                                                        ) // Using context function
                                                 }
                                             >
                                                 <FaPlus size={10} />

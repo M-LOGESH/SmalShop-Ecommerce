@@ -27,11 +27,15 @@ function ManageOrders() {
     }, [fetchWithAuth]);
 
     if (loading) {
-        return <div>Loading orders...</div>;
+        return (
+            <div className="min-h-120 flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
     }
 
     return (
-        <div >
+        <div>
             <h1 className="text-2xl font-bold mb-6">Manage Orders</h1>
             <OrdersTable orders={ordersData} user={user} />
         </div>

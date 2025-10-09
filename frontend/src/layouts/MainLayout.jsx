@@ -6,7 +6,7 @@ import MobileHeader from '../components/header/MobileHeader.jsx';
 import Navbar from '../components/Navbar.jsx';
 import Login from '../components/Login.jsx';
 import Register from '../components/Register.jsx';
-import Cart from '../pages/users/Cart.jsx'; // Add Cart import
+import Cart from '../pages/users/Cart.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 function MainLayout() {
@@ -100,11 +100,11 @@ function MainLayout() {
                 />
             )}
 
-            {/* Main content with adjusted padding for mobile header */}
+            {/* Main content */}
             <div
                 className={`flex-grow pb-18 sm:pt-18 lg:pb-0 ${
                     showMobileHeader 
-                        ? 'pt-16' // Add padding for fixed mobile header
+                        ? 'pt-16'
                         : (isAdminPage ? 'pt-14' : 'pt-24 sm:pt-18')
                 }`}
             >

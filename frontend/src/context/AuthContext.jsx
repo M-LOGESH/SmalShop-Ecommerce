@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -83,7 +84,6 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    // Load cart from API
     const loadCart = async () => {
         if (!user?.access) return;
         try {
@@ -97,7 +97,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Load wishlist from API
     const loadWishlist = async () => {
         if (!user?.access) return;
         try {
@@ -105,14 +104,13 @@ export const AuthProvider = ({ children }) => {
             if (res.ok) {
                 const data = await res.json();
                 setWishlistData(data);
-                setWishlist(data.map(item => item.product));
+                setWishlist(data.map((item) => item.product));
             }
         } catch (err) {
             console.error('Error loading wishlist:', err);
         }
     };
 
-    // Add item to cart
     const addToCart = async (productId, quantity = 1) => {
         if (!user) return alert('Login to add to cart');
 
@@ -125,21 +123,20 @@ export const AuthProvider = ({ children }) => {
 
             if (res.ok) {
                 const data = await res.json();
-                setCart(prev => [...prev, data]);
+                setCart((prev) => [...prev, data]);
             }
         } catch (err) {
             console.error('Cart error:', err);
         }
     };
 
-    // Update cart quantity
     const updateCartQuantity = async (cartId, quantity) => {
         try {
             if (quantity < 1) {
                 const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
                     method: 'DELETE',
                 });
-                if (res.ok) setCart(prev => prev.filter(item => item.id !== cartId));
+                if (res.ok) setCart((prev) => prev.filter((item) => item.id !== cartId));
             } else {
                 const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
                     method: 'PATCH',
@@ -148,7 +145,7 @@ export const AuthProvider = ({ children }) => {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setCart(prev => prev.map(item => item.id === cartId ? data : item));
+                    setCart((prev) => prev.map((item) => (item.id === cartId ? data : item)));
                 }
             }
         } catch (err) {
@@ -156,17 +153,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Toggle wishlist
     const toggleWishlist = async (productId) => {
-        if (!user) return alert('Login to add to wishlist');
+        if (!user) {
+            toast.error('Login to add to wishlist');
+            return;
+        }
 
         try {
-            const existingItem = wishlistData.find(w => w.product === productId);
+            const existingItem = wishlistData.find((w) => w.product === productId);
 
             if (existingItem) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, { method: 'DELETE' });
-                setWishlist(prev => prev.filter(pid => pid !== productId));
-                setWishlistData(prev => prev.filter(w => w.product !== productId));
+                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, {
+                    method: 'DELETE',
+                });
+                setWishlist((prev) => prev.filter((pid) => pid !== productId));
+                setWishlistData((prev) => prev.filter((w) => w.product !== productId));
+                toast.success('Removed from wishlist');
             } else {
                 const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
                     method: 'POST',
@@ -175,21 +177,28 @@ export const AuthProvider = ({ children }) => {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setWishlist(prev => [...prev, productId]);
-                    setWishlistData(prev => [...prev, data]);
+                    setWishlist((prev) => [...prev, productId]);
+                    setWishlistData((prev) => [...prev, data]);
+                    toast.success('Added to wishlist');
+                } else {
+                    toast.error('Failed to add to wishlist');
                 }
             }
         } catch (err) {
             console.error('Wishlist error:', err);
+            toast.error('Error updating wishlist');
         }
     };
 
     // proactive refresh every 55 min
     useEffect(() => {
         if (!user?.refresh) return;
-        const interval = setInterval(() => {
-            refreshAccessToken();
-        }, 55 * 60 * 1000);
+        const interval = setInterval(
+            () => {
+                refreshAccessToken();
+            },
+            55 * 60 * 1000
+        );
         return () => clearInterval(interval);
     }, [user]);
 
@@ -206,20 +215,22 @@ export const AuthProvider = ({ children }) => {
     }, [user]);
 
     return (
-        <AuthContext.Provider value={{
-            user,
-            login,
-            logout,
-            register,
-            fetchWithAuth,
-            cart,
-            setCart,
-            wishlist,
-            wishlistData,
-            toggleWishlist,
-            addToCart,
-            updateCartQuantity,
-        }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                login,
+                logout,
+                register,
+                fetchWithAuth,
+                cart,
+                setCart,
+                wishlist,
+                wishlistData,
+                toggleWishlist,
+                addToCart,
+                updateCartQuantity,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

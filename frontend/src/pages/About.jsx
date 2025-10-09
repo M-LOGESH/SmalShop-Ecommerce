@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-    FaShoppingBasket,
-    FaHeart,
-} from 'react-icons/fa';
+import { FaShoppingBasket } from 'react-icons/fa';
 
 function About() {
     return (
@@ -14,7 +11,6 @@ function About() {
 
             {/* Main Content */}
             <div className="mx-auto max-w-6xl px-4 py-5 sm:py-10">
-                {/* Our Story Section */}
                 <div className="mb-16 grid items-center gap-12 md:grid-cols-2">
                     <div>
                         <h2 className="mb-6 text-xl font-bold text-gray-900 md:text-2xl">

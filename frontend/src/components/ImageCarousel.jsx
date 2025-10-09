@@ -3,7 +3,7 @@ import Slider from "react-slick";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const ImageCarousel = ({ images }) => {
-  // Custom Arrow Components
+
   const NextArrow = ({ onClick }) => (
     <div
       className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white bg-opacity-80 hover:bg-opacity-100 p-1 rounded-full shadow cursor-pointer"
@@ -51,11 +51,11 @@ const ImageCarousel = ({ images }) => {
         <Slider {...settings}>
           {images.map((img, index) => (
             <div key={index} className="px-2">
-              <div className="aspect-[16/9] overflow-hidden rounded-2xl shadow-md">
+              <div className="aspect-[16/9] overflow-hidden rounded-xl shadow-md">
                 <img
                   src={img}
                   alt={`Slide ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>

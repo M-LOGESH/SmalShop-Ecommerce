@@ -16,7 +16,20 @@ export default function PendingOrders({ orders, cancelOrder }) {
         (order) => order.status !== 'cancelled' && order.status !== 'completed'
     );
 
-    if (!visibleOrders.length) return <p className="text-gray-500">No pending orders.</p>;
+    if (!visibleOrders.length) return (
+            <div className="flex flex-col items-center justify-center mt-20 p-4">
+                <div className="-mt-30">
+                    <img
+                        src="/src/assets/img/emptyorder.png"
+                        alt="Orders not found"
+                        className="mb-2 h-64 w-64"
+                    />
+                    <p className="text-center text-lg font-semibold text-gray-600">
+                        No Pending Orders
+                    </p>
+                </div>
+            </div>
+        );
 
     return (
         <div className="flex flex-col gap-4">
@@ -61,7 +74,7 @@ export default function PendingOrders({ orders, cancelOrder }) {
                                                 className="relative flex w-full flex-col items-center"
                                             >
                                                 <div
-                                                    className={`z-10 flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full text-white  ${
+                                                    className={`z-10 flex h-6 w-6 items-center justify-center rounded-full text-white sm:h-8 sm:w-8 ${
                                                         completed ? 'bg-green-600' : 'bg-gray-300'
                                                     }`}
                                                 >
@@ -72,7 +85,7 @@ export default function PendingOrders({ orders, cancelOrder }) {
                                                 </span>
                                                 {idx < STATUS_STEPS.length - 1 && (
                                                     <div
-                                                        className={`absolute top-[0.6rem] sm:top-3.5 left-1/2 h-1 w-full  ${
+                                                        className={`absolute top-[0.6rem] left-1/2 h-1 w-full sm:top-3.5 ${
                                                             idx < stepIndex
                                                                 ? 'bg-green-600'
                                                                 : 'bg-gray-300'

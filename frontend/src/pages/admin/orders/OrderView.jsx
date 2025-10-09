@@ -178,7 +178,6 @@ function OrderView() {
 
     return (
         <div className="mx-auto max-w-6xl">
-            {/* Header */}
             <div className="mb-6">
                 <div className="flex items-center gap-4">
                     <button

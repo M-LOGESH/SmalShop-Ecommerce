@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import Loading from "../../components/Loading";
 
 const STATUS_STEPS = ["pending", "preparing", "ready"];
 
@@ -35,7 +36,6 @@ const updateStatus = async (orderId, newStatus) => {
     });
     if (res.ok) {
       loadOrders();
-      // Removed auto-switch to Pickup tab
     } else {
       alert("Failed to update status");
     }
@@ -45,7 +45,7 @@ const updateStatus = async (orderId, newStatus) => {
 };
 
 
-  if (loading) return <p className="p-4 text-gray-500 min-h-screen">Loading orders...</p>;
+  if (loading) return <Loading />;
 
 
 // Filter logic + sort by first order first

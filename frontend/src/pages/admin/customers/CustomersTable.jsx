@@ -84,8 +84,7 @@ function CustomersTable({ users, user: currentUser }) {
         );
     }
 
-// Update the handleViewUser function in CustomersTable.jsx:
-// In CustomersTable.jsx, update the handleViewUser function:
+
 const handleViewUser = (user) => {
     navigate(`/admin/customers/${user.id}`, { 
         state: { customer: user } 

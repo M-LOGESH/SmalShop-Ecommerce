@@ -54,7 +54,7 @@ function Category() {
     const navigate = useNavigate();
 
     return (
-        <div className="mx-auto min-h-screen max-w-7xl px-6 py-6 sm:px-10">
+        <div className="mx-auto min-h-screen max-w-6xl px-6 py-6 sm:px-10">
             {categories.map((category, idx) => (
                 <div key={idx} className="mb-10">
                     <h2 className="mb-4 text-lg font-bold">{category.title}</h2>

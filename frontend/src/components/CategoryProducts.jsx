@@ -1,19 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaHeart, FaChevronRight, FaChevronLeft, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
 import ProductActionButton from './ProductActionButton';
+import WishlistIcon from './WishlistIcon';
 
 function CategoryProducts({ categoryName, title, slug }) {
-    const { user, fetchWithAuth, cart, setCart } = useAuth();
+    const { user, fetchWithAuth, cart, addToCart, updateCartQuantity } = useAuth();
     const [products, setProducts] = useState([]);
-    const [wishlist, setWishlist] = useState([]);
-    const [wishlistData, setWishlistData] = useState([]);
-
     const navigate = useNavigate();
 
-    // Scroll refs
     const scrollRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
@@ -23,7 +19,6 @@ function CategoryProducts({ categoryName, title, slug }) {
     const [scrollLeft, setScrollLeft] = useState(0);
     const pointerTypeRef = useRef('mouse');
 
-    // --- Load products ---
     useEffect(() => {
         loadProducts();
     }, [categoryName, user]);
@@ -44,122 +39,6 @@ function CategoryProducts({ categoryName, title, slug }) {
             setProducts(filtered);
         } catch (err) {
             console.error('Error fetching products:', err);
-        }
-    };
-
-    // --- Load wishlist & cart ---
-    useEffect(() => {
-        if (user?.access && !user?.is_staff) {
-            // Only load wishlist for non-staff users
-            loadWishlist();
-            loadCart();
-        } else {
-            setWishlist([]);
-            setWishlistData([]);
-        }
-    }, [user]);
-
-    const loadWishlist = async () => {
-        try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/');
-            if (!res.ok) return;
-
-            const data = await res.json();
-            setWishlistData(data);
-            setWishlist(data.map((item) => item.product));
-        } catch (err) {
-            console.error('Error loading wishlist:', err);
-        }
-    };
-
-    const loadCart = async () => {
-        try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/');
-            if (res.ok) {
-                const data = await res.json();
-                setCart(data);
-            }
-        } catch (err) {
-            console.error('Error loading cart:', err);
-        }
-    };
-
-    // --- Wishlist toggle ---
-    const toggleWishlist = async (productId) => {
-        if (!user) return toast.error('Login to add to wishlist');
-        if (user?.is_staff) return; // Prevent staff from using wishlist
-
-        try {
-            const existingItem = wishlistData.find((w) => w.product === productId);
-
-            if (existingItem) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, {
-                    method: 'DELETE',
-                });
-                setWishlist((prev) => prev.filter((pid) => pid !== productId));
-                setWishlistData((prev) => prev.filter((w) => w.product !== productId));
-                toast.success('Removed from Wishlist');
-            } else {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product: productId }),
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    setWishlist((prev) => [...prev, productId]);
-                    setWishlistData((prev) => [...prev, data]);
-                    toast.success('Added to Wishlist');
-                }
-            }
-        } catch (err) {
-            console.error('Wishlist error:', err);
-        }
-    };
-
-    // --- Cart actions ---
-    const addToCart = async (productId) => {
-        if (!user) return toast.error('Login to add to cart');
-        if (user?.is_staff) return; // Prevent staff from adding to cart
-
-        try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product: productId, quantity: 1 }),
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setCart((prev) => [...prev, data]);
-            }
-        } catch (err) {
-            console.error('Cart error:', err);
-        }
-    };
-
-    const updateCartQuantity = async (cartId, newQty) => {
-        if (user?.is_staff) return; // Prevent staff from updating cart
-
-        try {
-            if (newQty <= 0) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
-                    method: 'DELETE',
-                });
-                setCart((prev) => prev.filter((c) => c.id !== cartId));
-            } else {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity: newQty }),
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setCart((prev) => prev.map((c) => (c.id === cartId ? data : c)));
-                }
-            }
-        } catch (err) {
-            console.error('Cart update error:', err);
         }
     };
 
@@ -221,7 +100,6 @@ function CategoryProducts({ categoryName, title, slug }) {
     return (
         <div className="relative flex justify-center p-3 sm:px-10">
             <div className="w-full max-w-6xl">
-                {/* Header */}
                 <div className="mb-2 flex items-center justify-between">
                     <h2 className="text-lg font-bold">{title || categoryName}</h2>
                     <button
@@ -234,7 +112,6 @@ function CategoryProducts({ categoryName, title, slug }) {
 
                 {/* Scroll Container */}
                 <div className="relative">
-                    {/* Left Button */}
                     {canScrollLeft && (
                         <button
                             onClick={scrollLeftBtn}
@@ -287,31 +164,19 @@ function CategoryProducts({ categoryName, title, slug }) {
                                                     No Image
                                                 </div>
                                             )}
-                                            {/* Hide wishlist button for staff */}
-                                            {!user?.is_staff && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleWishlist(p.id);
-                                                    }}
-                                                    className="absolute top-2 right-2"
-                                                >
-                                                    <FaHeart
-                                                        size={14}
-                                                        className={
-                                                            wishlist.includes(p.id)
-                                                                ? 'text-red-500'
-                                                                : 'text-gray-400'
-                                                        }
-                                                    />
-                                                </button>
-                                            )}
+
+                                            <WishlistIcon
+                                                productId={p.id}
+                                                size={14}
+                                                className="absolute top-2 right-2"
+                                                showToast={true}
+                                            />
                                         </div>
 
-                                        <h3 className="truncate text-sm  pl-2 font-medium sm:font-semibold">
+                                        <h3 className="truncate pl-2 text-sm font-medium sm:font-semibold">
                                             {p.name}
                                         </h3>
-                                        <p className="text-xs text-gray-500 pl-2">{p.quantity}</p>
+                                        <p className="pl-2 text-xs text-gray-500">{p.quantity}</p>
 
                                         <div className="mt-1 pl-2">
                                             {p.retail_price && p.retail_price > p.selling_price ? (
@@ -341,7 +206,6 @@ function CategoryProducts({ categoryName, title, slug }) {
                                         </div>
                                     </div>
 
-                                    {/* Cart buttons - prevent navigation when clicking */}
                                     <ProductActionButton
                                         product={p}
                                         cartItem={cartItem}
@@ -354,7 +218,6 @@ function CategoryProducts({ categoryName, title, slug }) {
                         })}
                     </div>
 
-                    {/* Right Button */}
                     {canScrollRight && (
                         <button
                             onClick={scrollRightBtn}

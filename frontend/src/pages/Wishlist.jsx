@@ -1,17 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaHeart, FaPlus, FaMinus } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import ProductActionButton from '../components/ProductActionButton';
+import WishlistIcon from '../components/WishlistIcon';
 
 function Wishlist() {
-    const { user, wishlistData, cart, toggleWishlist, addToCart, updateCartQuantity } = useAuth();
+    const { user, wishlistData, cart, addToCart, updateCartQuantity } = useAuth();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
-    if (!user) return <p className="min-h-screen p-4 text-center">Login to view your wishlist.</p>;
+    useEffect(() => {
+        // When wishlistData changes (loaded or updated), mark loading false
+        if (wishlistData !== undefined) {
+            setLoading(false);
+        }
+    }, [wishlistData]);
+
+if (!user)
+    return (
+        <div className="flex min-h-screen flex-col items-center justify-center p-4">
+            <div className="-mt-30">
+                <img
+                    src="/src/assets/img/emptywishlist.png" 
+                    alt="Login required"
+                    className="mb-4 h-64 w-64"
+                />
+                <p className="text-lg text-center font-semibold text-gray-600">Login to view your Wishlist</p>
+            </div>
+        </div>
+    );
+
+    if (loading)
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <p className="animate-pulse text-gray-500">Loading wishlist...</p>
+            </div>
+        );
 
     if (!wishlistData || wishlistData.length === 0)
-        return <p className="min-h-screen p-4 text-center">No items in wishlist.</p>;
+        return (
+        <div className="flex min-h-screen flex-col items-center justify-center p-4">
+            <div className="-mt-30">
+                <img
+                    src="/src/assets/img/emptywishlist.png" 
+                    alt="Wishlist"
+                    className="mb-4 h-64 w-64"
+                />
+                <p className="text-lg text-center font-semibold text-gray-600">No items in Wishlist</p>
+            </div>
+        </div>
+    );
+
 
     const getCartItem = (productId) => cart.find((item) => item.product === productId);
 
@@ -22,7 +61,7 @@ function Wishlist() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5">
                     {wishlistData.map((w) => {
                         const p = w.product_detail;
-                        if (!p) return null; // Prevent crash if product_detail missing
+                        if (!p) return null;
 
                         const cartItem = getCartItem(p.id);
 
@@ -32,8 +71,8 @@ function Wishlist() {
                                 className="flex flex-row overflow-hidden rounded-lg border border-gray-200 bg-white p-2 shadow-md sm:flex-col"
                             >
                                 {/* Image */}
-                                <div 
-                                    className="relative flex h-28 w-28 flex-shrink-0 items-center justify-center bg-gray-100 sm:h-32 sm:w-full cursor-pointer"
+                                <div
+                                    className="relative flex h-28 w-28 flex-shrink-0 cursor-pointer items-center justify-center bg-gray-100 sm:h-32 sm:w-full"
                                     onClick={() => navigate(`/product/${p.id}`)}
                                 >
                                     {p.image ? (
@@ -47,23 +86,20 @@ function Wishlist() {
                                             No Image
                                         </div>
                                     )}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleWishlist(p.id);
-                                        }}
+                                    <WishlistIcon
+                                        productId={p.id}
+                                        size={16}
                                         className="absolute top-2 right-2"
-                                    >
-                                        <FaHeart size={16} className="text-red-500" />
-                                    </button>
+                                        showToast={true}
+                                    />
                                 </div>
 
                                 {/* Details */}
-                                <div 
-                                    className="flex flex-1 flex-col pl-2 sm:pl-0 justify-between p-2 cursor-pointer"
+                                <div
+                                    className="flex flex-1 cursor-pointer flex-col justify-between pl-2 sm:pl-0"
                                     onClick={() => navigate(`/product/${p.id}`)}
                                 >
-                                    <div className='pl-2'>
+                                    <div className="pl-2">
                                         <h3 className="truncate text-sm font-semibold">{p.name}</h3>
                                         <p className="text-xs text-gray-500">{p.quantity}</p>
                                         <div className="mt-1">

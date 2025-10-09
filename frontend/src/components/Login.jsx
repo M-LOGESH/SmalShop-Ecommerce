@@ -3,7 +3,7 @@ import { FiUser, FiLock } from 'react-icons/fi';
 
 function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
     const [formData, setFormData] = useState({ username: '', password: '' });
-    const [errors, setErrors] = useState({}); // field-wise errors
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,7 +39,7 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 is_superuser: data.is_superuser,
                 access: data.access,
                 refresh: data.refresh,
-                profile: data.profile || {}, // include profile info
+                profile: data.profile || {}, 
             });
 
             onClose();

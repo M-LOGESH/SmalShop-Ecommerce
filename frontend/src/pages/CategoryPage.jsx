@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaHeart } from 'react-icons/fa';
-import { toast } from 'react-toastify';
 import ProductActionButton from '../components/ProductActionButton';
+import WishlistIcon from '../components/WishlistIcon';
 
 function CategoryPage() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const { user, fetchWithAuth, cart, setCart } = useAuth();
+    const { user, fetchWithAuth, cart, addToCart, updateCartQuantity } = useAuth();
 
     const [products, setProducts] = useState([]);
-    const [wishlist, setWishlist] = useState([]);
-    const [wishlistData, setWishlistData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const categoryMap = {
         biscuits: 'Biscuits & Cookies',
@@ -35,106 +33,35 @@ function CategoryPage() {
                 }
             } catch (err) {
                 console.error('Error fetching products:', err);
+            } finally {
+                setLoading(false);
             }
         };
         loadProducts();
     }, [slug, user]);
 
-    useEffect(() => {
-        const loadWishlist = async () => {
-            if (!user?.access || user?.is_staff) return; // Don't load wishlist for staff
-            try {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/');
-                if (!res.ok) return;
-                const data = await res.json();
-                setWishlistData(data);
-                setWishlist(data.map((item) => item.product));
-            } catch (err) {
-                console.error('Error loading wishlist:', err);
-            }
-        };
-        loadWishlist();
-    }, [user]);
-
-    const toggleWishlist = async (productId) => {
-        if (!user) return toast.error('Login to add to wishlist');
-        if (user?.is_staff) return; // Prevent staff from using wishlist
-
-        try {
-            const existingItem = wishlistData.find((w) => w.product === productId);
-            if (existingItem) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, {
-                    method: 'DELETE',
-                });
-                setWishlist((prev) => prev.filter((pid) => pid !== productId));
-                setWishlistData((prev) => prev.filter((w) => w.product !== productId));
-                toast.success('Removed from Wishlist');
-            } else {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product: productId }),
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setWishlist((prev) => [...prev, productId]);
-                    setWishlistData((prev) => [...prev, data]);
-                    toast.success('Added to Wishlist');
-                }
-            }
-        } catch (err) {
-            console.error('Wishlist error:', err);
-        }
-    };
-
-    const addToCart = async (productId) => {
-        if (!user) return toast.error('Login to add to cart');
-        if (user?.is_staff) return; // Prevent staff from adding to cart
-
-        try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product: productId, quantity: 1 }),
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setCart((prev) => [...prev, data]);
-            }
-        } catch (err) {
-            console.error('Cart error:', err);
-        }
-    };
-
-    const updateCartQuantity = async (cartId, newQty) => {
-        if (user?.is_staff) return; // Prevent staff from updating cart
-
-        try {
-            if (newQty <= 0) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
-                    method: 'DELETE',
-                });
-                setCart((prev) => prev.filter((c) => c.id !== cartId));
-            } else {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity: newQty }),
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setCart((prev) => prev.map((c) => (c.id === cartId ? data : c)));
-                }
-            }
-        } catch (err) {
-            console.error('Cart update error:', err);
-        }
-    };
-
     const getCartItem = (productId) => cart.find((item) => item.product === productId);
 
-    if (!products.length)
-        return <p className="min-h-screen p-4 text-center">No products in this category.</p>;
+    if (loading) {
+        return (
+            <div className="min-h-screen px-4 py-4 sm:px-8">
+                
+            </div>
+        );
+    }
+
+    if (!products.length) {
+        return (
+            <div className="min-h-screen bg-gray-50 px-4 py-4 sm:px-8">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="mb-4 text-xl font-bold">{categoryName}</h1>
+                    <div className="flex items-center justify-center py-12">
+                        <p className="text-gray-500">No products in this category.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 px-4 py-4 sm:px-8">
@@ -143,7 +70,6 @@ function CategoryPage() {
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                     {products.map((p) => {
                         const cartItem = getCartItem(p.id);
-                        const isWishlisted = wishlist.includes(p.id);
                         return (
                             <div
                                 key={p.id}
@@ -164,25 +90,14 @@ function CategoryPage() {
                                         ) : (
                                             <div className="text-xs text-gray-500">No Image</div>
                                         )}
-                                        {/* Hide wishlist button for staff */}
-                                        {!user?.is_staff && (
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // Prevent navigation when clicking wishlist
-                                                    toggleWishlist(p.id);
-                                                }}
-                                                className="absolute top-2 right-2"
-                                            >
-                                                <FaHeart
-                                                    size={16}
-                                                    className={
-                                                        isWishlisted
-                                                            ? 'text-red-500'
-                                                            : 'text-gray-400'
-                                                    }
-                                                />
-                                            </button>
-                                        )}
+
+                                        {/* Use WishlistIcon component - staff check is handled inside */}
+                                        <WishlistIcon
+                                            productId={p.id}
+                                            size={16}
+                                            className="absolute top-2 right-2"
+                                            showToast={true}
+                                        />
                                     </div>
 
                                     <div className="p-2">
@@ -216,8 +131,6 @@ function CategoryPage() {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* ✅ Unified Cart Section - Sticks to bottom */}
 
                                 <ProductActionButton
                                     product={p}

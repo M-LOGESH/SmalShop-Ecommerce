@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaHeart, FaStar, FaChevronRight, FaHome } from 'react-icons/fa';
-import { toast } from 'react-toastify';
+import { FaChevronRight, FaHome } from 'react-icons/fa';
 import ProductActionButton from '../components/ProductActionButton';
 import CategoryProducts from '../components/CategoryProducts';
+import WishlistIcon from '../components/WishlistIcon';
 
 function ProductView() {
     const { id } = useParams();
@@ -13,26 +13,16 @@ function ProductView() {
         user,
         fetchWithAuth,
         cart,
-        setCart,
-        wishlist,
-        setWishlist,
-        wishlistData,
-        setWishlistData,
+        addToCart,
+        updateCartQuantity,
     } = useAuth();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
-    
-    // Local state for wishlist management
-    const [localWishlistData, setLocalWishlistData] = useState([]);
 
     useEffect(() => {
         loadProduct();
-        // Load wishlist data when component mounts and user is authenticated
-        if (user?.access && !user?.is_staff) {
-            loadWishlist();
-        }
     }, [id, user]);
 
     const loadProduct = async () => {
@@ -57,145 +47,8 @@ function ProductView() {
         }
     };
 
-    // Add this function to load wishlist data
-    const loadWishlist = async () => {
-        try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/');
-            if (res.ok) {
-                const data = await res.json();
-                // Use local state instead of potentially undefined context functions
-                setLocalWishlistData(data);
-                // Only use setWishlist if it exists in context
-                if (typeof setWishlist === 'function') {
-                    setWishlist(data.map((item) => item.product));
-                }
-            }
-        } catch (err) {
-            console.error('Error loading wishlist:', err);
-        }
-    };
-
-    const toggleWishlist = async (productId) => {
-        if (!user) {
-            toast.error('Login to add to wishlist');
-            return;
-        }
-        if (user?.is_staff) return;
-
-        try {
-            const existingItem = localWishlistData.find((w) => w.product === productId);
-
-            if (existingItem) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, {
-                    method: 'DELETE',
-                });
-                
-                // Update local state
-                setLocalWishlistData((prev) => prev.filter((w) => w.product !== productId));
-                
-                // Update context if functions exist
-                if (typeof setWishlist === 'function') {
-                    setWishlist((prev) => prev.filter((pid) => pid !== productId));
-                }
-                if (typeof setWishlistData === 'function') {
-                    setWishlistData((prev) => prev.filter((w) => w.product !== productId));
-                }
-                
-                toast.success('Removed from wishlist');
-            } else {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product: productId }),
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    
-                    // Update local state
-                    setLocalWishlistData((prev) => [...prev, data]);
-                    
-                    // Update context if functions exist
-                    if (typeof setWishlist === 'function') {
-                        setWishlist((prev) => [...prev, productId]);
-                    }
-                    if (typeof setWishlistData === 'function') {
-                        setWishlistData((prev) => [...prev, data]);
-                    }
-                    
-                    toast.success('Added to wishlist');
-                } else {
-                    toast.error('Failed to add to wishlist');
-                }
-            }
-        } catch (err) {
-            console.error('Wishlist error:', err);
-            toast.error('Error updating wishlist');
-        }
-    };
-
-    const addToCart = async (productId) => {
-        if (!user) return toast.error('Login to add to cart');
-        if (user?.is_staff) return;
-
-        try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product: productId, quantity: 1 }),
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setCart((prev) => [...prev, data]);
-                toast.success('Added to cart');
-            }
-        } catch (err) {
-            console.error('Cart error:', err);
-            toast.error('Error adding to cart');
-        }
-    };
-
-    const updateCartQuantity = async (cartId, newQty) => {
-        if (user?.is_staff) return;
-
-        try {
-            if (newQty <= 0) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
-                    method: 'DELETE',
-                });
-                setCart((prev) => prev.filter((c) => c.id !== cartId));
-                toast.success('Removed from cart');
-            } else {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity: newQty }),
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setCart((prev) => prev.map((c) => (c.id === cartId ? data : c)));
-                }
-            }
-        } catch (err) {
-            console.error('Cart update error:', err);
-            toast.error('Error updating cart');
-        }
-    };
 
     const getCartItem = (productId) => cart.find((item) => item.product === productId);
-
-    // Check if product is wishlisted using both context and local state
-    const isWishlisted = () => {
-        // First check local state
-        if (localWishlistData.find((w) => w.product === product?.id)) {
-            return true;
-        }
-        // Then check context (if wishlist exists)
-        if (wishlist && Array.isArray(wishlist)) {
-            return wishlist.includes(product?.id);
-        }
-        return false;
-    };
 
     if (loading) {
         return (
@@ -214,7 +67,6 @@ function ProductView() {
     }
 
     const cartItem = getCartItem(product.id);
-    const wishlisted = isWishlisted();
     const images =
         product.images && product.images.length > 0
             ? product.images
@@ -334,21 +186,13 @@ function ProductView() {
                                         </h1>
                                         <p className="mt-1 text-gray-500">{product.quantity}</p>
                                     </div>
-                                    {!user?.is_staff && (
-                                        <button
-                                            onClick={() => toggleWishlist(product.id)}
-                                            className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
-                                                wishlisted 
-                                                    ? 'text-red-500 bg-red-50' 
-                                                    : 'text-gray-400 hover:bg-red-50'
-                                            }`}
-                                        >
-                                            <FaHeart
-                                                size={20}
-                                                className={wishlisted ? 'fill-current' : ''}
-                                            />
-                                        </button>
-                                    )}
+                                    
+                                    <WishlistIcon 
+                                        productId={product.id}
+                                        size={20}
+                                        className="p-2 rounded-full hover:bg-red-50"
+                                        showToast={true}
+                                    />
                                 </div>
                             </div>
 

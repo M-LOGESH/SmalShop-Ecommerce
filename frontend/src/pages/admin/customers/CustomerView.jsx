@@ -26,7 +26,7 @@ function CustomerView() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Calculate order statistics - FIXED VERSION
+    // Calculate order statistics
     const calculateOrderStats = (orders) => {
         const completedOrders = orders.filter((order) => order.status === 'completed');
         const cancelledOrders = orders.filter((order) => order.status === 'cancelled');

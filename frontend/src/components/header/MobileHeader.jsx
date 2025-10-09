@@ -8,7 +8,6 @@ function MobileHeader({ title, setCartOpen }) {
     const location = useLocation();
     const { user } = useAuth();
 
-    // Check if current page is admin-only or user is admin
     const isAdminPage = location.pathname.startsWith('/admin');
     const shouldShowCart = !user?.is_staff && !isAdminPage;
 
@@ -19,7 +18,6 @@ function MobileHeader({ title, setCartOpen }) {
             </button>
             <h1 className="text-xl font-medium">{title}</h1>
             
-            {/* Conditionally render cart icon or empty space */}
             {shouldShowCart ? (
                 <button onClick={() => setCartOpen(true)}>
                     <FiShoppingCart size={20} />

@@ -9,7 +9,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
         confirmPassword: '',
     });
 
-    const [errors, setErrors] = useState({}); // field-wise errors
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -62,7 +62,7 @@ function Profile({ onCancel }) {
             const data = await response.json();
             if (!response.ok) {
                 console.error('Update error:', data);
-                toast.error('Failed to update profile!'); // error toast
+                toast.error('Failed to update profile!');
                 return;
             }
 
@@ -73,7 +73,7 @@ function Profile({ onCancel }) {
                 profile: data.profile,
             });
 
-            toast.success('Profile updated successfully!'); // success toast
+            toast.success('Profile updated successfully!');
         } catch (error) {
             console.error('Network error:', error);
             toast.error('Network error occurred!');

@@ -47,14 +47,26 @@ export default function CompletedOrders({ orders }) {
         filteredOrders = [...filteredOrders].sort((a, b) => b.total_price - a.total_price);
     }
 
-    if (!completedOrders.length) return <p className="text-gray-500"></p>;
+    if (!completedOrders.length) return  (
+            <div className="flex flex-col items-center justify-center mt-30 p-4">
+                <div className="-mt-30">
+                    <img
+                        src="/src/assets/img/emptyorder.png"
+                        alt="Orders not found"
+                        className="mb-2 h-64 w-64"
+                    />
+                    <p className="text-center text-lg font-semibold text-gray-600">
+                        No Orders Found
+                    </p>
+                </div>
+            </div>
+        );
 
     return (
         <div className="flex flex-col gap-2">
             {/* Header row with title + controls */}
             <div className="mt-8 mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                {/* Title */}
-                <h1 className="text-xl font-bold">Orders History</h1>
+
 
                 {/* Search + Filter */}
                 <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">

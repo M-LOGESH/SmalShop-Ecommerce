@@ -1,32 +1,34 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import Loading from './components/Loading.jsx';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Home from './pages/Home.jsx';
-import Category from './pages/Category.jsx';
-import CategoryPage from './pages/CategoryPage.jsx';
-import Account from './pages/myaccount/Account.jsx';
-import Profile from './pages/myaccount/Profile.jsx';
-import MyOrders from './pages/users/myorders/MyOrders.jsx';
-import Wishlist from './pages/Wishlist.jsx';
-import About from './pages/About.jsx';
-import Contact from './pages/Contact.jsx';
-import OrdersPage from './pages/admin/OrdersPage.jsx';
-import OrderDetails from './pages/users/myorders/OrderDetails.jsx';
-import AdminPanel from './pages/admin/AdminPanel.jsx';
-import ManageItems from './pages/admin/products/ManageProducts.jsx';
-import ManageOrders from './pages/admin/orders/ManageOrders.jsx';
-import ManageCustomers from './pages/admin/customers/ManageCustomers.jsx';
-import CustomerView from './pages/admin/customers/CustomerView.jsx';
-import OrderView from './pages/admin/orders/OrderView.jsx';
-import Dashboard from './pages/admin/DashBoard.jsx';
-import ProductView from './pages/ProductView.jsx';
+const Home = lazy(() => import('./pages/Home.jsx'));
+const Category = lazy(() => import('./pages/Category.jsx'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'));
+const Account = lazy(() => import('./pages/myaccount/Account.jsx'));
+const Profile = lazy(() => import('./pages/myaccount/Profile.jsx'));
+const MyOrders = lazy(() => import('./pages/users/myorders/MyOrders.jsx'));
+const Wishlist = lazy(() => import('./pages/Wishlist.jsx'));
+const About = lazy(() => import('./pages/About.jsx'));
+const Contact = lazy(() => import('./pages/Contact.jsx'));
+const OrdersPage = lazy(() => import('./pages/admin/OrdersPage.jsx'));
+const OrderDetails = lazy(() => import('./pages/users/myorders/OrderDetails.jsx'));
+const AdminPanel = lazy(() => import('./pages/admin/AdminPanel.jsx'));
+const ManageItems = lazy(() => import('./pages/admin/products/ManageProducts.jsx'));
+const ManageOrders = lazy(() => import('./pages/admin/orders/ManageOrders.jsx'));
+const ManageCustomers = lazy(() => import('./pages/admin/customers/ManageCustomers.jsx'));
+const CustomerView = lazy(() => import('./pages/admin/customers/CustomerView.jsx'));
+const OrderView = lazy(() => import('./pages/admin/orders/OrderView.jsx'));
+const Dashboard = lazy(() => import('./pages/admin/DashBoard.jsx'));
+const ProductView = lazy(() => import('./pages/ProductView.jsx'));
+const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 function App() {
     const { user, logout } = useAuth();
@@ -34,93 +36,93 @@ function App() {
     return (
         <Router>
             <ScrollToTop />
-
-            <Routes>
-                <Route element={<MainLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/category" element={<Category />} />
-                    <Route path="/category/:slug" element={<CategoryPage />} />
-                    <Route path="/product/:id" element={<ProductView />} />
-                    <Route
-                        path="/account"
-                        element={
-                            <ProtectedRoute>
-                                <Account user={user} onLogout={logout} />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/profile"
-                        element={
-                            <ProtectedRoute>
-                                <Profile user={user} />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/my-orders"
-                        element={                           
-                                <MyOrders />                           
-                        }
-                    />
-                    <Route
-                        path="/wishlist"
-                        element={                            
-                                <Wishlist />                            
-                        }
-                    />
-                    <Route
-                        path="/view-orders"
-                        element={
-                            <ProtectedRoute adminOnly={true}>
-                                <OrdersPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/my-orders/:id"
-                        element={
-                            <ProtectedRoute>
-                                <OrderDetails />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    {/* NESTED ADMIN ROUTES */}
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute adminOnly={true}>
-                                <AdminPanel />
-                            </ProtectedRoute>
-                        }
-                    >
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="products" element={<ManageItems />} />
-                        <Route path="orders" element={<ManageOrders />} />
-                        <Route path="customers" element={<ManageCustomers />} />
-                        <Route path="sales" element={<h2>Sales Page</h2>} />
-                        <Route path="settings" element={<h2>Settings Page</h2>} />
+            <Suspense fallback={<Loading />}>
+                <Routes>
+                    <Route element={<MainLayout />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/category" element={<Category />} />
+                        <Route path="/category/:slug" element={<CategoryPage />} />
+                        <Route path="/product/:id" element={<ProductView />} />
                         <Route
-                            path="/admin/customers/:id"
+                            path="/account"
                             element={
-                                <ProtectedRoute adminOnly={true}>
-                                    <CustomerView />
+                                <ProtectedRoute>
+                                    <Account user={user} onLogout={logout} />
                                 </ProtectedRoute>
                             }
                         />
                         <Route
-                            path="/admin/orders/:id"
+                            path="/profile"
                             element={
-                                <ProtectedRoute adminOnly={true}>
-                                    <OrderView />
+                                <ProtectedRoute>
+                                    <Profile user={user} />
                                 </ProtectedRoute>
                             }
                         />
+                        <Route
+                            path="/my-orders"
+                            element={                           
+                                    <MyOrders />                           
+                            }
+                        />
+                        <Route
+                            path="/wishlist"
+                            element={                            
+                                    <Wishlist />                            
+                            }
+                        />
+                        <Route
+                            path="/view-orders"
+                            element={
+                                <ProtectedRoute adminOnly={true}>
+                                    <OrdersPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/my-orders/:id"
+                            element={
+                                <ProtectedRoute>
+                                    <OrderDetails />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        {/* NESTED ADMIN ROUTES */}
+                        <Route
+                            path="/admin"
+                            element={
+                                <ProtectedRoute adminOnly={true}>
+                                    <AdminPanel />
+                                </ProtectedRoute>
+                            }
+                        >
+                            <Route path="dashboard" element={<Dashboard />} />
+                            <Route path="products" element={<ManageItems />} />
+                            <Route path="orders" element={<ManageOrders />} />
+                            <Route path="customers" element={<ManageCustomers />} />
+                            <Route
+                                path="/admin/customers/:id"
+                                element={
+                                    <ProtectedRoute adminOnly={true}>
+                                        <CustomerView />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/admin/orders/:id"
+                                element={
+                                    <ProtectedRoute adminOnly={true}>
+                                        <OrderView />
+                                    </ProtectedRoute>
+                                }
+                            />
+                        </Route>
                     </Route>
-                </Route>
-            </Routes>
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </Suspense>
 
             <ToastContainer
                 position="top-center"

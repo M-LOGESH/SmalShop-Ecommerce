@@ -7,7 +7,7 @@ function Footer() {
     const isStaff = user?.is_staff;
 
     return (
-        <footer className="bg-neutral-100 text-gray-800 py-8 hidden lg:block border-t border-neutral-200 mt-10">
+        <footer className="bg-neutral-100 text-gray-800 py-8 hidden lg:block border-t border-neutral-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     
@@ -40,7 +40,6 @@ function Footer() {
                                 My Account
                             </a>
                             
-                            {/* Show different links based on staff status */}
                             {isStaff ? (
                                 <a 
                                     href="/view-orders" 
@@ -121,7 +120,6 @@ function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
                 <div className="border-t border-gray-300 mt-6 pt-4 flex flex-col md:flex-row justify-between items-center">
                     <div className="text-xs text-gray-600">
                         &copy; {new Date().getFullYear()} SmalShop. All rights reserved.

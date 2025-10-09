@@ -7,17 +7,16 @@ export default function ProductActionButton({
   cartItem,
   addToCart,
   updateCartQuantity,
-  size = "normal", // new prop: "normal" or "small"
+  size = "normal", 
   className = "",
 }) {
-  const { user } = useAuth(); // Get user from auth context
+  const { user } = useAuth(); 
   
   const baseBtn =
     size === "small"
       ? "px-2 py-1 text-xs gap-2 max-w-21"
-      : "px-2 py-1 text-sm"; // adjusts padding & text size
+      : "px-2 py-1 text-sm";
 
-  // If user is staff, show disabled state
   if (user?.is_staff) {
     return (
       <button
