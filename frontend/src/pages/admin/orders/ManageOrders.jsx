@@ -1,43 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext.jsx';
+import React from 'react';
+import { useOrders } from '../../../context/OrdersContext.jsx';
 import OrdersTable from './OrdersTable.jsx';
 
 function ManageOrders() {
-    const { fetchWithAuth, user } = useAuth();
-    const [ordersData, setOrdersData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    // Fetch orders data
-    useEffect(() => {
-        const loadOrders = async () => {
-            try {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/orders/');
-                if (res.ok) {
-                    const data = await res.json();
-                    setOrdersData(data);
-                }
-            } catch (err) {
-                console.error('Error loading orders:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        
-        loadOrders();
-    }, [fetchWithAuth]);
+    const { allOrders, loading, error } = useOrders();
 
     if (loading) {
         return (
-            <div className="min-h-120 flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="flex min-h-120 items-center justify-center">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-500 border-t-transparent"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div>
+                <h1 className="mb-6 text-2xl font-bold">Manage Orders</h1>
+                <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+                    <h3 className="font-semibold text-red-800">Error Loading Orders</h3>
+                    <p className="text-red-600">{error}</p>
+                </div>
             </div>
         );
     }
 
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-6">Manage Orders</h1>
-            <OrdersTable orders={ordersData} user={user} />
+            <h1 className="mb-6 text-2xl font-bold">Manage Orders</h1>
+            <OrdersTable orders={allOrders} />
         </div>
     );
 }

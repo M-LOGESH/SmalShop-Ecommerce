@@ -1,14 +1,17 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
+import ProtectedRoute from './components/routes/ProtectedRoute.jsx';
+import AdminRoute from './components/routes/AdminRoute.jsx';
+import UserOnlyRoute from './components/routes/UserOnlyRoute.jsx';
 import { useAuth } from './context/AuthContext.jsx';
-import ScrollToTop from './components/ScrollToTop.jsx';
-import Loading from './components/Loading.jsx';
+import ScrollToTop from './components/common/ScrollToTop.jsx';
+import Loading from './components/common/Loading.jsx';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Lazy load components
 const Home = lazy(() => import('./pages/Home.jsx'));
 const Category = lazy(() => import('./pages/Category.jsx'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'));
@@ -39,10 +42,15 @@ function App() {
             <Suspense fallback={<Loading />}>
                 <Routes>
                     <Route element={<MainLayout />}>
+                        {/* Public Routes */}
                         <Route path="/" element={<Home />} />
                         <Route path="/category" element={<Category />} />
                         <Route path="/category/:slug" element={<CategoryPage />} />
                         <Route path="/product/:id" element={<ProductView />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+
+                        {/* Protected Routes - Any Authenticated User */}
                         <Route
                             path="/account"
                             element={
@@ -59,71 +67,67 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
+
+                        {/* User Only Routes - Regular Users Only */}
                         <Route
                             path="/my-orders"
-                            element={                           
-                                    <MyOrders />                           
+                            element={
+                                <UserOnlyRoute>
+                                    <MyOrders />
+                                </UserOnlyRoute>
                             }
                         />
                         <Route
                             path="/wishlist"
-                            element={                            
-                                    <Wishlist />                            
-                            }
-                        />
-                        <Route
-                            path="/view-orders"
                             element={
-                                <ProtectedRoute adminOnly={true}>
-                                    <OrdersPage />
-                                </ProtectedRoute>
+                                <UserOnlyRoute>
+                                    <Wishlist />
+                                </UserOnlyRoute>
                             }
                         />
                         <Route
                             path="/my-orders/:id"
                             element={
-                                <ProtectedRoute>
+                                <UserOnlyRoute>
                                     <OrderDetails />
-                                </ProtectedRoute>
+                                </UserOnlyRoute>
                             }
                         />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/contact" element={<Contact />} />
-                        {/* NESTED ADMIN ROUTES */}
+
+                        {/* Admin Only Routes */}
+                        <Route
+                            path="/view-orders"
+                            element={
+                                <AdminRoute>
+                                    <OrdersPage />
+                                </AdminRoute>
+                            }
+                        />
+
+                        {/* Nested Admin Routes */}
                         <Route
                             path="/admin"
                             element={
-                                <ProtectedRoute adminOnly={true}>
+                                <AdminRoute>
                                     <AdminPanel />
-                                </ProtectedRoute>
+                                </AdminRoute>
                             }
                         >
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="products" element={<ManageItems />} />
                             <Route path="orders" element={<ManageOrders />} />
                             <Route path="customers" element={<ManageCustomers />} />
-                            <Route
-                                path="/admin/customers/:id"
-                                element={
-                                    <ProtectedRoute adminOnly={true}>
-                                        <CustomerView />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/admin/orders/:id"
-                                element={
-                                    <ProtectedRoute adminOnly={true}>
-                                        <OrderView />
-                                    </ProtectedRoute>
-                                }
-                            />
+                            <Route path="customers/:id" element={<CustomerView />} />
+                            <Route path="orders/:id" element={<OrderView />} />
                         </Route>
                     </Route>
+
+                    {/* 404 Page */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </Suspense>
 
+            {/* Toast Notifications */}
             <ToastContainer
                 position="top-center"
                 autoClose={2000}

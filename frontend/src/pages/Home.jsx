@@ -1,5 +1,5 @@
 import CategoryProducts from '../components/CategoryProducts';
-import ImageCarousel from '../components/ImageCarousel';
+import ImageCarousel from '../components/common/ImageCarousel';
 
 const sampleImages = [
     'src/assets/img/carousel/car1.jpg',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext.jsx';
+import { useOrders } from '../../../context/OrdersContext.jsx';
+import { useAdminUsers } from '../../../context/AdminUsersContext.jsx';
 import {
     FaArrowLeft,
     FaUser,
@@ -19,7 +20,8 @@ function CustomerView() {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    const { fetchWithAuth } = useAuth();
+    const { allOrders, getOrdersByUser, loading: ordersLoading } = useOrders();
+    const { allUsers, getUserById, loading: usersLoading } = useAdminUsers();
 
     const [customer, setCustomer] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -31,9 +33,7 @@ function CustomerView() {
         const completedOrders = orders.filter((order) => order.status === 'completed');
         const cancelledOrders = orders.filter((order) => order.status === 'cancelled');
 
-        // Fix: Ensure we're working with numbers, not strings
         const totalCompletedPrice = completedOrders.reduce((sum, order) => {
-            // Convert to number and handle potential string values
             const price = Number(order.total_price) || 0;
             return sum + price;
         }, 0);
@@ -46,9 +46,9 @@ function CustomerView() {
         };
     };
 
-    // Fetch customer details and their orders
+    // Find customer and orders data from contexts
     useEffect(() => {
-        const loadCustomerData = async () => {
+        const loadCustomerData = () => {
             try {
                 setLoading(true);
                 setError('');
@@ -57,58 +57,18 @@ function CustomerView() {
                 if (location.state?.customer) {
                     setCustomer(location.state.customer);
                 } else {
-                    // Option 2: Try to fetch from all users endpoint
-                    try {
-                        const allUsersRes = await fetchWithAuth(
-                            'http://127.0.0.1:8000/api/users/all/'
-                        );
-                        if (allUsersRes.ok) {
-                            const allUsers = await allUsersRes.json();
-                            const foundCustomer = allUsers.find(
-                                (user) => user.id.toString() === id
-                            );
-                            if (foundCustomer) {
-                                setCustomer(foundCustomer);
-                            } else {
-                                throw new Error('Customer not found in users list');
-                            }
-                        } else {
-                            throw new Error('Failed to load users data');
-                        }
-                    } catch (apiError) {
-                        console.warn('Users API failed:', apiError);
-                        throw new Error('Could not load customer details');
-                    }
-                }
-
-                // Fetch ALL orders and filter by user
-                let ordersData = [];
-                try {
-                    const allOrdersRes = await fetchWithAuth('http://127.0.0.1:8000/api/orders/');
-                    if (allOrdersRes.ok) {
-                        const allOrders = await allOrdersRes.json();
-
-                        // Filter orders by user - based on your actual Order model structure
-                        ordersData = allOrders.filter((order) => {
-                            // Check different possible user identifier fields
-                            return (
-                                order.user?.toString() === id ||
-                                (order.user &&
-                                    typeof order.user === 'object' &&
-                                    order.user.id?.toString() === id) ||
-                                order.user === customer?.username ||
-                                order.user_id?.toString() === id
-                            );
-                        });
+                    // Option 2: Find customer from context
+                    const foundCustomer = getUserById(id);
+                    if (foundCustomer) {
+                        setCustomer(foundCustomer);
                     } else {
-                        console.warn('Failed to load orders, continuing without order data');
+                        throw new Error('Customer not found in users list');
                     }
-                } catch (ordersError) {
-                    console.warn('Error loading orders:', ordersError);
-                    // Continue without orders data - this is not critical
                 }
 
-                setOrders(ordersData);
+                // Get orders for this customer from context
+                const customerOrders = getOrdersByUser(id);
+                setOrders(customerOrders);
             } catch (err) {
                 console.error('Error loading customer data:', err);
                 setError(`Failed to load customer details: ${err.message}`);
@@ -117,10 +77,28 @@ function CustomerView() {
             }
         };
 
-        if (id) {
+        // Only load when contexts have data
+        if (id && !usersLoading && !ordersLoading && allUsers.length > 0 && allOrders.length > 0) {
             loadCustomerData();
+        } else if (
+            id &&
+            (!usersLoading || !ordersLoading) &&
+            (allUsers.length === 0 || allOrders.length === 0)
+        ) {
+            // If contexts are done loading but no data found
+            setError('Customer not found in system');
+            setLoading(false);
         }
-    }, [id, fetchWithAuth, location.state, customer?.username]);
+    }, [
+        id,
+        allUsers,
+        allOrders,
+        usersLoading,
+        ordersLoading,
+        getUserById,
+        getOrdersByUser,
+        location.state,
+    ]);
 
     // Calculate age from date of birth
     const calculateAge = (dobString) => {
@@ -155,7 +133,7 @@ function CustomerView() {
         }
     };
 
-    if (loading) {
+    if (loading || usersLoading || ordersLoading) {
         return (
             <div className="flex min-h-64 items-center justify-center">
                 <div className="text-gray-500">Loading customer details...</div>
@@ -268,7 +246,9 @@ function CustomerView() {
                                         <FaEnvelope className="text-gray-400" />
                                         Email
                                     </label>
-                                    <p className="text-gray-900">{customer.email || 'Not provided'}</p>
+                                    <p className="text-gray-900">
+                                        {customer.email || 'Not provided'}
+                                    </p>
                                 </div>
 
                                 <div>
@@ -321,7 +301,9 @@ function CustomerView() {
 
                             <div className="space-y-3">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-500">Address</label>
+                                    <label className="text-sm font-medium text-gray-500">
+                                        Address
+                                    </label>
                                     <p className="text-gray-900">
                                         {customer.profile?.address || 'Not provided'}
                                     </p>
@@ -429,9 +411,7 @@ function CustomerView() {
                         </div>
                         <div className="flex justify-between md:block">
                             <span className="text-gray-600">Joined: </span>
-                            <span className="font-medium">
-                                {formatDate(customer.date_joined)}
-                            </span>
+                            <span className="font-medium">{formatDate(customer.date_joined)}</span>
                         </div>
                         <div className="flex justify-between md:block">
                             <span className="text-gray-600">Account Type: </span>

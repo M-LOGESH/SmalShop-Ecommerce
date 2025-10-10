@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../../../context/AuthContext.jsx';
+import { useProducts } from '../../../context/ProductsContext.jsx'; // Import ProductsContext
 import { toast } from 'react-toastify';
 import { showConfirmToast } from '../../../utils/toastHelpers.jsx';
 import ProductForm from './ProductForm.jsx';
@@ -7,9 +8,9 @@ import ProductTable from './ProductTable.jsx';
 
 function ManageItems() {
     const { fetchWithAuth, user } = useAuth();
-    const headingRef = useRef(null); // <-- Ref for scrolling to the heading
+    const { allProducts, refetchProducts, loading: productsLoading } = useProducts(); // Use products from context
+    const headingRef = useRef(null);
 
-    const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [subcategories, setSubcategories] = useState([]);
     const [editingProduct, setEditingProduct] = useState(null);
@@ -33,25 +34,46 @@ function ManageItems() {
         image: null,
     });
 
+    const [loading, setLoading] = useState({
+        categories: false,
+        subcategories: false,
+        submitting: false,
+    });
+
     useEffect(() => {
-        loadProducts();
         loadCategories();
         loadSubcategories();
     }, []);
 
-    const loadProducts = async () => {
-        const res = await fetchWithAuth('http://127.0.0.1:8000/api/products/');
-        setProducts(await res.json());
-    };
+    // Use products from context - no need to load separately
+    const products = allProducts;
 
     const loadCategories = async () => {
-        const res = await fetchWithAuth('http://127.0.0.1:8000/api/categories/');
-        setCategories(await res.json());
+        try {
+            setLoading((prev) => ({ ...prev, categories: true }));
+            const res = await fetchWithAuth('http://127.0.0.1:8000/api/categories/');
+            if (!res.ok) throw new Error('Failed to load categories');
+            setCategories(await res.json());
+        } catch (err) {
+            toast.error('Error loading categories');
+            console.error(err);
+        } finally {
+            setLoading((prev) => ({ ...prev, categories: false }));
+        }
     };
 
     const loadSubcategories = async () => {
-        const res = await fetchWithAuth('http://127.0.0.1:8000/api/subcategories/');
-        setSubcategories(await res.json());
+        try {
+            setLoading((prev) => ({ ...prev, subcategories: true }));
+            const res = await fetchWithAuth('http://127.0.0.1:8000/api/subcategories/');
+            if (!res.ok) throw new Error('Failed to load subcategories');
+            setSubcategories(await res.json());
+        } catch (err) {
+            toast.error('Error loading subcategories');
+            console.error(err);
+        } finally {
+            setLoading((prev) => ({ ...prev, subcategories: false }));
+        }
     };
 
     const handleChange = (e) => {
@@ -68,6 +90,8 @@ function ManageItems() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading((prev) => ({ ...prev, submitting: true }));
+
         const form = new FormData();
 
         Object.keys(formData).forEach((key) => {
@@ -88,26 +112,37 @@ function ManageItems() {
         try {
             const res = await fetchWithAuth(url, { method, body: form });
             if (!res.ok) throw new Error('Error saving product');
+
             toast.success(editingProduct ? 'Product updated!' : 'Product added!');
-            setFormData({
-                name: '',
-                quantity: '',
-                cost_price: '',
-                retail_price: '',
-                selling_price: '',
-                stock_status: 'in_stock',
-                category_id: '',
-                subcategories_ids: [],
-                brand: '',
-                manufacturer: '',
-                description: '',
-                image: null,
-            });
-            setEditingProduct(null);
-            loadProducts();
+
+            // Reset form
+            resetForm();
+
+            // Refresh products from context instead of local state
+            refetchProducts();
         } catch (err) {
             toast.error(err.message);
+        } finally {
+            setLoading((prev) => ({ ...prev, submitting: false }));
         }
+    };
+
+    const resetForm = () => {
+        setFormData({
+            name: '',
+            quantity: '',
+            cost_price: '',
+            retail_price: '',
+            selling_price: '',
+            stock_status: 'in_stock',
+            category_id: '',
+            subcategories_ids: [],
+            brand: '',
+            manufacturer: '',
+            description: '',
+            image: null,
+        });
+        setEditingProduct(null);
     };
 
     const handleAddCategory = async () => {
@@ -147,9 +182,16 @@ function ManageItems() {
 
     const handleDelete = (id) => {
         showConfirmToast('Are you sure you want to delete this product?', async () => {
-            await fetchWithAuth(`http://127.0.0.1:8000/api/products/${id}/`, { method: 'DELETE' });
-            toast.success('Product deleted!');
-            loadProducts();
+            try {
+                await fetchWithAuth(`http://127.0.0.1:8000/api/products/${id}/`, {
+                    method: 'DELETE',
+                });
+                toast.success('Product deleted!');
+                // Refresh products from context
+                refetchProducts();
+            } catch (err) {
+                toast.error('Error deleting product');
+            }
         });
     };
 
@@ -190,17 +232,25 @@ function ManageItems() {
                 setNewSubcategory={setNewSubcategory}
                 setSelectedCategoryForSub={setSelectedCategoryForSub}
                 setFormData={setFormData}
+                loading={loading}
             />
 
             <h2 className="mt-8 mb-4 text-xl font-bold">Products List</h2>
 
-            {/* Table Component */}
-            <ProductTable
-                products={products}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                user={user}
-            />
+            {/* Show loading state for products */}
+            {productsLoading ? (
+                <div className="flex justify-center py-8">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent"></div>
+                </div>
+            ) : (
+                /* Table Component */
+                <ProductTable
+                    products={products}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    user={user}
+                />
+            )}
         </div>
     );
 }

@@ -37,6 +37,24 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
     };
 
+    // Check if user is staff or admin
+    const isStaffOrAdmin = () => {
+        if (!user) return false;
+
+        // Check from decoded token
+        const payload = decodeJWT(user.access);
+        if (payload?.is_staff || payload?.is_superuser) {
+            return true;
+        }
+
+        // Check from user object (fallback)
+        if (user.is_staff || user.is_superuser) {
+            return true;
+        }
+
+        return false;
+    };
+
     const refreshAccessToken = async () => {
         if (!user?.refresh) return null;
 
@@ -86,6 +104,14 @@ export const AuthProvider = ({ children }) => {
 
     const loadCart = async () => {
         if (!user?.access) return;
+
+        // Skip cart loading for staff/admin
+        if (isStaffOrAdmin()) {
+            console.log('Skipping cart load for staff/admin user');
+            setCart([]);
+            return;
+        }
+
         try {
             const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/');
             if (res.ok) {
@@ -99,6 +125,15 @@ export const AuthProvider = ({ children }) => {
 
     const loadWishlist = async () => {
         if (!user?.access) return;
+
+        // Skip wishlist loading for staff/admin
+        if (isStaffOrAdmin()) {
+            console.log('Skipping wishlist load for staff/admin user');
+            setWishlist([]);
+            setWishlistData([]);
+            return;
+        }
+
         try {
             const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/');
             if (res.ok) {
@@ -112,7 +147,12 @@ export const AuthProvider = ({ children }) => {
     };
 
     const addToCart = async (productId, quantity = 1) => {
-        if (!user) return alert('Login to add to cart');
+        if (!user) return toast.error('Login to add to cart');
+
+        if (isStaffOrAdmin()) {
+            toast.error('Staff and admin users cannot use cart functionality');
+            return;
+        }
 
         try {
             const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
@@ -124,13 +164,20 @@ export const AuthProvider = ({ children }) => {
             if (res.ok) {
                 const data = await res.json();
                 setCart((prev) => [...prev, data]);
+                toast.success('Added to cart');
             }
         } catch (err) {
             console.error('Cart error:', err);
+            toast.error('Error adding to cart');
         }
     };
 
     const updateCartQuantity = async (cartId, quantity) => {
+        if (isStaffOrAdmin()) {
+            toast.error('Staff and admin users cannot modify cart');
+            return;
+        }
+
         try {
             if (quantity < 1) {
                 const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
@@ -156,6 +203,11 @@ export const AuthProvider = ({ children }) => {
     const toggleWishlist = async (productId) => {
         if (!user) {
             toast.error('Login to add to wishlist');
+            return;
+        }
+
+        if (isStaffOrAdmin()) {
+            toast.error('Staff and admin users cannot use wishlist functionality');
             return;
         }
 
@@ -229,6 +281,7 @@ export const AuthProvider = ({ children }) => {
                 toggleWishlist,
                 addToCart,
                 updateCartQuantity,
+                isStaffOrAdmin,
             }}
         >
             {children}

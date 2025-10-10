@@ -3,16 +3,16 @@ import { useState } from 'react';
 import Header from '../components/header/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import MobileHeader from '../components/header/MobileHeader.jsx';
-import Navbar from '../components/Navbar.jsx';
-import Login from '../components/Login.jsx';
-import Register from '../components/Register.jsx';
+import Navbar from '../components/header/Navbar.jsx';
+import Login from '../components/forms/Login.jsx';
+import Register from '../components/forms/Register.jsx';
 import Cart from '../pages/users/Cart.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 function MainLayout() {
     const location = useLocation();
     const { user, login, register, logout } = useAuth();
-    
+
     const [showRegister, setShowRegister] = useState(() => {
         return localStorage.getItem('showRegister') === 'true';
     });
@@ -27,7 +27,7 @@ function MainLayout() {
     );
 
     const isAdminPage = location.pathname.startsWith('/admin');
-    
+
     const getPageTitle = () => {
         if (location.pathname === '/account') return 'My Account';
         if (location.pathname === '/profile') return 'My Profile';
@@ -50,20 +50,15 @@ function MainLayout() {
     return (
         <div className="flex min-h-screen flex-col bg-gray-50">
             {/* Header with all state management */}
-            <Header 
-                user={user} 
+            <Header
+                user={user}
                 onLoginClick={() => handleSetShowLogin(true)}
                 cartOpen={cartOpen}
                 setCartOpen={setCartOpen}
             />
 
             {/* Fixed Mobile Header for specific pages */}
-            {showMobileHeader && (
-                <MobileHeader 
-                    title={getPageTitle()} 
-                    setCartOpen={setCartOpen} 
-                />
-            )}
+            {showMobileHeader && <MobileHeader title={getPageTitle()} setCartOpen={setCartOpen} />}
 
             {/* Cart Component - Always available in layout */}
             {(!user || (user && !user.is_staff)) && (
@@ -103,9 +98,7 @@ function MainLayout() {
             {/* Main content */}
             <div
                 className={`flex-grow pb-18 sm:pt-18 lg:pb-0 ${
-                    showMobileHeader 
-                        ? 'pt-16'
-                        : (isAdminPage ? 'pt-14' : 'pt-24 sm:pt-18')
+                    showMobileHeader ? 'pt-16' : isAdminPage ? 'pt-14' : 'pt-24 sm:pt-18'
                 }`}
             >
                 <Outlet />
@@ -113,7 +106,7 @@ function MainLayout() {
 
             {/* Bottom Navbar - Always visible on mobile */}
             <Navbar user={user} />
-            
+
             <Footer />
         </div>
     );

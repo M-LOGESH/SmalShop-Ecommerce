@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ProductActionButton from '../components/ProductActionButton';
-import WishlistIcon from '../components/WishlistIcon';
+import ProductActionButton from '../components/common/ProductActionButton';
+import WishlistIcon from '../components/common/WishlistIcon';
 
 function Wishlist() {
     const { user, wishlistData, cart, addToCart, updateCartQuantity } = useAuth();
@@ -16,19 +16,21 @@ function Wishlist() {
         }
     }, [wishlistData]);
 
-if (!user)
-    return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-            <div className="-mt-30">
-                <img
-                    src="/src/assets/img/emptywishlist.png" 
-                    alt="Login required"
-                    className="mb-4 h-64 w-64"
-                />
-                <p className="text-lg text-center font-semibold text-gray-600">Login to view your Wishlist</p>
+    if (!user)
+        return (
+            <div className="flex min-h-screen flex-col items-center justify-center p-4">
+                <div className="-mt-30">
+                    <img
+                        src="/src/assets/img/emptywishlist.png"
+                        alt="Login required"
+                        className="mb-4 h-64 w-64"
+                    />
+                    <p className="text-center text-lg font-semibold text-gray-600">
+                        Login to view your Wishlist
+                    </p>
+                </div>
             </div>
-        </div>
-    );
+        );
 
     if (loading)
         return (
@@ -39,18 +41,19 @@ if (!user)
 
     if (!wishlistData || wishlistData.length === 0)
         return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-            <div className="-mt-30">
-                <img
-                    src="/src/assets/img/emptywishlist.png" 
-                    alt="Wishlist"
-                    className="mb-4 h-64 w-64"
-                />
-                <p className="text-lg text-center font-semibold text-gray-600">No items in Wishlist</p>
+            <div className="flex min-h-screen flex-col items-center justify-center p-4">
+                <div className="-mt-30">
+                    <img
+                        src="/src/assets/img/emptywishlist.png"
+                        alt="Wishlist"
+                        className="mb-4 h-64 w-64"
+                    />
+                    <p className="text-center text-lg font-semibold text-gray-600">
+                        No items in Wishlist
+                    </p>
+                </div>
             </div>
-        </div>
-    );
-
+        );
 
     const getCartItem = (productId) => cart.find((item) => item.product === productId);
 

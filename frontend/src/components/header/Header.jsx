@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Navbar from '../Navbar.jsx';
-import SearchBar from '../SearchBar.jsx';
+import Navbar from './Navbar.jsx';
+import SearchBar from '../common/SearchBar.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { FiShoppingCart, FiMenu } from 'react-icons/fi';
 

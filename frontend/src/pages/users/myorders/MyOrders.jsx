@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import PendingOrders from './PendingOrders';
 import CompletedOrders from './CompletedOrders';
+import Loading from '../../../components/common/Loading';
 
 export default function MyOrders() {
     const { user, fetchWithAuth } = useAuth();
@@ -64,11 +65,7 @@ export default function MyOrders() {
         );
 
     if (loading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <p className="animate-pulse text-gray-500">Loading your orders...</p>
-            </div>
-        );
+        return <Loading />;
     }
 
     if (!orders || orders.length === 0) {

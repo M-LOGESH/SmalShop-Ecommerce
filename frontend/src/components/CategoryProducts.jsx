@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ProductActionButton from './ProductActionButton';
-import WishlistIcon from './WishlistIcon';
+import { useProducts } from '../context/ProductsContext';
+import ProductActionButton from './common/ProductActionButton';
+import WishlistIcon from './common/WishlistIcon';
 
 function CategoryProducts({ categoryName, title, slug }) {
-    const { user, fetchWithAuth, cart, addToCart, updateCartQuantity } = useAuth();
-    const [products, setProducts] = useState([]);
+    const { cart, addToCart, updateCartQuantity } = useAuth();
+    const { getProductsByCategory, loading, hasFetched } = useProducts();
     const navigate = useNavigate();
 
     const scrollRef = useRef(null);
@@ -19,28 +20,11 @@ function CategoryProducts({ categoryName, title, slug }) {
     const [scrollLeft, setScrollLeft] = useState(0);
     const pointerTypeRef = useRef('mouse');
 
-    useEffect(() => {
-        loadProducts();
-    }, [categoryName, user]);
-
-    const loadProducts = async () => {
-        try {
-            let res;
-            if (user?.access) {
-                res = await fetchWithAuth('http://127.0.0.1:8000/api/products/');
-            } else {
-                res = await fetch('http://127.0.0.1:8000/api/products/');
-            }
-
-            const data = await res.json();
-            if (!Array.isArray(data)) return;
-
-            const filtered = data.filter((p) => p.category?.name === categoryName);
-            setProducts(filtered);
-        } catch (err) {
-            console.error('Error fetching products:', err);
-        }
-    };
+    // Memoize filtered products to prevent unnecessary recalculations
+    const products = useMemo(() => {
+        // Only return products if we have fetched data
+        return hasFetched ? getProductsByCategory(categoryName) : [];
+    }, [getProductsByCategory, categoryName, hasFetched]);
 
     // --- Drag-to-scroll (desktop only) ---
     const handlePointerDown = (e) => {
@@ -95,7 +79,37 @@ function CategoryProducts({ categoryName, title, slug }) {
         };
     }, [products]);
 
-    if (products.length === 0) return null;
+    // Show loading skeleton only if we're still loading AND haven't fetched data yet
+    if (loading && !hasFetched) {
+        return (
+            <div className="relative flex justify-center p-3 sm:px-10">
+                <div className="w-full max-w-6xl">
+                    <div className="mb-2 flex items-center justify-between">
+                        <h2 className="text-lg font-bold">{title || categoryName}</h2>
+                        <div className="flex items-center gap-1 text-sm font-medium text-violet-600">
+                            See all <FaChevronRight size={12} />
+                        </div>
+                    </div>
+                    <div className="flex gap-4 overflow-x-auto py-3">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="w-35 flex-shrink-0 animate-pulse">
+                                <div className="h-24 rounded-lg bg-gray-200 sm:h-32"></div>
+                                <div className="mt-2 h-4 rounded bg-gray-200"></div>
+                                <div className="mt-1 h-3 w-3/4 rounded bg-gray-200"></div>
+                                <div className="mt-2 h-8 rounded bg-gray-200"></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Don't render anything if no products and we have fetched data
+    if (hasFetched && products.length === 0) return null;
+
+    // If we haven't fetched yet but also not loading (edge case), return null
+    if (!hasFetched && !loading) return null;
 
     return (
         <div className="relative flex justify-center p-3 sm:px-10">

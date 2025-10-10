@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ProductActionButton from '../components/ProductActionButton';
-import WishlistIcon from '../components/WishlistIcon';
+import { useProducts } from '../context/ProductsContext';
+import ProductActionButton from '../components/common/ProductActionButton';
+import WishlistIcon from '../components/common/WishlistIcon';
 
 function CategoryPage() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const { user, fetchWithAuth, cart, addToCart, updateCartQuantity } = useAuth();
-
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { cart, addToCart, updateCartQuantity } = useAuth();
+    const { getProductsByCategorySlug, loading, hasFetched } = useProducts();
 
     const categoryMap = {
         biscuits: 'Biscuits & Cookies',
@@ -21,36 +20,31 @@ function CategoryPage() {
     };
     const categoryName = categoryMap[slug] || slug;
 
-    useEffect(() => {
-        const loadProducts = async () => {
-            try {
-                const res = user?.access
-                    ? await fetchWithAuth('http://127.0.0.1:8000/api/products/')
-                    : await fetch('http://127.0.0.1:8000/api/products/');
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                    setProducts(data.filter((p) => p.category?.slug === slug));
-                }
-            } catch (err) {
-                console.error('Error fetching products:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadProducts();
-    }, [slug, user]);
+    const products = getProductsByCategorySlug(slug);
 
     const getCartItem = (productId) => cart.find((item) => item.product === productId);
 
-    if (loading) {
+    if (loading && !hasFetched) {
         return (
-            <div className="min-h-screen px-4 py-4 sm:px-8">
-                
+            <div className="min-h-screen bg-gray-50 px-4 py-4 sm:px-8">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="mb-4 text-xl font-bold">{categoryName}</h1>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                        {[...Array(10)].map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="h-32 rounded bg-gray-200"></div>
+                                <div className="mt-2 h-4 rounded bg-gray-200"></div>
+                                <div className="mt-1 h-3 w-3/4 rounded bg-gray-200"></div>
+                                <div className="mt-2 h-8 rounded bg-gray-200"></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         );
     }
 
-    if (!products.length) {
+    if (hasFetched && !products.length) {
         return (
             <div className="min-h-screen bg-gray-50 px-4 py-4 sm:px-8">
                 <div className="mx-auto max-w-6xl">
@@ -91,7 +85,6 @@ function CategoryPage() {
                                             <div className="text-xs text-gray-500">No Image</div>
                                         )}
 
-                                        {/* Use WishlistIcon component - staff check is handled inside */}
                                         <WishlistIcon
                                             productId={p.id}
                                             size={16}

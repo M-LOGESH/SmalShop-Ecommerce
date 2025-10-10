@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FaEye, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ScrollableDropdown from '../../../components/ScrollableDropdown';
+import ScrollableDropdown from '../../../components/common/ScrollableDropdown';
 
-function OrdersTable({ orders, user }) {
+function OrdersTable({ orders }) {
     const navigate = useNavigate();
     const [activeMode, setActiveMode] = useState('completed'); // 'completed' or 'cancelled'
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('');
 
-    // Filter orders based on active mode
-    const filteredOrders = orders.filter((order) => order.status === activeMode);
+    // Memoize filtered orders
+    const filteredOrders = useMemo(() => {
+        return orders.filter((order) => order.status === activeMode);
+    }, [orders, activeMode]);
+
+    // Memoize order counts for better performance
+    const orderCounts = useMemo(() => {
+        const completedOrders = orders.filter((order) => order.status === 'completed').length;
+        const cancelledOrders = orders.filter((order) => order.status === 'cancelled').length;
+        return { completedOrders, cancelledOrders };
+    }, [orders]);
 
     const formatDate = (isoString) => {
         if (!isoString) return '-';
@@ -31,36 +40,40 @@ function OrdersTable({ orders, user }) {
         });
     };
 
-    // Simple username extraction - based on your data structure
+    // Simple username extraction
     const getUsername = (order) => {
         return order.user || 'N/A';
     };
 
-    // Search and filter logic
-    let displayOrders = filteredOrders.filter((order) => {
-        const orderNumber = order.order_number?.toLowerCase() || '';
-        const username = getUsername(order)?.toLowerCase() || '';
+    // Memoize display orders with search and sort
+    const displayOrders = useMemo(() => {
+        let result = filteredOrders.filter((order) => {
+            const orderNumber = order.order_number?.toLowerCase() || '';
+            const username = getUsername(order)?.toLowerCase() || '';
 
-        return (
-            orderNumber.includes(searchTerm.toLowerCase()) ||
-            username.includes(searchTerm.toLowerCase())
-        );
-    });
+            return (
+                orderNumber.includes(searchTerm.toLowerCase()) ||
+                username.includes(searchTerm.toLowerCase())
+            );
+        });
 
-    // Sorting logic
-    if (sortBy === 'date-asc') {
-        displayOrders = [...displayOrders].sort(
-            (a, b) => new Date(a.created_at) - new Date(b.created_at)
-        );
-    } else if (sortBy === 'date-desc') {
-        displayOrders = [...displayOrders].sort(
-            (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-    } else if (sortBy === 'price-asc') {
-        displayOrders = [...displayOrders].sort((a, b) => a.total_price - b.total_price);
-    } else if (sortBy === 'price-desc') {
-        displayOrders = [...displayOrders].sort((a, b) => b.total_price - a.total_price);
-    }
+        // Sorting logic
+        if (sortBy === 'date-asc') {
+            result = [...result].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        } else if (sortBy === 'date-desc') {
+            result = [...result].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        } else if (sortBy === 'price-asc') {
+            result = [...result].sort((a, b) => (a.total_price || 0) - (b.total_price || 0));
+        } else if (sortBy === 'price-desc') {
+            result = [...result].sort((a, b) => (b.total_price || 0) - (a.total_price || 0));
+        }
+
+        return result;
+    }, [filteredOrders, searchTerm, sortBy]);
+
+    const handleViewOrder = (order) => {
+        navigate(`/admin/orders/${order.id}`, { state: { order: order } });
+    };
 
     if (!filteredOrders.length) {
         return (
@@ -72,9 +85,7 @@ function OrdersTable({ orders, user }) {
             </div>
         );
     }
-    const handleViewOrder = (order) => {
-        navigate(`/admin/orders/${order.id}`, { state: { order: order } });
-    };
+
     return (
         <div className="w-full">
             {/* Mode Toggle Buttons */}
@@ -88,7 +99,7 @@ function OrdersTable({ orders, user }) {
                     }`}
                 >
                     <FaCheckCircle />
-                    Completed
+                    Completed ({orderCounts.completedOrders})
                 </button>
                 <button
                     onClick={() => setActiveMode('cancelled')}
@@ -99,7 +110,7 @@ function OrdersTable({ orders, user }) {
                     }`}
                 >
                     <FaTimesCircle />
-                    Cancelled
+                    Cancelled ({orderCounts.cancelledOrders})
                 </button>
             </div>
 

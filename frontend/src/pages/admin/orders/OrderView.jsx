@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext.jsx';
+import { useOrders } from '../../../context/OrdersContext.jsx';
+import { useAdminUsers } from '../../../context/AdminUsersContext.jsx';
 import {
     FaArrowLeft,
     FaShoppingBag,
@@ -19,49 +20,36 @@ import {
 function OrderView() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { fetchWithAuth } = useAuth();
+    const { allOrders, getOrderById, loading: ordersLoading } = useOrders();
+    const { allUsers, getUserByUsername, loading: usersLoading } = useAdminUsers();
 
     const [order, setOrder] = useState(null);
     const [customer, setCustomer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Fetch order details and customer information
+    // Find order and customer data from contexts
     useEffect(() => {
-        const loadOrderData = async () => {
+        const loadOrderData = () => {
             try {
                 setLoading(true);
                 setError('');
 
-                // Fetch order details
-                const orderRes = await fetchWithAuth(`http://127.0.0.1:8000/api/orders/${id}/`);
-                if (!orderRes.ok) {
-                    throw new Error('Failed to load order details');
+                // Find order from context
+                const foundOrder = getOrderById(id);
+                if (!foundOrder) {
+                    throw new Error('Order not found');
                 }
-                const orderData = await orderRes.json();
-                setOrder(orderData);
+                setOrder(foundOrder);
 
-                // Try to fetch customer details from all users endpoint
-                try {
-                    const allUsersRes = await fetchWithAuth('http://127.0.0.1:8000/api/users/all/');
-                    if (allUsersRes.ok) {
-                        const allUsers = await allUsersRes.json();
-                        
-                        // Find customer by username (since order.user contains username)
-                        const foundCustomer = allUsers.find(user => 
-                            user.username === orderData.user || 
-                            user.id?.toString() === orderData.user?.toString()
-                        );
-                        
-                        if (foundCustomer) {
-                            setCustomer(foundCustomer);
-                        } else {
-                            console.log('Customer not found in users list');
-                        }
-                    }
-                } catch (customerError) {
-                    console.warn('Could not load customer details:', customerError);
-                    // Continue without customer details
+                // Find customer from context
+                const foundCustomer = getUserByUsername(foundOrder.user) || 
+                                   allUsers.find(user => user.id?.toString() === foundOrder.user?.toString());
+                
+                if (foundCustomer) {
+                    setCustomer(foundCustomer);
+                } else {
+                    console.log('Customer not found in users list');
                 }
 
             } catch (err) {
@@ -72,10 +60,15 @@ function OrderView() {
             }
         };
 
-        if (id) {
+        // Only load when contexts have data
+        if (id && !ordersLoading && !usersLoading && allOrders.length > 0 && allUsers.length > 0) {
             loadOrderData();
+        } else if (id && (!ordersLoading || !usersLoading) && (allOrders.length === 0 || allUsers.length === 0)) {
+            // If contexts are done loading but no data found
+            setError('Order not found in system');
+            setLoading(false);
         }
-    }, [id, fetchWithAuth]);
+    }, [id, allOrders, allUsers, ordersLoading, usersLoading, getOrderById, getUserByUsername]);
 
     // Format date for display
     const formatDate = (dateString) => {
@@ -125,7 +118,7 @@ function OrderView() {
         }
     };
 
-    if (loading) {
+    if (loading || ordersLoading || usersLoading) {
         return (
             <div className="flex min-h-64 items-center justify-center">
                 <div className="text-gray-500">Loading order details...</div>
@@ -217,7 +210,7 @@ function OrderView() {
                                 <label className="text-sm font-medium text-gray-500">
                                     Status
                                 </label>
-                                <span className={`inline-flex items-center rounded-full border px-2 py-1 ml-3  text-sm font-medium ${getStatusBadge(order.status)}`}>
+                                <span className={`inline-flex items-center rounded-full border px-2 py-1 ml-3 text-sm font-medium ${getStatusBadge(order.status)}`}>
                                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                                 </span>
                             </div>

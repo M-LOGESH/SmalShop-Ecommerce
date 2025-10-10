@@ -9,7 +9,7 @@ import {
     FaTags,
     FaInfoCircle,
 } from 'react-icons/fa';
-import ScrollableDropdown from '../../../components/ScrollableDropdown';
+import ScrollableDropdown from '../../../components/common/ScrollableDropdown';
 
 function ProductTable({ products, onEdit, onDelete, user }) {
     const [activeTable, setActiveTable] = useState('default');
@@ -51,7 +51,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                     <button
                         key={tab.key}
                         onClick={() => setActiveTable(tab.key)}
-                        className={`flex flex-shrink-0 items-center gap-2 px-3 py-1 sm:py-2 font-medium whitespace-nowrap ${
+                        className={`flex flex-shrink-0 items-center gap-2 px-3 py-1 font-medium whitespace-nowrap sm:py-2 ${
                             activeTable === tab.key
                                 ? 'border-b-2 border-violet-500 text-violet-600'
                                 : 'text-gray-500 hover:text-gray-700'
@@ -80,7 +80,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                     placeholder="Search products..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="min-w-[200px] flex-1 rounded border border-gray-400 px-3 py-1 sm:py-2 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none"
+                    className="min-w-[200px] flex-1 rounded border border-gray-400 px-3 py-1 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none sm:py-2"
                 />
 
                 {activeTable === 'default' && (

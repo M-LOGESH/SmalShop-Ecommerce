@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useOrders } from '../../context/OrdersContext.jsx';
+import { useAdminUsers } from '../../context/AdminUsersContext.jsx';
+import { useProducts } from '../../context/ProductsContext.jsx';
 import {
     FaUsers,
     FaShoppingBag,
@@ -19,14 +21,17 @@ import {
 
 function Loading() {
     return (
-        <div className="min-h-120 flex items-center justify-center bg-gray-50">
-            <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="flex min-h-120 items-center justify-center bg-gray-50">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-500 border-t-transparent"></div>
         </div>
     );
 }
 
 function Dashboard() {
-    const { fetchWithAuth } = useAuth();
+    const { allOrders, ordersLoading, hasFetched: ordersFetched } = useOrders();
+    const { allUsers, loading: usersLoading, hasFetched: usersFetched } = useAdminUsers();
+    const { allProducts, loading: productsLoading, hasFetched: productsFetched } = useProducts();
+
     const [stats, setStats] = useState({
         totalCustomers: 0,
         totalOrders: 0,
@@ -41,24 +46,18 @@ function Dashboard() {
     const [topProducts, setTopProducts] = useState([]);
     const [topCustomers, setTopCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [timeRange, setTimeRange] = useState('week'); // week, month, year
+    const [timeRange, setTimeRange] = useState('week');
 
-    // Fetch dashboard data
+    // Calculate dashboard data when contexts are loaded
     useEffect(() => {
-        const loadDashboardData = async () => {
+        const calculateDashboardData = () => {
             try {
                 setLoading(true);
 
-                // Fetch all necessary data
-                const [usersRes, ordersRes, productsRes] = await Promise.all([
-                    fetchWithAuth('http://127.0.0.1:8000/api/users/all/'),
-                    fetchWithAuth('http://127.0.0.1:8000/api/orders/'),
-                    fetchWithAuth('http://127.0.0.1:8000/api/products/'),
-                ]);
-
-                const users = usersRes.ok ? await usersRes.json() : [];
-                const orders = ordersRes.ok ? await ordersRes.json() : [];
-                const products = productsRes.ok ? await productsRes.json() : [];
+                // Use data from contexts instead of API calls
+                const users = allUsers;
+                const orders = allOrders;
+                const products = allProducts;
 
                 // Filter out staff and admin users
                 const customers = users.filter((user) => !user.is_staff && !user.is_superuser);
@@ -90,7 +89,7 @@ function Dashboard() {
                     (user) => new Date(user.date_joined) > oneWeekAgo
                 ).length;
 
-                // Find low stock products (assuming stock_status field)
+                // Find low stock products
                 const lowStockProducts = products.filter(
                     (product) => product.stock_status === 'out_of_stock'
                 ).length;
@@ -100,14 +99,17 @@ function Dashboard() {
                     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
                     .slice(0, 5);
 
-                // Calculate top products (by order frequency)
+                // Calculate top products from COMPLETED orders only
                 const productCount = {};
-                orders.forEach((order) => {
-                    order.items?.forEach((item) => {
-                        const productId = item.product;
-                        productCount[productId] = (productCount[productId] || 0) + item.quantity;
+                orders
+                    .filter((order) => order.status === 'completed')
+                    .forEach((order) => {
+                        order.items?.forEach((item) => {
+                            const productId = item.product;
+                            productCount[productId] =
+                                (productCount[productId] || 0) + item.quantity;
+                        });
                     });
-                });
 
                 const topProductsData = Object.entries(productCount)
                     .sort(([, a], [, b]) => b - a)
@@ -122,7 +124,7 @@ function Dashboard() {
                         };
                     });
 
-                // Calculate top customers (by total spending)
+                // Calculate top customers (by total spending from completed orders)
                 const customerSpending = {};
                 orders
                     .filter((order) => order.status === 'completed')
@@ -167,14 +169,40 @@ function Dashboard() {
                 setTopProducts(topProductsData);
                 setTopCustomers(topCustomersData);
             } catch (err) {
-                console.error('Error loading dashboard data:', err);
+                console.error('Error calculating dashboard data:', err);
             } finally {
                 setLoading(false);
             }
         };
 
-        loadDashboardData();
-    }, [fetchWithAuth, timeRange]);
+        // Only calculate when all contexts have data
+        if (
+            usersFetched &&
+            !usersLoading &&
+            ordersFetched &&
+            !ordersLoading &&
+            productsFetched &&
+            !productsLoading
+        ) {
+            calculateDashboardData();
+        }
+    }, [
+        allUsers,
+        allOrders,
+        allProducts,
+        usersLoading,
+        ordersLoading,
+        productsLoading,
+        usersFetched,
+        ordersFetched,
+        productsFetched,
+        timeRange, // Recalculate when time range changes
+    ]);
+
+    // Show loading if any context is still loading
+    if (usersLoading || ordersLoading || productsLoading) {
+        return <Loading />;
+    }
 
     // Format currency
     const formatCurrency = (amount) => {
@@ -323,6 +351,7 @@ function Dashboard() {
                 </div>
             </div>
 
+            {/* Rest of your component remains exactly the same... */}
             {/* Second Row - Order Status Cards */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {/* Completed Orders */}

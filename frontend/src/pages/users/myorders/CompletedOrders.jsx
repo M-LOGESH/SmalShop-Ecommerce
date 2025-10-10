@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ScrollableDropdown from '../../../components/ScrollableDropdown'; // adjust path
+import ScrollableDropdown from '../../../components/common/ScrollableDropdown'; // adjust path
 
 export default function CompletedOrders({ orders }) {
     const navigate = useNavigate();
@@ -47,8 +47,9 @@ export default function CompletedOrders({ orders }) {
         filteredOrders = [...filteredOrders].sort((a, b) => b.total_price - a.total_price);
     }
 
-    if (!completedOrders.length) return  (
-            <div className="flex flex-col items-center justify-center mt-30 p-4">
+    if (!completedOrders.length)
+        return (
+            <div className="mt-30 flex flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
                         src="/src/assets/img/emptyorder.png"
@@ -66,8 +67,6 @@ export default function CompletedOrders({ orders }) {
         <div className="flex flex-col gap-2">
             {/* Header row with title + controls */}
             <div className="mt-8 mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
-
                 {/* Search + Filter */}
                 <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                     {/* Search */}

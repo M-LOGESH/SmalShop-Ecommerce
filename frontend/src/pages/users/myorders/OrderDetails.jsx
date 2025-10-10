@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useOrders } from '../../../context/OrdersContext';
 import {
     FaShoppingCart,
     FaClock,
@@ -22,24 +22,21 @@ const STATUS_STEPS = [
 
 export default function OrderDetails() {
     const { id } = useParams();
-    const { fetchWithAuth } = useAuth();
-    const [order, setOrder] = useState(null);
+    const { getOrderById, loading: ordersLoading } = useOrders();
 
-    useEffect(() => {
-        const loadOrder = async () => {
-            try {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/orders/${id}/`);
-                if (!res.ok) throw new Error('Failed to fetch order');
-                const data = await res.json();
-                setOrder(data);
-            } catch (err) {
-                console.error('Error fetching order:', err);
-            }
-        };
-        loadOrder();
-    }, [id, fetchWithAuth]);
+    const order = getOrderById(id);
 
-    if (!order) return <p className="p-4 min-h-screen">Loading order details...</p>;
+    if (ordersLoading) {
+        return <p className="min-h-screen p-4">Loading order details...</p>;
+    }
+
+    if (!order) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <p className="text-gray-500">Order not found.</p>
+            </div>
+        );
+    }
 
     // Adjust stepIndex: completed includes "ordered" as first step
     const stepIndex = STATUS_STEPS.findIndex((s) => s.key === order.status) + 1;
@@ -64,7 +61,7 @@ export default function OrderDetails() {
     };
 
     return (
-        <div className="mx-auto max-w-6xl min-h-screen">
+        <div className="mx-auto min-h-screen max-w-6xl">
             <div className="p-3 sm:p-6 md:flex md:gap-6">
                 {/* LEFT SIDE */}
                 <div className="flex-1 space-y-2 sm:space-y-4">
@@ -151,7 +148,7 @@ export default function OrderDetails() {
 
                 {/* RIGHT SIDE - Product Details */}
                 <div className="flex-1">
-                    <div className="rounded-lg p-4 shadow bg-white">
+                    <div className="rounded-lg bg-white p-4 shadow">
                         <h3 className="mb-3 font-medium">Products Details</h3>
                         <div className="max-h-80 space-y-3 overflow-y-auto rounded bg-violet-50 p-2">
                             {order.items.map((item) => (

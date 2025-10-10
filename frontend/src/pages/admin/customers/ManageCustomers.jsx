@@ -1,34 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext.jsx';
+import React from 'react';
+import { useAdminUsers } from '../../../context/AdminUsersContext.jsx';
 import CustomersTable from './CustomersTable.jsx';
 
 function ManageCustomers() {
-    const { fetchWithAuth, user } = useAuth();
-    const [usersData, setUsersData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    // Fetch all users data
-    useEffect(() => {
-        const loadUsers = async () => {
-            try {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/users/all/');
-                if (res.ok) {
-                    const data = await res.json();
-                    setUsersData(data);
-                } else {
-                    setError('Failed to load users data');
-                }
-            } catch (err) {
-                console.error('Error loading users:', err);
-                setError('Error loading users data');
-            } finally {
-                setLoading(false);
-            }
-        };
-        
-        loadUsers();
-    }, [fetchWithAuth]);
+    const { allUsers, loading, error } = useAdminUsers();
 
     if (loading) {
         return (
@@ -41,6 +16,7 @@ function ManageCustomers() {
     if (error) {
         return (
             <div>
+                <h1 className="text-2xl font-bold mb-6">Manage Customers</h1>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <h3 className="text-red-800 font-semibold">Error</h3>
                     <p className="text-red-600">{error}</p>
@@ -55,7 +31,7 @@ function ManageCustomers() {
     return (
         <div>
             <h1 className="text-2xl font-bold mb-6">Manage Customers</h1>            
-            <CustomersTable users={usersData} user={user} />
+            <CustomersTable users={allUsers} />
         </div>
     );
 }

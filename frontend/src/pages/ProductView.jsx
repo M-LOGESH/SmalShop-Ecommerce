@@ -1,21 +1,20 @@
+// pages/ProductView.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useProducts } from '../context/ProductsContext';
 import { FaChevronRight, FaHome } from 'react-icons/fa';
-import ProductActionButton from '../components/ProductActionButton';
+import ProductActionButton from '../components/common/ProductActionButton';
 import CategoryProducts from '../components/CategoryProducts';
-import WishlistIcon from '../components/WishlistIcon';
+import WishlistIcon from '../components/common/WishlistIcon';
+import { toast } from 'react-toastify';
 
 function ProductView() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const {
-        user,
-        fetchWithAuth,
-        cart,
-        addToCart,
-        updateCartQuantity,
-    } = useAuth();
+    const { user, fetchWithAuth, cart, addToCart, updateCartQuantity } = useAuth();
+
+    const { getProductById, allProducts, loading: productsLoading, hasFetched } = useProducts();
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -23,11 +22,23 @@ function ProductView() {
 
     useEffect(() => {
         loadProduct();
-    }, [id, user]);
+    }, [id, user, allProducts]);
 
     const loadProduct = async () => {
         try {
             setLoading(true);
+
+            // First try to get product from cache
+            const cachedProduct = getProductById(id);
+            if (cachedProduct) {
+                console.log('🔄 ProductView: Using cached product');
+                setProduct(cachedProduct);
+                setLoading(false);
+                return;
+            }
+
+            console.log('🚀 ProductView: Fetching individual product');
+            // If not in cache, fetch individually
             const res = user?.access
                 ? await fetchWithAuth(`http://127.0.0.1:8000/api/products/${id}/`)
                 : await fetch(`http://127.0.0.1:8000/api/products/${id}/`);
@@ -35,9 +46,11 @@ function ProductView() {
             if (res.ok) {
                 const data = await res.json();
                 setProduct(data);
-            } else {
+            } else if (res.status === 404) {
                 toast.error('Product not found');
                 navigate('/');
+            } else {
+                toast.error('Error loading product');
             }
         } catch (err) {
             console.error('Error fetching product:', err);
@@ -47,13 +60,54 @@ function ProductView() {
         }
     };
 
-
     const getCartItem = (productId) => cart.find((item) => item.product === productId);
 
+    // Show loading state
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-lg">Loading...</div>
+            <div className="min-h-screen bg-white">
+                <div className="mx-auto max-w-5xl px-4 py-2 sm:py-6">
+                    {/* Breadcrumb Skeleton */}
+                    <div className="mx-auto mb-5 max-w-5xl py-3">
+                        <div className="flex items-center space-x-2">
+                            <div className="h-4 w-20 animate-pulse rounded bg-gray-200"></div>
+                            <FaChevronRight size={12} className="text-gray-300" />
+                            <div className="h-4 w-24 animate-pulse rounded bg-gray-200"></div>
+                            <FaChevronRight size={12} className="text-gray-300" />
+                            <div className="h-4 w-32 animate-pulse rounded bg-gray-200"></div>
+                        </div>
+                    </div>
+
+                    {/* Product Grid Skeleton */}
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-6">
+                        {/* Image Section Skeleton */}
+                        <div className="space-y-4">
+                            <div className="aspect-square animate-pulse rounded-xl bg-gray-200"></div>
+                            <div className="flex justify-center gap-2">
+                                {[...Array(4)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="h-12 w-12 animate-pulse rounded bg-gray-200"
+                                    ></div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Details Section Skeleton */}
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <div className="h-8 w-3/4 animate-pulse rounded bg-gray-200"></div>
+                                <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200"></div>
+                            </div>
+                            <div className="h-12 w-1/3 animate-pulse rounded bg-gray-200"></div>
+                            <div className="space-y-3">
+                                <div className="h-6 animate-pulse rounded bg-gray-200"></div>
+                                <div className="h-4 animate-pulse rounded bg-gray-200"></div>
+                                <div className="h-4 animate-pulse rounded bg-gray-200"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -61,7 +115,15 @@ function ProductView() {
     if (!product) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <div className="text-lg text-red-500">Product not found</div>
+                <div className="text-center">
+                    <div className="mb-4 text-lg text-red-500">Product not found</div>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="rounded-lg bg-violet-600 px-4 py-2 text-white hover:bg-violet-700"
+                    >
+                        Go Back Home
+                    </button>
+                </div>
             </div>
         );
     }
@@ -77,11 +139,11 @@ function ProductView() {
             {/* Main Content */}
             <div className="mx-auto max-w-5xl px-4 py-2 sm:py-6">
                 {/* Breadcrumb */}
-                <div className="mx-auto max-w-5xl py-3 mb-5">
+                <div className="mx-auto mb-5 max-w-5xl py-3">
                     <nav className="flex items-center space-x-2 text-sm text-gray-600">
                         <button
                             onClick={() => navigate('/')}
-                            className="flex items-center gap-1 hover:text-gray-900"
+                            className="flex items-center gap-1 transition-colors hover:text-gray-900"
                         >
                             <FaHome size={14} />
                             <span>Home</span>
@@ -89,7 +151,7 @@ function ProductView() {
                         <FaChevronRight size={12} />
                         <button
                             onClick={() => navigate('/category')}
-                            className="hover:text-gray-900"
+                            className="transition-colors hover:text-gray-900"
                         >
                             <span>Category</span>
                         </button>
@@ -98,7 +160,7 @@ function ProductView() {
                             <>
                                 <button
                                     onClick={() => navigate(`/category/${product.category.slug}`)}
-                                    className="hover:text-gray-900"
+                                    className="transition-colors hover:text-gray-900"
                                 >
                                     {product.category.name}
                                 </button>
@@ -108,14 +170,14 @@ function ProductView() {
                         <span className="font-medium text-gray-900">{product.name}</span>
                     </nav>
                 </div>
-                
+
                 {/* Main Product Grid */}
                 <div className="relative">
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-6">
                         {/* Left Side - Sticky Image Section */}
-                        <div className="lg:sticky lg:top-25 lg:self-start space-y-4">
+                        <div className="space-y-4 lg:sticky lg:top-25 lg:self-start">
                             {/* Main Image */}
-                            <div className="mx-auto flex aspect-square max-w-sm items-center rounded-xl border border-gray-200 justify-center bg-gray-50">
+                            <div className="mx-auto flex aspect-square max-w-sm items-center justify-center rounded-xl border border-gray-200 bg-gray-50">
                                 {images.length > 0 ? (
                                     <img
                                         src={images[selectedImage]}
@@ -136,10 +198,10 @@ function ProductView() {
                                         <button
                                             key={index}
                                             onClick={() => setSelectedImage(index)}
-                                            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center border bg-white ${
+                                            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center border bg-white transition-all ${
                                                 selectedImage === index
-                                                    ? 'border-violet-600'
-                                                    : 'border-gray-300'
+                                                    ? 'border-violet-600 ring-2 ring-violet-200'
+                                                    : 'border-gray-300 hover:border-gray-400'
                                             }`}
                                         >
                                             <img
@@ -186,11 +248,11 @@ function ProductView() {
                                         </h1>
                                         <p className="mt-1 text-gray-500">{product.quantity}</p>
                                     </div>
-                                    
-                                    <WishlistIcon 
+
+                                    <WishlistIcon
                                         productId={product.id}
                                         size={20}
-                                        className="p-2 rounded-full hover:bg-red-50"
+                                        className="rounded-full p-2 transition-colors hover:bg-red-50"
                                         showToast={true}
                                     />
                                 </div>
@@ -231,7 +293,9 @@ function ProductView() {
                                     <h3 className="mb-3 text-lg font-semibold text-gray-900">
                                         Description
                                     </h3>
-                                    <p className="text-gray-600">{product.description}</p>
+                                    <p className="leading-relaxed text-gray-600">
+                                        {product.description}
+                                    </p>
                                 </div>
                             )}
 
@@ -286,7 +350,9 @@ function ProductView() {
 
                             {/* Seller Information */}
                             <div className="border-t border-gray-200 pt-4">
-                                <h3 className="mb-3 text-lg font-semibold text-gray-900">Sold By</h3>
+                                <h3 className="mb-3 text-lg font-semibold text-gray-900">
+                                    Sold By
+                                </h3>
                                 <div className="text-gray-600">
                                     <p className="font-medium">Smalshop</p>
                                 </div>
@@ -298,9 +364,9 @@ function ProductView() {
                 {/* Similar Products Section */}
                 {product.category && (
                     <div className="mt-12">
-                        <CategoryProducts 
-                            categoryName={product.category.name} 
-                            title="Similar Products" 
+                        <CategoryProducts
+                            categoryName={product.category.name}
+                            title="Similar Products"
                             slug={product.category.slug}
                         />
                     </div>
