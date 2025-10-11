@@ -29,7 +29,7 @@ const ManageOrders = lazy(() => import('./pages/admin/orders/ManageOrders.jsx'))
 const ManageCustomers = lazy(() => import('./pages/admin/customers/ManageCustomers.jsx'));
 const CustomerView = lazy(() => import('./pages/admin/customers/CustomerView.jsx'));
 const OrderView = lazy(() => import('./pages/admin/orders/OrderView.jsx'));
-const Dashboard = lazy(() => import('./pages/admin/DashBoard.jsx'));
+const Dashboard = lazy(() => import('./pages/admin/Dashboard.jsx'));
 const ProductView = lazy(() => import('./pages/ProductView.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
