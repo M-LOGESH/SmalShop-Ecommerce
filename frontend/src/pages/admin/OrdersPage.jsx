@@ -14,7 +14,7 @@ function OrderPage() {
     const updateStatus = async (orderId, newStatus) => {
         try {
             setUpdatingOrderId(orderId);
-            const res = await fetchWithAuth(`${API_BASE}//api/orders/${orderId}/`, {
+            const res = await fetchWithAuth(`${API_BASE}/api/orders/${orderId}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
