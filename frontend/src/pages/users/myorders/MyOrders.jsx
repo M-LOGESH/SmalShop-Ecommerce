@@ -22,7 +22,7 @@ export default function MyOrders() {
     const loadOrders = async () => {
         setLoading(true);
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/orders/');
+            const res = await fetchWithAuth(`${API_BASE}/api/orders/`);
             if (res.ok) {
                 const data = await res.json();
                 setOrders(data);
@@ -55,7 +55,7 @@ export default function MyOrders() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
-                        src="/src/assets/img/emptyorder.png"
+                        src="/img/emptyorder.png"
                         alt="Login required"
                         className="mb-4 h-64 w-64"
                     />
@@ -75,7 +75,7 @@ export default function MyOrders() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
-                        src="/src/assets/img/emptyorder.png"
+                        src="/img/emptyorder.png"
                         alt="Orders not found"
                         className="mb-4 h-64 w-64"
                     />

@@ -53,7 +53,7 @@ function ManageItems() {
     const loadCategories = async () => {
         try {
             setLoading((prev) => ({ ...prev, categories: true }));
-            const res = await fetchWithAuth('${API_BASE}/api/categories/');
+            const res = await fetchWithAuth(`${API_BASE}/api/categories/`);
             if (!res.ok) throw new Error('Failed to load categories');
             setCategories(await res.json());
         } catch (err) {
@@ -67,7 +67,7 @@ function ManageItems() {
     const loadSubcategories = async () => {
         try {
             setLoading((prev) => ({ ...prev, subcategories: true }));
-            const res = await fetchWithAuth('${API_BASE}/api/subcategories/');
+            const res = await fetchWithAuth(`${API_BASE}/api/subcategories/`);
             if (!res.ok) throw new Error('Failed to load subcategories');
             setSubcategories(await res.json());
         } catch (err) {
@@ -108,7 +108,7 @@ function ManageItems() {
 
         const url = editingProduct
             ? `${API_BASE}/api/products/${editingProduct.id}/`
-            : '${API_BASE}/api/products/';
+            : `${API_BASE}/api/products/`;
         const method = editingProduct ? 'PATCH' : 'POST';
 
         try {
@@ -150,7 +150,7 @@ function ManageItems() {
     const handleAddCategory = async () => {
         if (!newCategory) return;
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/categories/', {
+            const res = await fetchWithAuth(`${API_BASE}/api/categories/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newCategory, slug: newCategory.toLowerCase() }),
@@ -167,7 +167,7 @@ function ManageItems() {
     const handleAddSubcategory = async () => {
         if (!newSubcategory || !selectedCategoryForSub) return;
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/subcategories/', {
+            const res = await fetchWithAuth(`${API_BASE}/api/subcategories/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newSubcategory, category: selectedCategoryForSub }),

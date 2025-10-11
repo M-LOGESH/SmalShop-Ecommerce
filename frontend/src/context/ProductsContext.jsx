@@ -28,9 +28,9 @@ export const ProductsProvider = ({ children }) => {
 
             let res;
             if (user?.access) {
-                res = await fetchWithAuth('${API_BASE}/api/products/');
+                res = await fetchWithAuth(`${API_BASE}/api/products/`);
             } else {
-                res = await fetch('${API_BASE}/api/products/');
+                res = await fetch(`${API_BASE}/api/products/`);
             }
 
             if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);

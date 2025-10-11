@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
         if (!user?.refresh) return null;
 
         try {
-            const response = await fetch('${API_BASE}/api/users/token/refresh/', {
+            const response = await fetch(`${API_BASE}/api/users/token/refresh/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refresh: user.refresh }),
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/cart/');
+            const res = await fetchWithAuth(`${API_BASE}/api/cart/`);
             if (res.ok) {
                 const data = await res.json();
                 setCart(data);
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/wishlist/');
+            const res = await fetchWithAuth(`${API_BASE}/api/wishlist/`);
             if (res.ok) {
                 const data = await res.json();
                 setWishlistData(data);
@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/cart/', {
+            const res = await fetchWithAuth(`${API_BASE}/api/cart/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ product: productId, quantity }),
@@ -224,7 +224,7 @@ export const AuthProvider = ({ children }) => {
                 setWishlistData((prev) => prev.filter((w) => w.product !== productId));
                 toast.success('Removed from wishlist');
             } else {
-                const res = await fetchWithAuth('${API_BASE}/api/wishlist/', {
+                const res = await fetchWithAuth(`${API_BASE}/api/wishlist/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ product: productId }),

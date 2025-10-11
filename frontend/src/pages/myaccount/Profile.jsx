@@ -53,7 +53,7 @@ function Profile({ onCancel }) {
             };
 
             const response = await fetchWithAuth(
-                '${API_BASE}/api/users/profile/update/',
+                `${API_BASE}/api/users/profile/update/`,
                 {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },

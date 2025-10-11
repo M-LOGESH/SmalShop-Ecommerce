@@ -21,7 +21,7 @@ function Wishlist() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
-                        src="/src/assets/img/emptywishlist.png"
+                        src="/img/emptywishlist.png"
                         alt="Login required"
                         className="mb-4 h-64 w-64"
                     />
@@ -44,7 +44,7 @@ function Wishlist() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
-                        src="/src/assets/img/emptywishlist.png"
+                        src="/img/emptywishlist.png"
                         alt="Wishlist"
                         className="mb-4 h-64 w-64"
                     />

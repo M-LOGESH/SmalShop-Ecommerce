@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaInstagram, FaWhatsapp, FaFacebook, FaTwitter } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
@@ -27,49 +28,49 @@ function Footer() {
                     <div className="space-y-3 pl-30">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Links</h3>
                         <div className="space-y-2">
-                            <a 
-                                href="/about" 
+                            <Link 
+                                to="/about" 
                                 className="block text-gray-600 hover:text-violet-600 transition-colors text-sm"
                             >
                                 About Us
-                            </a>
-                            <a 
-                                href="/account" 
+                            </Link>
+                            <Link 
+                                to="/account" 
                                 className="block text-gray-600 hover:text-violet-600 transition-colors text-sm"
                             >
                                 My Account
-                            </a>
+                            </Link>
                             
                             {isStaff ? (
-                                <a 
-                                    href="/view-orders" 
+                                <Link 
+                                    to="/view-orders" 
                                     className="block text-gray-600 hover:text-violet-600 transition-colors text-sm"
                                 >
                                     Orders
-                                </a>
+                                </Link>
                             ) : (
                                 <>
-                                    <a 
-                                        href="/orders" 
+                                    <Link 
+                                        to="/orders" 
                                         className="block text-gray-600 hover:text-violet-600 transition-colors text-sm"
                                     >
                                         My Orders
-                                    </a>
-                                    <a 
-                                        href="/wishlist" 
+                                    </Link>
+                                    <Link 
+                                        to="/wishlist" 
                                         className="block text-gray-600 hover:text-violet-600 transition-colors text-sm"
                                     >
                                         Wishlist
-                                    </a>
+                                    </Link>
                                 </>
                             )}
                             
-                            <a 
-                                href="/contact" 
+                            <Link 
+                                to="/contact" 
                                 className="block text-gray-600 hover:text-violet-600 transition-colors text-sm"
                             >
                                 Contact
-                            </a>
+                            </Link>
                         </div>
                     </div>
 
@@ -80,6 +81,7 @@ function Footer() {
                             Follow us for updates and offers
                         </p>
                         <div className="flex gap-3">
+                            {/* Keep regular <a> tags for external links */}
                             <a 
                                 href="https://instagram.com/smalshop" 
                                 target="_blank" 
@@ -125,12 +127,12 @@ function Footer() {
                         &copy; {new Date().getFullYear()} SmalShop. All rights reserved.
                     </div>
                     <div className="flex space-x-4 mt-2 md:mt-0">
-                        <a href="/privacy" className="text-gray-600 hover:text-violet-600 transition-colors text-xs">
+                        <Link to="/privacy" className="text-gray-600 hover:text-violet-600 transition-colors text-xs">
                             Privacy Policy
-                        </a>
-                        <a href="/terms" className="text-gray-600 hover:text-violet-600 transition-colors text-xs">
+                        </Link>
+                        <Link to="/terms" className="text-gray-600 hover:text-violet-600 transition-colors text-xs">
                             Terms of Service
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

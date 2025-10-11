@@ -7,32 +7,32 @@ const categories = [
         items: [
             {
                 name: 'Biscuits & Cookies',
-                img: 'src/assets/img/categories/biscuits.png',
+                img: '/img/categories/biscuits.png',
                 slug: 'biscuits',
             },
             {
                 name: 'Chips & Munchies',
-                img: 'src/assets/img/categories/munchies.png',
+                img: '/img/categories/munchies.png',
                 slug: 'munchies',
             },
             {
                 name: 'Cold Drinks',
-                img: 'src/assets/img/categories/colddrinks.png',
+                img: '/img/categories/colddrinks.png',
                 slug: 'colddrinks',
             },
             {
                 name: 'Biscuits & Cookies',
-                img: 'src/assets/img/categories/biscuits.png',
+                img: '/img/categories/biscuits.png',
                 slug: 'biscuits',
             },
             {
                 name: 'Chips & Munchies',
-                img: 'src/assets/img/categories/munchies.png',
+                img: '/img/categories/munchies.png',
                 slug: 'munchies',
             },
             {
                 name: 'Cold Drinks',
-                img: 'src/assets/img/categories/colddrinks.png',
+                img: '/img/categories/colddrinks.png',
                 slug: 'colddrinks',
             },
         ],
@@ -40,10 +40,10 @@ const categories = [
     {
         title: 'Fruits & Vegetables',
         items: [
-            { name: 'Fresh Fruits', img: 'src/assets/img/categories/fruits.png', slug: 'fruits' },
+            { name: 'Fresh Fruits', img: '/img/categories/fruits.png', slug: 'fruits' },
             {
                 name: 'Basic Vegetables',
-                img: 'src/assets/img/categories/vegetables.png',
+                img: '/img/categories/vegetables.png',
                 slug: 'vegetables',
             },
         ],

@@ -31,7 +31,7 @@ function Cart({ isOpen, onClose }) {
 
     const loadCart = async () => {
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/cart/');
+            const res = await fetchWithAuth(`${API_BASE}/api/cart/`);
             if (res.ok) {
                 const data = await res.json();
                 setCart(data);
@@ -47,7 +47,7 @@ function Cart({ isOpen, onClose }) {
 
     const placeOrder = async () => {
         try {
-            const res = await fetchWithAuth('${API_BASE}/api/orders/', {
+            const res = await fetchWithAuth(`${API_BASE}/api/orders/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({}),
@@ -109,7 +109,7 @@ function Cart({ isOpen, onClose }) {
                         <div className="flex min-h-screen flex-col items-center justify-center p-4">
                             <div className="-mt-55">
                                 <img
-                                    src="/src/assets/img/emptycart.png"
+                                    src="/img/emptycart.png"
                                     alt="Empt Cart"
                                     className="h-40 w-40"
                                 />

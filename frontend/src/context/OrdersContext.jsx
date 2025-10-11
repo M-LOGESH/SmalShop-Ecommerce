@@ -31,7 +31,7 @@ export const OrdersProvider = ({ children }) => {
                 setLoading(true);
                 setError(null);
 
-                const res = await fetchWithAuth('${API_BASE}/api/orders/');
+                const res = await fetchWithAuth(`${API_BASE}/api/orders/`);
 
                 if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
 

@@ -48,7 +48,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
         }
 
         try {
-            const response = await fetch('${API_BASE}/api/users/register/', {
+            const response = await fetch(`${API_BASE}/api/users/register/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password }),

@@ -17,7 +17,7 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
         setErrors({}); // reset errors
 
         try {
-            const response = await fetch('${API_BASE}/api/users/login/', {
+            const response = await fetch(`${API_BASE}/api/users/login/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

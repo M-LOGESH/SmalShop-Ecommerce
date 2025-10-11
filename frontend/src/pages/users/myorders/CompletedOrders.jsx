@@ -52,7 +52,7 @@ export default function CompletedOrders({ orders }) {
             <div className="mt-30 flex flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
-                        src="/src/assets/img/emptyorder.png"
+                        src="/img/emptyorder.png"
                         alt="Orders not found"
                         className="mb-2 h-64 w-64"
                     />

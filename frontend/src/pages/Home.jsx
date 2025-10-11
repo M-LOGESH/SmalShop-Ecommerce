@@ -2,18 +2,18 @@ import CategoryProducts from '../components/CategoryProducts';
 import ImageCarousel from '../components/common/ImageCarousel';
 
 const sampleImages = [
-    'src/assets/img/carousel/car1.jpg',
-    'src/assets/img/carousel/car2.jpg',
-    'src/assets/img/carousel/car3.jpg',
-    'src/assets/img/carousel/car4.jpg',
-    'src/assets/img/carousel/car5.jpg',
-    'src/assets/img/carousel/car6.jpg',
-    'src/assets/img/carousel/car7.jpg',
+    '/img/carousel/car1.jpg',
+    '/img/carousel/car2.jpg',
+    '/img/carousel/car3.jpg',
+    '/img/carousel/car4.jpg',
+    '/img/carousel/car5.jpg',
+    '/img/carousel/car6.jpg',
+    '/img/carousel/car7.jpg',
 ];
 
-const banner = 'src/assets/img/banner/banner2.jpg';
-const banner1 = 'src/assets/img/banner/banner4.jpg';
-const banner2 = 'src/assets/img/banner/banner1.jpg';
+const banner = '/img/banner/banner2.jpg';
+const banner1 = '/img/banner/banner4.jpg';
+const banner2 = '/img/banner/banner1.jpg';
 
 function Home() {
     return (
