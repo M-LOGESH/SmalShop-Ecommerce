@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useOrders } from '../../context/OrdersContext';
+import { useAuth } from '../../context/AuthContext';
 import Loading from '../../components/common/Loading';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -8,6 +9,7 @@ const STATUS_STEPS = ['pending', 'preparing', 'ready'];
 
 function OrderPage() {
     const { allOrders, loading: ordersLoading, refetchOrders } = useOrders();
+    const { fetchWithAuth } = useAuth();
     const [category, setCategory] = useState('Prep');
     const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
