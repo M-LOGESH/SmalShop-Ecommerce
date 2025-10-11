@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import environ
 from datetime import timedelta
+import dj_database_url
 
 # -------------------------
 # Base directory
@@ -31,14 +32,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'users',
-    "myaccount",
+    'myaccount',
     'products',
     'cart',
     'orders',
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware", 
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -48,9 +49,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
-
 
 ROOT_URLCONF = 'grocery_backend.urls'
 
@@ -72,19 +70,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'grocery_backend.wsgi.application'
 
 # -------------------------
-# Database
+# Database (Supabase/Postgres via Session Pooler)
 # -------------------------
+# Use explicit configuration instead of dj_database_url for clarity
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
+        'NAME': 'postgres',
+        'USER': 'postgres.xrajpmdugjqmocgxbmwi',  # Correct pooled username
         'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+        'HOST': 'aws-1-ap-south-1.pooler.supabase.com',
+        'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
         },
+        'CONN_MAX_AGE': 600,  # Connection persistence
     }
 }
 
@@ -107,9 +107,7 @@ USE_TZ = True
 # Static files
 # -------------------------
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
-
-# Enable WhiteNoise compressed & cached static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -------------------------
@@ -137,13 +135,21 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+# -------------------------
+# CORS
+# -------------------------
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+
+# -------------------------
 # Production security settings
+# -------------------------
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
-    # Trust Render.com proxy
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
