@@ -151,26 +151,3 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     
-    # Auto-create superuser if it doesn't exist
-from django.core.management import execute_from_command_line
-from django.contrib.auth import get_user_model
-
-# This runs on startup and creates superuser if needed
-def create_superuser():
-    User = get_user_model()
-    username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
-    email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
-    password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
-    
-    if username and email and password:
-        if not User.objects.filter(username=username).exists():
-            User.objects.create_superuser(username=username, email=email, password=password)
-            print(f"Superuser '{username}' created successfully!")
-        else:
-            print(f"Superuser '{username}' already exists.")
-
-# Run this function when Django starts
-try:
-    create_superuser()
-except:
-    pass  # Ignore errors during initial setup
