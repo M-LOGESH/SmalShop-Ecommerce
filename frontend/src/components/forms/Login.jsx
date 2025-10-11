@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FiUser, FiLock } from 'react-icons/fi';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [errors, setErrors] = useState({});
@@ -15,7 +17,7 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
         setErrors({}); // reset errors
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/login/', {
+            const response = await fetch('${API_BASE}/api/users/login/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

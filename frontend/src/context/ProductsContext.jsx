@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const ProductsContext = createContext();
 
 export const ProductsProvider = ({ children }) => {
@@ -27,9 +28,9 @@ export const ProductsProvider = ({ children }) => {
 
             let res;
             if (user?.access) {
-                res = await fetchWithAuth('http://127.0.0.1:8000/api/products/');
+                res = await fetchWithAuth('${API_BASE}/api/products/');
             } else {
-                res = await fetch('http://127.0.0.1:8000/api/products/');
+                res = await fetch('${API_BASE}/api/products/');
             }
 
             if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);

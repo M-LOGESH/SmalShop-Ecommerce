@@ -4,6 +4,8 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function Cart({ isOpen, onClose }) {
     const { user, cart, updateCartQuantity, fetchWithAuth, setCart } = useAuth();
 
@@ -29,7 +31,7 @@ function Cart({ isOpen, onClose }) {
 
     const loadCart = async () => {
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/');
+            const res = await fetchWithAuth('${API_BASE}/api/cart/');
             if (res.ok) {
                 const data = await res.json();
                 setCart(data);
@@ -45,7 +47,7 @@ function Cart({ isOpen, onClose }) {
 
     const placeOrder = async () => {
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/orders/', {
+            const res = await fetchWithAuth('${API_BASE}/api/orders/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({}),

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function Profile({ onCancel }) {
     const { user, fetchWithAuth, login } = useAuth();
 
@@ -51,7 +53,7 @@ function Profile({ onCancel }) {
             };
 
             const response = await fetchWithAuth(
-                'http://127.0.0.1:8000/api/users/profile/update/',
+                '${API_BASE}/api/users/profile/update/',
                 {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },

@@ -6,6 +6,8 @@ import { showConfirmToast } from '../../../utils/toastHelpers.jsx';
 import ProductForm from './ProductForm.jsx';
 import ProductTable from './ProductTable.jsx';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function ManageItems() {
     const { fetchWithAuth, user } = useAuth();
     const { allProducts, refetchProducts, loading: productsLoading } = useProducts(); // Use products from context
@@ -51,7 +53,7 @@ function ManageItems() {
     const loadCategories = async () => {
         try {
             setLoading((prev) => ({ ...prev, categories: true }));
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/categories/');
+            const res = await fetchWithAuth('${API_BASE}/api/categories/');
             if (!res.ok) throw new Error('Failed to load categories');
             setCategories(await res.json());
         } catch (err) {
@@ -65,7 +67,7 @@ function ManageItems() {
     const loadSubcategories = async () => {
         try {
             setLoading((prev) => ({ ...prev, subcategories: true }));
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/subcategories/');
+            const res = await fetchWithAuth('${API_BASE}/api/subcategories/');
             if (!res.ok) throw new Error('Failed to load subcategories');
             setSubcategories(await res.json());
         } catch (err) {
@@ -105,8 +107,8 @@ function ManageItems() {
         });
 
         const url = editingProduct
-            ? `http://127.0.0.1:8000/api/products/${editingProduct.id}/`
-            : 'http://127.0.0.1:8000/api/products/';
+            ? `${API_BASE}/api/products/${editingProduct.id}/`
+            : '${API_BASE}/api/products/';
         const method = editingProduct ? 'PATCH' : 'POST';
 
         try {
@@ -148,7 +150,7 @@ function ManageItems() {
     const handleAddCategory = async () => {
         if (!newCategory) return;
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/categories/', {
+            const res = await fetchWithAuth('${API_BASE}/api/categories/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newCategory, slug: newCategory.toLowerCase() }),
@@ -165,7 +167,7 @@ function ManageItems() {
     const handleAddSubcategory = async () => {
         if (!newSubcategory || !selectedCategoryForSub) return;
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/subcategories/', {
+            const res = await fetchWithAuth('${API_BASE}/api/subcategories/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newSubcategory, category: selectedCategoryForSub }),
@@ -183,7 +185,7 @@ function ManageItems() {
     const handleDelete = (id) => {
         showConfirmToast('Are you sure you want to delete this product?', async () => {
             try {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/products/${id}/`, {
+                await fetchWithAuth(`${API_BASE}/api/products/${id}/`, {
                     method: 'DELETE',
                 });
                 toast.success('Product deleted!');

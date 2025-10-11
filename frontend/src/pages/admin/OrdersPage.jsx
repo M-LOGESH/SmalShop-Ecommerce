@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useOrders } from '../../context/OrdersContext';
 import Loading from '../../components/common/Loading';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 const STATUS_STEPS = ['pending', 'preparing', 'ready'];
 
 function OrderPage() {
@@ -12,7 +14,7 @@ function OrderPage() {
     const updateStatus = async (orderId, newStatus) => {
         try {
             setUpdatingOrderId(orderId);
-            const res = await fetchWithAuth(`http://127.0.0.1:8000/api/orders/${orderId}/`, {
+            const res = await fetchWithAuth(`${API_BASE}//api/orders/${orderId}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),

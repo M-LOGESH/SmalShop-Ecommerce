@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './AuthContext';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const AdminUsersContext = createContext();
 
 export const AdminUsersProvider = ({ children }) => {
@@ -40,7 +41,7 @@ export const AdminUsersProvider = ({ children }) => {
                 setLoading(true);
                 setError(null);
 
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/users/all/');
+                const res = await fetchWithAuth('${API_BASE}/api/users/all/');
 
                 if (!res.ok) {
                     if (res.status === 403) {

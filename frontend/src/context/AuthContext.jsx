@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 const AuthContext = createContext();
 
 function decodeJWT(token) {
@@ -59,7 +61,7 @@ export const AuthProvider = ({ children }) => {
         if (!user?.refresh) return null;
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/token/refresh/', {
+            const response = await fetch('${API_BASE}/api/users/token/refresh/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refresh: user.refresh }),
@@ -113,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/');
+            const res = await fetchWithAuth('${API_BASE}/api/cart/');
             if (res.ok) {
                 const data = await res.json();
                 setCart(data);
@@ -135,7 +137,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/');
+            const res = await fetchWithAuth('${API_BASE}/api/wishlist/');
             if (res.ok) {
                 const data = await res.json();
                 setWishlistData(data);
@@ -155,7 +157,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/cart/', {
+            const res = await fetchWithAuth('${API_BASE}/api/cart/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ product: productId, quantity }),
@@ -180,12 +182,12 @@ export const AuthProvider = ({ children }) => {
 
         try {
             if (quantity < 1) {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
+                const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'DELETE',
                 });
                 if (res.ok) setCart((prev) => prev.filter((item) => item.id !== cartId));
             } else {
-                const res = await fetchWithAuth(`http://127.0.0.1:8000/api/cart/${cartId}/`, {
+                const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ quantity }),
@@ -215,14 +217,14 @@ export const AuthProvider = ({ children }) => {
             const existingItem = wishlistData.find((w) => w.product === productId);
 
             if (existingItem) {
-                await fetchWithAuth(`http://127.0.0.1:8000/api/wishlist/${existingItem.id}/`, {
+                await fetchWithAuth(`${API_BASE}/api/wishlist/${existingItem.id}/`, {
                     method: 'DELETE',
                 });
                 setWishlist((prev) => prev.filter((pid) => pid !== productId));
                 setWishlistData((prev) => prev.filter((w) => w.product !== productId));
                 toast.success('Removed from wishlist');
             } else {
-                const res = await fetchWithAuth('http://127.0.0.1:8000/api/wishlist/', {
+                const res = await fetchWithAuth('${API_BASE}/api/wishlist/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ product: productId }),

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
     const [formData, setFormData] = useState({
         username: '',
@@ -46,7 +48,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/register/', {
+            const response = await fetch('${API_BASE}/api/users/register/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password }),

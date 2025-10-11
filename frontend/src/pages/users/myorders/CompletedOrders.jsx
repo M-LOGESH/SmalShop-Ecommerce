@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import ScrollableDropdown from '../../../components/common/ScrollableDropdown'; // adjust path
+import ScrollableDropdown from '../../../components/common/ScrollableDropdown';
 
 export default function CompletedOrders({ orders }) {
     const navigate = useNavigate();

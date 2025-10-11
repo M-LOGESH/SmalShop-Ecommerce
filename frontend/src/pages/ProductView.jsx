@@ -9,6 +9,8 @@ import CategoryProducts from '../components/CategoryProducts';
 import WishlistIcon from '../components/common/WishlistIcon';
 import { toast } from 'react-toastify';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function ProductView() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -40,8 +42,8 @@ function ProductView() {
             console.log('🚀 ProductView: Fetching individual product');
             // If not in cache, fetch individually
             const res = user?.access
-                ? await fetchWithAuth(`http://127.0.0.1:8000/api/products/${id}/`)
-                : await fetch(`http://127.0.0.1:8000/api/products/${id}/`);
+                ? await fetchWithAuth(`${API_BASE}/api/products/${id}/`)
+                : await fetch(`${API_BASE}/api/products/${id}/`);
 
             if (res.ok) {
                 const data = await res.json();

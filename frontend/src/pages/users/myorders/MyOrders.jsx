@@ -4,6 +4,8 @@ import PendingOrders from './PendingOrders';
 import CompletedOrders from './CompletedOrders';
 import Loading from '../../../components/common/Loading';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 export default function MyOrders() {
     const { user, fetchWithAuth } = useAuth();
     const [orders, setOrders] = useState([]);
@@ -20,7 +22,7 @@ export default function MyOrders() {
     const loadOrders = async () => {
         setLoading(true);
         try {
-            const res = await fetchWithAuth('http://127.0.0.1:8000/api/orders/');
+            const res = await fetchWithAuth('${API_BASE}/api/orders/');
             if (res.ok) {
                 const data = await res.json();
                 setOrders(data);
@@ -36,7 +38,7 @@ export default function MyOrders() {
 
     const cancelOrder = async (orderId) => {
         try {
-            const res = await fetchWithAuth(`http://127.0.0.1:8000/api/orders/${orderId}/`, {
+            const res = await fetchWithAuth(`${API_BASE}/api/orders/${orderId}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'cancelled' }),
