@@ -1,5 +1,9 @@
-import os
 from django.db import models
+from supabase import create_client
+import os
+
+# Initialize Supabase client
+supabase = create_client(os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY"))
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -8,30 +12,19 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
 class SubCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
-
-
-# Function to define dynamic image upload path
-def product_image_path(instance, filename):
-    category_name = instance.category.name if instance.category else "uncategorized"
-    return os.path.join("Products", category_name, filename)
-
-
-
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    image = models.ImageField(upload_to=product_image_path, blank=True, null=True)
-    quantity = models.CharField(max_length=50) 
+    image_url = models.URLField(blank=True, null=True)  # store Supabase URL
+    quantity = models.CharField(max_length=50)
 
-    
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) 
-    retail_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) 
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    retail_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     stock_status = models.CharField(
@@ -52,3 +45,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def upload_image_to_supabase(self, file):
+        """
+        Uploads file to Supabase Storage and updates image_url.
+        """
+        path = f"products/{self.id}/{file.name}"  # you can customize path
+        supabase.storage.from_("products").upload(path, file)
+        url = supabase.storage.from_("products").get_public_url(path).url
+        self.image_url = url
+        self.save()
+        return url
