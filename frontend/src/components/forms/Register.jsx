@@ -12,6 +12,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
     });
 
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,12 +32,14 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrors({}); // reset errors
+        setIsLoading(true);
 
         const { username, email, password, confirmPassword } = formData;
 
         // Check if passwords match
         if (password !== confirmPassword) {
             setErrors({ confirmPassword: 'Passwords do not match!' });
+            setIsLoading(false);
             return;
         }
 
@@ -44,6 +47,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
         const passwordError = validatePassword(password);
         if (passwordError) {
             setErrors({ password: passwordError });
+            setIsLoading(false);
             return;
         }
 
@@ -65,6 +69,7 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                         : data[key];
                 });
                 setErrors(formattedErrors);
+                setIsLoading(false);
                 return;
             }
 
@@ -77,9 +82,11 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 refresh: data.refresh,
             });
             onClose();
+            
         } catch (error) {
             console.error('Network error:', error);
             setErrors({ general: 'Error connecting to server.' });
+            setIsLoading(false);
         }
     };
 
@@ -96,7 +103,10 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-sm text-gray-500 hover:text-violet-700"
+                        disabled={isLoading}
+                        className={`text-sm transition-colors ${
+                            isLoading ? 'text-gray-400 cursor-not-allowed' : 'text-gray-500 hover:text-violet-700'
+                        }`}
                     >
                         ✖
                     </button>
@@ -106,7 +116,9 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 <div className="mb-4">
                     <div className="relative">
                         <FiUser
-                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            className={`absolute top-1/2 left-3 -translate-y-1/2 ${
+                                isLoading ? 'text-gray-300' : 'text-gray-400'
+                            }`}
                             size={20}
                         />
                         <input
@@ -115,7 +127,14 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                             placeholder="Username"
                             value={formData.username}
                             onChange={handleChange}
-                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.username ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
+                            disabled={isLoading}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 transition-all focus:outline-none ${
+                                errors.username
+                                    ? 'border-red-500'
+                                    : isLoading
+                                    ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
+                                    : 'border-gray-400 focus:border-violet-600'
+                            }`}
                             autoComplete="username"
                             required
                         />
@@ -129,7 +148,9 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 <div className="mb-4">
                     <div className="relative">
                         <FiMail
-                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            className={`absolute top-1/2 left-3 -translate-y-1/2 ${
+                                isLoading ? 'text-gray-300' : 'text-gray-400'
+                            }`}
                             size={20}
                         />
                         <input
@@ -138,7 +159,14 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                             placeholder="Email"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
+                            disabled={isLoading}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 transition-all focus:outline-none ${
+                                errors.email
+                                    ? 'border-red-500'
+                                    : isLoading
+                                    ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
+                                    : 'border-gray-400 focus:border-violet-600'
+                            }`}
                             autoComplete="email"
                             required
                         />
@@ -150,7 +178,9 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 <div className="mb-4">
                     <div className="relative">
                         <FiLock
-                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            className={`absolute top-1/2 left-3 -translate-y-1/2 ${
+                                isLoading ? 'text-gray-300' : 'text-gray-400'
+                            }`}
                             size={20}
                         />
                         <input
@@ -159,7 +189,14 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                             placeholder="Password"
                             value={formData.password}
                             onChange={handleChange}
-                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.password ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
+                            disabled={isLoading}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 transition-all focus:outline-none ${
+                                errors.password
+                                    ? 'border-red-500'
+                                    : isLoading
+                                    ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
+                                    : 'border-gray-400 focus:border-violet-600'
+                            }`}
                             autoComplete="new-password"
                             required
                         />
@@ -173,7 +210,9 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                 <div className="mb-6">
                     <div className="relative">
                         <FiLock
-                            className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                            className={`absolute top-1/2 left-3 -translate-y-1/2 ${
+                                isLoading ? 'text-gray-300' : 'text-gray-400'
+                            }`}
                             size={20}
                         />
                         <input
@@ -182,7 +221,14 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
                             placeholder="Confirm Password"
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            className={`w-full rounded border-2 px-3 py-2 pl-10 focus:outline-none ${errors.confirmPassword ? 'border-red-500' : 'border-gray-400 focus:border-violet-600'}`}
+                            disabled={isLoading}
+                            className={`w-full rounded border-2 px-3 py-2 pl-10 transition-all focus:outline-none ${
+                                errors.confirmPassword
+                                    ? 'border-red-500'
+                                    : isLoading
+                                    ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
+                                    : 'border-gray-400 focus:border-violet-600'
+                            }`}
                             autoComplete="new-password"
                             required
                         />
@@ -199,23 +245,46 @@ function Register({ onClose, onRegisterSuccess, onSwitchToLogin }) {
 
                 <button
                     type="submit"
-                    className="w-full rounded bg-violet-600 py-2 text-white transition hover:bg-violet-700"
+                    disabled={isLoading}
+                    className={`w-full rounded py-2 text-white font-medium transition-all duration-300 ${
+                        isLoading
+                            ? 'bg-violet-400 cursor-not-allowed'
+                            : 'bg-violet-600 hover:bg-violet-700 active:scale-95'
+                    } ${!isLoading ? 'hover:shadow-lg transform hover:-translate-y-0.5' : ''}`}
                 >
                     Sign Up
                 </button>
 
-                <p className="mt-4 text-center text-gray-600">
+                <p className={`mt-4 text-center transition-opacity ${
+                    isLoading ? 'text-gray-400' : 'text-gray-600'
+                }`}>
                     Already have an account?{' '}
                     <span
                         onClick={() => {
-                            onClose();
-                            onSwitchToLogin();
+                            if (!isLoading) {
+                                onClose();
+                                onSwitchToLogin();
+                            }
                         }}
-                        className="cursor-pointer font-medium text-violet-600 hover:underline"
+                        className={`cursor-pointer font-medium transition-colors ${
+                            isLoading
+                                ? 'text-gray-400 cursor-not-allowed'
+                                : 'text-violet-600 hover:underline hover:text-violet-700'
+                        }`}
                     >
                         Log In
                     </span>
                 </p>
+
+                {/* Loading overlay for the entire form */}
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded bg-white/80">
+                        <div className="flex flex-col items-center">
+                            <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-600 border-t-transparent"></div>
+                            <p className="mt-2 text-sm text-gray-600">Creating Account...</p>
+                        </div>
+                    </div>
+                )}
             </form>
         </div>
     );

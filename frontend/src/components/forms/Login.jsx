@@ -46,6 +46,7 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 refresh: data.refresh,
                 profile: data.profile || {}, 
             });
+
             onClose();
             
         } catch (error) {
@@ -151,11 +152,11 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                     disabled={isLoading}
                     className={`w-full rounded py-2 text-white font-medium transition-all duration-300 ${
                         isLoading
-                            ? 'bg-violet-500 cursor-wait'
+                            ? 'bg-violet-400 cursor-not-allowed'
                             : 'bg-violet-600 hover:bg-violet-700 active:scale-95'
                     } ${!isLoading ? 'hover:shadow-lg transform hover:-translate-y-0.5' : ''}`}
                 >
-                    {isLoading ? 'Please wait...' : 'Sign In'}
+                    Sign In
                 </button>
 
                 <p className={`mt-4 text-center transition-opacity ${
@@ -183,8 +184,8 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center rounded bg-white/80">
                         <div className="flex flex-col items-center">
-                            <div className="h-8 w-8 animate-pulse rounded-full bg-violet-200"></div>
-                            <p className="mt-2 text-sm text-gray-600">Signing you in...</p>
+                            <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-600 border-t-transparent"></div>
+                            <p className="mt-2 text-sm text-gray-600">Authenticating...</p>
                         </div>
                     </div>
                 )}
