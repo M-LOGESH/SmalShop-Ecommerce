@@ -8,27 +8,35 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const STATUS_STEPS = ['pending', 'preparing', 'ready'];
 
 function OrderPage() {
-    const { allOrders, loading: ordersLoading, refetchOrders } = useOrders();
+    const { allOrders, loading: ordersLoading, updateOrderLocally, refetchOrders } = useOrders();
     const { fetchWithAuth } = useAuth();
     const [category, setCategory] = useState('Prep');
     const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
     const updateStatus = async (orderId, newStatus) => {
+        const currentOrder = allOrders.find((order) => order.id === orderId);
+        const previousStatus = currentOrder?.status;
+
+        if (!currentOrder) return alert('Order not found');
+
+        setUpdatingOrderId(orderId);
+
+        // Optimistically update the order via context
+        updateOrderLocally(orderId, newStatus);
+
         try {
-            setUpdatingOrderId(orderId);
             const res = await fetchWithAuth(`${API_BASE}/api/orders/${orderId}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
             });
-            if (res.ok) {
-                // Refresh orders from context instead of reloading all data
-                refetchOrders();
-            } else {
-                alert('Failed to update status');
-            }
+
+            if (!res.ok) throw new Error('Failed to update status');
         } catch (err) {
-            console.error('Error updating status:', err);
+            console.error(err);
+            // Rollback on error
+            updateOrderLocally(orderId, previousStatus);
+            alert('Failed to update status');
         } finally {
             setUpdatingOrderId(null);
         }

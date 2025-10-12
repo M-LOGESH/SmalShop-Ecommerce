@@ -14,6 +14,14 @@ export const OrdersProvider = ({ children }) => {
 
     const CACHE_DURATION = 2 * 60 * 1000;
 
+    const updateOrderLocally = (orderId, newStatus) => {
+        setAllOrders((prevOrders) =>
+            prevOrders.map((order) =>
+                order.id === orderId ? { ...order, status: newStatus } : order
+            )
+        );
+    };
+
     const fetchOrders = useCallback(
         async (force = false) => {
             // Skip if not logged in
@@ -114,6 +122,7 @@ export const OrdersProvider = ({ children }) => {
         getPendingOrders,
         getMyOrders,
         refetchOrders,
+        updateOrderLocally,
     };
 
     return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>;
