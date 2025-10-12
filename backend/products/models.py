@@ -20,7 +20,7 @@ class SubCategory(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    image_url = models.URLField(blank=True, null=True)  # store Supabase URL
+    image_url = models.URLField(blank=True, null=True)
     quantity = models.CharField(max_length=50)
 
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -50,9 +50,10 @@ class Product(models.Model):
         """
         Uploads file to Supabase Storage and updates image_url.
         """
-        path = f"products/{self.id}/{file.name}"  # you can customize path
-        supabase.storage.from_("products").upload(path, file)
-        url = supabase.storage.from_("products").get_public_url(path).url
+        bucket = os.getenv("SUPABASE_BUCKET", "products")
+        path = f"products/{self.id}/{file.name}"
+        supabase.storage.from_(bucket).upload(path, file, {"content-type": file.content_type})
+        url = supabase.storage.from_(bucket).get_public_url(path)
         self.image_url = url
         self.save()
         return url

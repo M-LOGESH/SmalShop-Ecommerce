@@ -167,9 +167,9 @@ function CategoryProducts({ categoryName, title, slug }) {
                                         onClick={() => navigate(`/product/${p.id}`)}
                                     >
                                         <div className="relative mb-2 flex h-24 w-full items-center justify-center rounded bg-gray-100 sm:h-32">
-                                            {p.image ? (
+                                            {p.image_url ? (
                                                 <img
-                                                    src={p.image}
+                                                    src={p.image_url}
                                                     alt={p.name}
                                                     className="h-full max-h-40 w-auto object-contain"
                                                 />

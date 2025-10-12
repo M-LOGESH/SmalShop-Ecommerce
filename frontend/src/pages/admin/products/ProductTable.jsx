@@ -4,7 +4,7 @@ import {
     FaTimesCircle,
     FaEdit,
     FaTrash,
-    FaImage,
+    FaImage_url,
     FaBox,
     FaTags,
     FaInfoCircle,
@@ -186,15 +186,15 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                                 <td className="px-4 py-3">
                                     <div className="flex items-center gap-3">
                                         <div className="flex-shrink-0">
-                                            {p.image ? (
+                                            {p.image_url ? (
                                                 <img
-                                                    src={p.image}
+                                                    src={p.image_url}
                                                     alt={p.name}
                                                     className="h-12 w-12 rounded-lg object-cover"
                                                 />
                                             ) : (
                                                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
-                                                    <FaImage className="text-gray-400" size={20} />
+                                                    <FaImage_url className="text-gray-400" size={20} />
                                                 </div>
                                             )}
                                         </div>
