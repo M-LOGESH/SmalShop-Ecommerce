@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { FaPlus, FaMinus } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { FaPlus, FaMinus, FaCheck } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -8,6 +8,8 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function Cart({ isOpen, onClose }) {
     const { user, cart, updateCartQuantity, fetchWithAuth, setCart } = useAuth();
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const [orderSuccess, setOrderSuccess] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -29,6 +31,14 @@ function Cart({ isOpen, onClose }) {
         if (isOpen && user?.access) loadCart();
     }, [isOpen, user]);
 
+    // Reset states when cart closes
+    useEffect(() => {
+        if (!isOpen) {
+            setIsPlacingOrder(false);
+            setOrderSuccess(false);
+        }
+    }, [isOpen]);
+
     const loadCart = async () => {
         try {
             const res = await fetchWithAuth(`${API_BASE}/api/cart/`);
@@ -46,6 +56,11 @@ function Cart({ isOpen, onClose }) {
         .reduce((sum, item) => sum + (item.product_detail?.selling_price || 0) * item.quantity, 0);
 
     const placeOrder = async () => {
+        if (isPlacingOrder || orderSuccess) return;
+        
+        setIsPlacingOrder(true);
+        setOrderSuccess(false);
+        
         try {
             const res = await fetchWithAuth(`${API_BASE}/api/orders/`, {
                 method: 'POST',
@@ -55,20 +70,31 @@ function Cart({ isOpen, onClose }) {
 
             if (res.ok) {
                 const data = await res.json();
-                toast.success(data.message || 'Order placed successfully!');
-
-                // Update cart - remove only in-stock items
-                setCart((prevCart) =>
-                    prevCart.filter((item) => item.product_detail?.stock_status === 'out_of_stock')
-                );
-                onClose();
+                
+                // Show success state first
+                setOrderSuccess(true);
+                setIsPlacingOrder(false);
+                
+                // Wait for animation to complete before closing
+                setTimeout(() => {
+                    toast.success(data.message || 'Order placed successfully!');
+                    
+                    // Update cart - remove only in-stock items
+                    setCart((prevCart) =>
+                        prevCart.filter((item) => item.product_detail?.stock_status === 'out_of_stock')
+                    );
+                    onClose();
+                }, 1500); // Show success state for 1.5 seconds
+                
             } else {
                 const err = await res.json();
                 toast.error('Error: ' + (err.error || JSON.stringify(err)));
+                setIsPlacingOrder(false);
             }
         } catch (error) {
             console.error('Error placing order:', error);
             toast.error('Error placing order. Please try again.');
+            setIsPlacingOrder(false);
         }
     };
 
@@ -78,6 +104,43 @@ function Cart({ isOpen, onClose }) {
     const outOfStockItems = cart.filter(
         (item) => item.product_detail?.stock_status === 'out_of_stock'
     );
+
+    // Determine button state and content
+    const getButtonContent = () => {
+        if (orderSuccess) {
+            return (
+                <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-center">
+                        <FaCheck className="text-white" size={18} />
+                    </div>
+                    Order Placed!
+                </div>
+            );
+        }
+        
+        if (isPlacingOrder) {
+            return (
+                <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Placing Order...
+                </div>
+            );
+        }
+        
+        return 'Place Order';
+    };
+
+    const getButtonClass = () => {
+        if (orderSuccess) {
+            return 'w-full rounded bg-green-600 py-2 text-white cursor-default flex items-center justify-center gap-2';
+        }
+        
+        if (isPlacingOrder) {
+            return 'w-full rounded bg-violet-700 py-2 text-white cursor-not-allowed flex items-center justify-center gap-2';
+        }
+        
+        return 'w-full rounded bg-violet-900 py-2 text-white hover:bg-violet-800 transition-all duration-300 flex items-center justify-center';
+    };
 
     return (
         <>
@@ -107,7 +170,7 @@ function Cart({ isOpen, onClose }) {
                 <div className="flex-1 overflow-y-auto p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {cart.length === 0 ? (
                         <div className="flex h-full flex-col items-center justify-center p-4">
-                            <img src="/img/emptycart.png"  alt="Empt Cart" loading="lazy" className="h-40 w-40" />
+                            <img src="/img/emptycart.png"  alt="Empty Cart" loading="lazy" className="h-40 w-40" />
                             <p className="text-center text-lg font-semibold text-gray-600">
                                 Your Cart Is Empty
                             </p>
@@ -151,7 +214,7 @@ function Cart({ isOpen, onClose }) {
                                                         updateCartQuantity(
                                                             item.id,
                                                             item.quantity - 1
-                                                        ) // Using context function
+                                                        )
                                                 }
                                             >
                                                 <FaMinus size={10} />
@@ -165,7 +228,7 @@ function Cart({ isOpen, onClose }) {
                                                         updateCartQuantity(
                                                             item.id,
                                                             item.quantity + 1
-                                                        ) // Using context function
+                                                        )
                                                 }
                                             >
                                                 <FaPlus size={10} />
@@ -231,9 +294,10 @@ function Cart({ isOpen, onClose }) {
                     </div>
                     <button
                         onClick={placeOrder}
-                        className="w-full rounded bg-violet-900 py-2 text-white hover:bg-violet-800"
+                        disabled={isPlacingOrder || orderSuccess || inStockItems.length === 0}
+                        className={getButtonClass()}
                     >
-                        Place Order
+                        {getButtonContent()}
                     </button>
                 </div>
             </div>
