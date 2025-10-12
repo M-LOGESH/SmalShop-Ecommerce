@@ -16,10 +16,10 @@ class ProductSerializer(serializers.ModelSerializer):
     subcategories = SubCategorySerializer(many=True, read_only=True)
 
     category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), source="category", write_only=True
+        queryset=Category.objects.all(), source="category", write_only=True, required=False
     )
     subcategories_ids = serializers.PrimaryKeyRelatedField(
-        queryset=SubCategory.objects.all(), many=True, source="subcategories", write_only=True
+        queryset=SubCategory.objects.all(), many=True, source="subcategories", write_only=True, required=False
     )
 
     class Meta:
@@ -32,3 +32,4 @@ class ProductSerializer(serializers.ModelSerializer):
             "created_at", "updated_at",
             "category_id", "subcategories_ids"
         ]
+        read_only_fields = ['image_url']

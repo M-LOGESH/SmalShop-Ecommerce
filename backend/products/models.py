@@ -1,9 +1,7 @@
 from django.db import models
 from supabase import create_client
 import os
-
-# Initialize Supabase client
-supabase = create_client(os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY"))
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -50,10 +48,31 @@ class Product(models.Model):
         """
         Uploads file to Supabase Storage and updates image_url.
         """
-        bucket = os.getenv("SUPABASE_BUCKET", "products")
-        path = f"products/{self.id}/{file.name}"
-        supabase.storage.from_(bucket).upload(path, file, {"content-type": file.content_type})
-        url = supabase.storage.from_(bucket).get_public_url(path)
-        self.image_url = url
-        self.save()
-        return url
+        try:
+            # Initialize Supabase client
+            supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+            bucket = settings.SUPABASE_BUCKET
+            
+            # Create unique file path
+            import uuid
+            file_extension = os.path.splitext(file.name)[1]
+            unique_filename = f"{uuid.uuid4()}{file_extension}"
+            path = f"products/{self.id}/{unique_filename}"
+            
+            # Upload file
+            result = supabase.storage.from_(bucket).upload(path, file.read(), {
+                "content-type": file.content_type
+            })
+            
+            if hasattr(result, 'error') and result.error:
+                raise Exception(f"Supabase upload error: {result.error}")
+            
+            # Get public URL
+            url = supabase.storage.from_(bucket).get_public_url(path)
+            self.image_url = url
+            self.save()
+            return url
+            
+        except Exception as e:
+            print(f"Error uploading to Supabase: {e}")
+            raise e

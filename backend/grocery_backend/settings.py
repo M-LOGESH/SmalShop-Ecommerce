@@ -19,6 +19,11 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
+# Supabase configuration
+SUPABASE_URL = env('SUPABASE_URL')
+SUPABASE_KEY = env('SUPABASE_KEY')
+SUPABASE_BUCKET = env('SUPABASE_BUCKET', default='products')
+
 # -------------------------
 # Application definition
 # -------------------------
@@ -72,12 +77,11 @@ WSGI_APPLICATION = 'grocery_backend.wsgi.application'
 # -------------------------
 # Database (Supabase/Postgres via Session Pooler)
 # -------------------------
-# Use explicit configuration instead of dj_database_url for clarity
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'postgres.wkhvlxlcvhlclqysabph',  # ✅ Correct
+        'USER': 'postgres.wkhvlxlcvhlclqysabph',
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': 'aws-1-ap-south-1.pooler.supabase.com', 
         'PORT': '5432',
@@ -85,6 +89,7 @@ DATABASES = {
         'CONN_MAX_AGE': 600,
     }
 }
+
 # -------------------------
 # Password validation
 # -------------------------
@@ -124,7 +129,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ]
 }
 
 SIMPLE_JWT = {
@@ -136,6 +146,20 @@ SIMPLE_JWT = {
 # CORS
 # -------------------------
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # -------------------------
 # Production security settings
@@ -150,4 +174,3 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    
