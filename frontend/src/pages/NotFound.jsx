@@ -8,6 +8,7 @@ function NotFound() {
                     src="/img/404.png"
                     alt="404"
                     className="mx-auto mb-4 h-48 w-48 sm:h-64 sm:w-64"
+                    loading="lazy"
                 />
                 <h2 className="mt-4 text-xl font-semibold text-gray-600 sm:text-2xl">
                     Page Not Found

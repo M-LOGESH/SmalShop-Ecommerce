@@ -172,6 +172,7 @@ function CategoryProducts({ categoryName, title, slug }) {
                                                     src={p.image_url}
                                                     alt={p.name}
                                                     className="h-full max-h-40 w-auto object-contain"
+                                                    loading="lazy"                                                    
                                                 />
                                             ) : (
                                                 <div className="flex h-32 w-full items-center justify-center rounded">

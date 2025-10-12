@@ -191,6 +191,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                                                     src={p.image_url}
                                                     alt={p.name}
                                                     className="h-12 w-12 rounded-lg object-cover"
+                                                    loading="lazy"
                                                 />
                                             ) : (
                                                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">

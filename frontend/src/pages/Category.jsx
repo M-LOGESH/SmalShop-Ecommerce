@@ -71,6 +71,7 @@ function Category() {
                                         src={item.img}
                                         alt={item.name}
                                         className="object-contain"
+                                        loading="lazy"
                                     />
                                 </div>
                                 <p className="mt-2 text-sm">{item.name}</p>

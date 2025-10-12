@@ -180,6 +180,7 @@ function ProductView() {
                                         src={product.image_url}
                                         alt={product.name}
                                         className="h-full max-h-80 w-auto object-contain"
+                                        loading="lazy"
                                     />
                                 ) : (
                                     <div className="flex h-48 w-full items-center justify-center text-gray-400">

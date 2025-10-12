@@ -23,6 +23,7 @@ export default function PendingOrders({ orders, cancelOrder }) {
                         src="/img/emptyorder.png"
                         alt="Orders not found"
                         className="mb-2 h-64 w-64"
+                        loading="lazy"
                     />
                     <p className="text-center text-lg font-semibold text-gray-600">
                         No Pending Orders
@@ -125,6 +126,7 @@ export default function PendingOrders({ orders, cancelOrder }) {
                                                         src={item.product_detail.image_url}
                                                         alt={item.product_detail.name}
                                                         className="h-full w-full object-cover"
+                                                        loading="lazy"
                                                     />
                                                 ) : (
                                                     <span className="text-xs text-gray-400">

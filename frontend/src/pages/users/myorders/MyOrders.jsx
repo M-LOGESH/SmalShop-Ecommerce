@@ -58,6 +58,7 @@ export default function MyOrders() {
                         src="/img/emptyorder.png"
                         alt="Login required"
                         className="mb-4 h-64 w-64"
+                        loading="lazy"
                     />
                     <p className="text-center text-lg font-semibold text-gray-600">
                         Login to view your orders
@@ -78,6 +79,7 @@ export default function MyOrders() {
                         src="/img/emptyorder.png"
                         alt="Orders not found"
                         className="mb-4 h-64 w-64"
+                        loading="lazy"
                     />
                     <p className="text-center text-lg font-semibold text-gray-600">
                         No Orders Found

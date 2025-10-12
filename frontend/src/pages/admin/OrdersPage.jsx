@@ -212,6 +212,7 @@ function OrderPage() {
                                                             src={item.product_detail.image_url}
                                                             alt={item.product_detail.name}
                                                             className="h-full w-full object-cover"
+                                                            loading="lazy"
                                                         />
                                                     ) : (
                                                         <span className="text-xs text-gray-400">

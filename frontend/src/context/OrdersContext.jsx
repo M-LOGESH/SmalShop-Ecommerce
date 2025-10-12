@@ -72,18 +72,20 @@ export const OrdersProvider = ({ children }) => {
         [allOrders]
     );
 
-    const getOrdersByUser = useCallback(
-        (userId) =>
-            allOrders.filter(
-                (o) =>
-                    o.user?.toString() === userId.toString() ||
-                    (o.user &&
-                        typeof o.user === 'object' &&
-                        o.user.id?.toString() === userId.toString()) ||
-                    o.user_id?.toString() === userId.toString()
-            ),
-        [allOrders]
-    );
+const getOrdersByUser = useCallback(
+    (userId) => {
+        return allOrders.filter((o) => {
+            if (!o.user && !o.user_id) return false;
+            const orderUserId =
+                typeof o.user === 'object'
+                    ? o.user.id
+                    : o.user || o.user_id;
+            return orderUserId?.toString() === userId.toString();
+        });
+    },
+    [allOrders]
+);
+
 
     const getOrdersByStatus = useCallback(
         (status) => allOrders.filter((o) => o.status === status),

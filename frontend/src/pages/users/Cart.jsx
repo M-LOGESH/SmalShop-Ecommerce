@@ -106,17 +106,11 @@ function Cart({ isOpen, onClose }) {
                 {/* Cart items */}
                 <div className="flex-1 overflow-y-auto p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {cart.length === 0 ? (
-                        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                            <div className="-mt-55">
-                                <img
-                                    src="/img/emptycart.png"
-                                    alt="Empt Cart"
-                                    className="h-40 w-40"
-                                />
-                                <p className="text-center text-lg font-semibold text-gray-600">
-                                    Your Cart Is Empty
-                                </p>
-                            </div>
+                        <div className="flex h-full flex-col items-center justify-center p-4">
+                            <img src="/img/emptycart.png"  alt="Empt Cart" loading="lazy" className="h-40 w-40" />
+                            <p className="text-center text-lg font-semibold text-gray-600">
+                                Your Cart Is Empty
+                            </p>
                         </div>
                     ) : (
                         <>

@@ -510,6 +510,7 @@ function Dashboard() {
                                                 src={product.image_url}
                                                 alt={product.name}
                                                 className="h-8 w-8 rounded object-cover"
+                                                loading="lazy"
                                             />
                                         ) : (
                                             <FaBoxOpen className="h-5 w-5 text-gray-400" />

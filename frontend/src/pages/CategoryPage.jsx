@@ -80,6 +80,7 @@ function CategoryPage() {
                                                 src={p.image_url}
                                                 alt={p.name}
                                                 className="h-full w-auto object-contain"
+                                                loading="lazy"
                                             />
                                         ) : (
                                             <div className="text-xs text-gray-500">No Image</div>
