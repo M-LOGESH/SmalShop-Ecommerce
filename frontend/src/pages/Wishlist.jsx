@@ -78,9 +78,9 @@ function Wishlist() {
                                     className="relative flex h-28 w-28 flex-shrink-0 cursor-pointer items-center justify-center bg-gray-100 sm:h-32 sm:w-full"
                                     onClick={() => navigate(`/product/${p.id}`)}
                                 >
-                                    {p.image ? (
+                                    {p.image_url ? (
                                         <img
-                                            src={p.image}
+                                            src={p.image_url}
                                             alt={p.name}
                                             className="h-full w-auto object-contain"
                                         />

@@ -207,9 +207,9 @@ function OrderPage() {
                                         >
                                             <div className="flex min-w-[150px] flex-1 items-center gap-4">
                                                 <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-gray-200">
-                                                    {item.product_detail.image ? (
+                                                    {item.product_detail.image_url ? (
                                                         <img
-                                                            src={item.product_detail.image}
+                                                            src={item.product_detail.image_url}
                                                             alt={item.product_detail.name}
                                                             className="h-full w-full object-cover"
                                                         />

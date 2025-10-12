@@ -20,7 +20,6 @@ function ProductView() {
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [selectedImage, setSelectedImage] = useState(0);
 
     useEffect(() => {
         loadProduct();
@@ -131,10 +130,6 @@ function ProductView() {
     }
 
     const cartItem = getCartItem(product.id);
-    const images =
-        product.images && product.images.length > 0
-            ? product.images
-            : [product.image].filter(Boolean);
 
     return (
         <div className="min-h-screen bg-white">
@@ -180,9 +175,9 @@ function ProductView() {
                         <div className="space-y-4 lg:sticky lg:top-25 lg:self-start">
                             {/* Main Image */}
                             <div className="mx-auto flex aspect-square max-w-sm items-center justify-center rounded-xl border border-gray-200 bg-gray-50">
-                                {images.length > 0 ? (
+                                {product.image_url ? (
                                     <img
-                                        src={images[selectedImage]}
+                                        src={product.image_url}
                                         alt={product.name}
                                         className="h-full max-h-80 w-auto object-contain"
                                     />
@@ -192,29 +187,6 @@ function ProductView() {
                                     </div>
                                 )}
                             </div>
-
-                            {/* Thumbnail Images */}
-                            {images.length > 1 && (
-                                <div className="mx-auto flex max-w-md justify-center gap-2 overflow-x-auto">
-                                    {images.map((img, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => setSelectedImage(index)}
-                                            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center border bg-white transition-all ${
-                                                selectedImage === index
-                                                    ? 'border-violet-600 ring-2 ring-violet-200'
-                                                    : 'border-gray-300 hover:border-gray-400'
-                                            }`}
-                                        >
-                                            <img
-                                                src={img}
-                                                alt={`${product.name} ${index + 1}`}
-                                                className="h-full w-auto object-contain"
-                                            />
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
 
                             {/* Add to Cart Button - Mobile: Below image on smaller screens */}
                             <div className="mx-auto max-w-md pt-4 lg:hidden">

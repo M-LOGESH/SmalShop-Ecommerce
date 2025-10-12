@@ -75,9 +75,9 @@ function CategoryPage() {
                                     onClick={() => navigate(`/product/${p.id}`)}
                                 >
                                     <div className="relative flex h-32 items-center justify-center bg-gray-100">
-                                        {p.image ? (
+                                        {p.image_url ? (
                                             <img
-                                                src={p.image}
+                                                src={p.image_url}
                                                 alt={p.name}
                                                 className="h-full w-auto object-contain"
                                             />

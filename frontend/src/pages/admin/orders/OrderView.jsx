@@ -359,9 +359,9 @@ function OrderView() {
                             {order.items?.map((item) => (
                                 <div key={item.id} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
                                     <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
-                                        {item.product_detail?.image ? (
+                                        {item.product_detail?.image_url ? (
                                             <img
-                                                src={item.product_detail.image}
+                                                src={item.product_detail.image_url}
                                                 alt={item.product_detail.name}
                                                 className="h-full w-full object-cover"
                                             />

@@ -120,9 +120,9 @@ export default function PendingOrders({ orders, cancelOrder }) {
                                     {order.items.map((item) => (
                                         <div key={item.id} className="flex items-center gap-4 pb-2">
                                             <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-purple-200">
-                                                {item.product_detail.image ? (
+                                                {item.product_detail.image_url ? (
                                                     <img
-                                                        src={item.product_detail.image}
+                                                        src={item.product_detail.image_url}
                                                         alt={item.product_detail.name}
                                                         className="h-full w-full object-cover"
                                                     />

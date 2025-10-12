@@ -129,9 +129,9 @@ function Cart({ isOpen, onClose }) {
                                         className="mb-2 flex items-center justify-between rounded bg-white p-2 text-xs"
                                     >
                                         <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded bg-gray-100">
-                                            {p.image ? (
+                                            {p.image_url ? (
                                                 <img
-                                                    src={p.image}
+                                                    src={p.image_url}
                                                     alt={p.name}
                                                     className="h-full w-auto object-contain"
                                                 />
@@ -195,9 +195,9 @@ function Cart({ isOpen, onClose }) {
                                                 className="mb-2 flex items-center justify-between rounded bg-gray-100 p-2 text-xs opacity-70"
                                             >
                                                 <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded bg-gray-200">
-                                                    {p.image ? (
+                                                    {p.image_url ? (
                                                         <img
-                                                            src={p.image}
+                                                            src={p.image_url}
                                                             alt={p.name}
                                                             className="h-full w-auto object-contain"
                                                         />

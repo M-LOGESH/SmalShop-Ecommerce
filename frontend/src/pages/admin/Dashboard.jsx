@@ -120,7 +120,7 @@ function Dashboard() {
                             id: productId,
                             name: product?.name || 'Unknown Product',
                             count: count,
-                            image: product?.image,
+                            image_url: product?.image_url,
                         };
                     });
 
@@ -505,9 +505,9 @@ function Dashboard() {
                             <div key={product.id} className="flex items-center justify-between">
                                 <div className="flex items-center space-x-3">
                                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
-                                        {product.image ? (
+                                        {product.image_url ? (
                                             <img
-                                                src={product.image}
+                                                src={product.image_url}
                                                 alt={product.name}
                                                 className="h-8 w-8 rounded object-cover"
                                             />
