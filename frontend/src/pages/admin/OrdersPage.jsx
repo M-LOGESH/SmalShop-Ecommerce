@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useOrders } from '../../context/OrdersContext';
 import { useAuth } from '../../context/AuthContext';
 import Loading from '../../components/common/Loading';
+import { toast } from 'react-toastify';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,7 +37,7 @@ function OrderPage() {
             console.error(err);
             // Rollback on error
             updateOrderLocally(orderId, previousStatus);
-            alert('Failed to update status');
+            toast.error('Failed to update status');
         } finally {
             setUpdatingOrderId(null);
         }
@@ -178,7 +179,7 @@ function OrderPage() {
                                                     }
                                                     className={`relative z-10 flex flex-col items-center text-sm font-medium ${
                                                         isUpdating
-                                                            ? 'cursor-not-allowed opacity-50'
+                                                            ? 'cursor-not-allowed'
                                                             : 'cursor-pointer'
                                                     }`}
                                                 >
