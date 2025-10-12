@@ -4,7 +4,7 @@ import {
     FaTimesCircle,
     FaEdit,
     FaTrash,
-    FaImage_url,
+    FaImage,
     FaBox,
     FaTags,
     FaInfoCircle,
