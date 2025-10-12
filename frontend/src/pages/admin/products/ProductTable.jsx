@@ -194,7 +194,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
                                                 />
                                             ) : (
                                                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
-                                                    <FaImage_url className="text-gray-400" size={20} />
+                                                    <FaImage className="text-gray-400" size={20} />
                                                 </div>
                                             )}
                                         </div>
