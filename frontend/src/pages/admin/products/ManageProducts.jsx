@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../../../context/AuthContext.jsx';
-import { useProducts } from '../../../context/ProductsContext.jsx'; // Import ProductsContext
+import { useProducts } from '../../../context/ProductsContext.jsx';
 import { toast } from 'react-toastify';
 import { showConfirmToast } from '../../../utils/toastHelpers.jsx';
 import ProductForm from './ProductForm.jsx';
@@ -10,7 +10,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function ManageItems() {
     const { fetchWithAuth, user } = useAuth();
-    const { allProducts, refetchProducts, loading: productsLoading } = useProducts(); // Use products from context
+    const { allProducts, refetchProducts, loading: productsLoading } = useProducts();
     const headingRef = useRef(null);
 
     const [categories, setCategories] = useState([]);
@@ -47,7 +47,6 @@ function ManageItems() {
         loadSubcategories();
     }, []);
 
-    // Use products from context - no need to load separately
     const products = allProducts;
 
     const loadCategories = async () => {
@@ -90,21 +89,48 @@ function ManageItems() {
         }
     };
 
+    const uploadProductImage = async (productId, imageFile) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            
+            const res = await fetchWithAuth(`${API_BASE}/api/products/${productId}/upload-image/`, {
+                method: 'POST',
+                body: formData,
+            });
+            
+            if (!res.ok) throw new Error('Failed to upload image');
+            return await res.json();
+        } catch (error) {
+            console.error('Image upload error:', error);
+            throw error;
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading((prev) => ({ ...prev, submitting: true }));
 
         const form = new FormData();
 
+        // Add all product fields
         Object.keys(formData).forEach((key) => {
             if (key === 'subcategories_ids') {
                 formData.subcategories_ids.forEach((id) => form.append('subcategories_ids', id));
             } else if (key === 'image') {
-                if (formData.image instanceof File) form.append('image', formData.image);
+                if (formData.image instanceof File) {
+                    // Use 'file' as the key to match backend expectation
+                    form.append('file', formData.image);
+                }
             } else {
                 form.append(key, formData[key] ?? '');
             }
         });
+
+        // Debug: log FormData contents
+        for (let [key, value] of form.entries()) {
+            console.log(key, value);
+        }
 
         const url = editingProduct
             ? `${API_BASE}/api/products/${editingProduct.id}/`
@@ -113,17 +139,31 @@ function ManageItems() {
 
         try {
             const res = await fetchWithAuth(url, { method, body: form });
-            if (!res.ok) throw new Error('Error saving product');
+            
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.detail || 'Error saving product');
+            }
 
-            toast.success(editingProduct ? 'Product updated!' : 'Product added!');
+            const productData = await res.json();
+            
+            // If creating new product and image upload failed during creation, try separate upload
+            if (!editingProduct && formData.image instanceof File && !productData.image_url) {
+                try {
+                    await uploadProductImage(productData.id, formData.image);
+                    toast.success('Product added with image!');
+                } catch (imageError) {
+                    toast.success('Product added but image upload failed');
+                }
+            } else {
+                toast.success(editingProduct ? 'Product updated!' : 'Product added!');
+            }
 
-            // Reset form
             resetForm();
-
-            // Refresh products from context instead of local state
             refetchProducts();
         } catch (err) {
             toast.error(err.message);
+            console.error('Submit error:', err);
         } finally {
             setLoading((prev) => ({ ...prev, submitting: false }));
         }
@@ -153,7 +193,7 @@ function ManageItems() {
             const res = await fetchWithAuth(`${API_BASE}/api/categories/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: newCategory, slug: newCategory.toLowerCase() }),
+                body: JSON.stringify({ name: newCategory, slug: newCategory.toLowerCase().replace(/\s+/g, '-') }),
             });
             if (!res.ok) throw new Error('Failed to add category');
             toast.success('Category added!');
@@ -165,17 +205,16 @@ function ManageItems() {
     };
 
     const handleAddSubcategory = async () => {
-        if (!newSubcategory || !selectedCategoryForSub) return;
+        if (!newSubcategory) return;
         try {
             const res = await fetchWithAuth(`${API_BASE}/api/subcategories/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: newSubcategory, category: selectedCategoryForSub }),
+                body: JSON.stringify({ name: newSubcategory }),
             });
             if (!res.ok) throw new Error('Failed to add subcategory');
             toast.success('Subcategory added!');
             setNewSubcategory('');
-            setSelectedCategoryForSub('');
             loadSubcategories();
         } catch (err) {
             toast.error(err.message);
@@ -189,7 +228,6 @@ function ManageItems() {
                     method: 'DELETE',
                 });
                 toast.success('Product deleted!');
-                // Refresh products from context
                 refetchProducts();
             } catch (err) {
                 toast.error('Error deleting product');
@@ -206,18 +244,15 @@ function ManageItems() {
             image: null,
         });
 
-        // Scroll to heading
         headingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
     return (
         <div>
-            {/* Heading with ref */}
             <h2 ref={headingRef} className="mb-4 text-xl font-bold">
                 Manage Products
             </h2>
 
-            {/* Form Component */}
             <ProductForm
                 formData={formData}
                 categories={categories}
@@ -239,13 +274,11 @@ function ManageItems() {
 
             <h2 className="mt-8 mb-4 text-xl font-bold">Products List</h2>
 
-            {/* Show loading state for products */}
             {productsLoading ? (
                 <div className="flex justify-center py-8">
                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent"></div>
                 </div>
             ) : (
-                /* Table Component */
                 <ProductTable
                     products={products}
                     onEdit={handleEdit}

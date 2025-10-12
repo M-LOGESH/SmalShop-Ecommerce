@@ -19,6 +19,7 @@ function ProductForm({
     setNewSubcategory,
     setSelectedCategoryForSub,
     setFormData,
+    loading,
 }) {
     const { user } = useAuth();
     const isSuperuser = user?.is_superuser;
@@ -26,9 +27,7 @@ function ProductForm({
     return (
         <form onSubmit={handleSubmit} className="mx-auto mb-6 max-w-6xl">
             {/* Row 1: Name, Quantity, Stock Status */}
-            {/* Row 1 & 2 */}
             <div className="flex flex-col gap-3 md:flex-row">
-                {/* Name: full row on mobile, inline at md+ */}
                 <input
                     name="name"
                     placeholder="Product Name"
@@ -39,7 +38,6 @@ function ProductForm({
                     required
                 />
 
-                {/* Quantity + Stock Status → same line on mobile */}
                 <div className="flex flex-1 flex-row flex-wrap gap-3">
                     <input
                         name="quantity"
@@ -137,16 +135,16 @@ function ProductForm({
                             option: (base, state) => ({
                                 ...base,
                                 backgroundColor: state.isSelected
-                                    ? '#7c3aed' // violet when selected
+                                    ? '#7c3aed'
                                     : state.isFocused
-                                      ? '#ede9fe' // violet-100 on hover
+                                      ? '#ede9fe'
                                       : 'white',
                                 color: state.isSelected ? 'white' : '#374151',
                                 cursor: 'pointer',
                             }),
                             singleValue: (base) => ({
                                 ...base,
-                                color: '#111827', // gray-900
+                                color: '#111827',
                                 fontWeight: 500,
                             }),
                         }}
@@ -201,36 +199,36 @@ function ProductForm({
                                 border: '1px solid black',
                                 boxShadow: 'none',
                                 '&:hover': {
-                                    border: '1px solid #7c3aed', // violet hover border
+                                    border: '1px solid #7c3aed',
                                 },
                             }),
                             menu: (base) => ({
                                 ...base,
                                 borderRadius: '0.2rem',
                                 marginTop: '4px',
-                                border: '1px solid #e5e7eb', // gray-200
-                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)', // subtle shadow
+                                border: '1px solid #e5e7eb',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                 zIndex: 9999,
                             }),
                             option: (base, state) => ({
                                 ...base,
                                 backgroundColor: state.isSelected
-                                    ? '#7c3aed' // violet-600 selected
+                                    ? '#7c3aed'
                                     : state.isFocused
-                                      ? '#ede9fe' // violet-100 hover
+                                      ? '#ede9fe'
                                       : 'white',
-                                color: state.isSelected ? 'white' : '#374151', // gray-700
+                                color: state.isSelected ? 'white' : '#374151',
                                 cursor: 'pointer',
                             }),
                             multiValue: (base) => ({
                                 ...base,
-                                backgroundColor: '#ede9fe', // violet-100 chip background
+                                backgroundColor: '#ede9fe',
                                 borderRadius: '0.3rem',
                                 padding: '2px 4px',
                             }),
                             multiValueLabel: (base) => ({
                                 ...base,
-                                color: '#7c3aed', // violet-600 text
+                                color: '#7c3aed',
                                 fontWeight: 500,
                             }),
                             multiValueRemove: (base) => ({
@@ -294,27 +292,73 @@ function ProductForm({
                 className="mt-3 w-full rounded border p-2 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
             />
 
-            {editingProduct && editingProduct.image && !formData.image && (
-                <img
-                    src={editingProduct.image}
-                    alt={editingProduct.name}
-                    className="mt-3 mb-2 h-24 w-24 object-cover"
-                />
+            {/* Image Preview */}
+            {editingProduct && editingProduct.image_url && !formData.image && (
+                <div className="mt-3">
+                    <p className="text-sm font-medium">Current Image:</p>
+                    <img
+                        src={editingProduct.image_url}
+                        alt={editingProduct.name}
+                        className="mt-2 h-24 w-24 object-cover rounded border"
+                    />
+                </div>
             )}
 
-            <input type="file" name="image" onChange={handleChange} className="mt-3 border p-2" />
+            {/* File Input */}
+            <div className="mt-3">
+                <label className="block text-sm font-medium mb-2">
+                    {editingProduct ? 'Update Image' : 'Upload Image'}
+                </label>
+                <input 
+                    type="file" 
+                    name="image" 
+                    onChange={handleChange} 
+                    className="w-full border p-2 rounded"
+                    accept="image/*"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                    Supported formats: JPG, PNG, WebP. Max size: 5MB
+                </p>
+            </div>
 
+            {/* Submit Button */}
             <button
                 type="submit"
-                disabled={!isSuperuser}
+                disabled={!isSuperuser || loading.submitting}
                 className={`mt-3 rounded px-4 py-2 text-white sm:ml-3 ${
-                    isSuperuser
+                    isSuperuser && !loading.submitting
                         ? 'bg-violet-700 hover:bg-violet-800'
                         : 'cursor-not-allowed bg-gray-400'
                 }`}
             >
-                {editingProduct ? 'Update Product' : 'Add Product'}
+                {loading.submitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}
             </button>
+
+            {editingProduct && (
+                <button
+                    type="button"
+                    onClick={() => {
+                        setEditingProduct(null);
+                        setFormData({
+                            name: '',
+                            quantity: '',
+                            cost_price: '',
+                            retail_price: '',
+                            selling_price: '',
+                            stock_status: 'in_stock',
+                            category_id: '',
+                            subcategories_ids: [],
+                            brand: '',
+                            manufacturer: '',
+                            description: '',
+                            image: null,
+                        });
+                    }}
+                    className="mt-3 ml-3 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+                >
+                    Cancel Edit
+                </button>
+            )}
         </form>
     );
 }

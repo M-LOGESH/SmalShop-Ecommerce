@@ -50,7 +50,7 @@ export const ProductsProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }, [user, fetchWithAuth]); 
+    }, [user, fetchWithAuth, allProducts.length, lastFetchTime]);
 
     // Fetch products once when user changes (not on every render)
     useEffect(() => {
