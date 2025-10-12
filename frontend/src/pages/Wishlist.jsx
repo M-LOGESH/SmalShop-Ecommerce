@@ -1,3 +1,4 @@
+// pages/Wishlist.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -5,33 +6,15 @@ import ProductActionButton from '../components/common/ProductActionButton';
 import WishlistIcon from '../components/common/WishlistIcon';
 
 function Wishlist() {
-    const { user, wishlistData, cart, addToCart, updateCartQuantity } = useAuth();
+    const { wishlistData, cart, addToCart, updateCartQuantity } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // When wishlistData changes (loaded or updated), mark loading false
         if (wishlistData !== undefined) {
             setLoading(false);
         }
     }, [wishlistData]);
-
-    if (!user)
-        return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <div className="-mt-30">
-                    <img
-                        src="/img/emptywishlist.png"
-                        alt="Login required"
-                        className="mb-4 h-64 w-64"
-                        loading="lazy"
-                    />
-                    <p className="text-center text-lg font-semibold text-gray-600">
-                        Login to view your Wishlist
-                    </p>
-                </div>
-            </div>
-        );
 
     if (loading)
         return (
@@ -86,7 +69,6 @@ function Wishlist() {
                                             alt={p.name}
                                             className="h-full w-auto object-contain"
                                             loading="lazy"
-                                            
                                         />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">

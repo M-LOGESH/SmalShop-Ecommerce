@@ -72,7 +72,7 @@ function App() {
                         <Route
                             path="/my-orders"
                             element={
-                                <UserOnlyRoute>
+                                <UserOnlyRoute pageType="orders">
                                     <MyOrders />
                                 </UserOnlyRoute>
                             }
@@ -80,7 +80,7 @@ function App() {
                         <Route
                             path="/wishlist"
                             element={
-                                <UserOnlyRoute>
+                                <UserOnlyRoute pageType="wishlist">
                                     <Wishlist />
                                 </UserOnlyRoute>
                             }
@@ -88,7 +88,7 @@ function App() {
                         <Route
                             path="/my-orders/:id"
                             element={
-                                <UserOnlyRoute>
+                                <UserOnlyRoute pageType="orders">
                                     <OrderDetails />
                                 </UserOnlyRoute>
                             }

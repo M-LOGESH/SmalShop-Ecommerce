@@ -44,11 +44,10 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 is_superuser: data.is_superuser,
                 access: data.access,
                 refresh: data.refresh,
-                profile: data.profile || {}, 
+                profile: data.profile || {},
             });
 
             onClose();
-            
         } catch (error) {
             console.error('Network error:', error);
             setErrors({ general: 'Error connecting to server.' });
@@ -71,7 +70,9 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                         onClick={onClose}
                         disabled={isLoading}
                         className={`text-sm transition-colors ${
-                            isLoading ? 'text-gray-400 cursor-not-allowed' : 'text-gray-500 hover:text-violet-700'
+                            isLoading
+                                ? 'cursor-not-allowed text-gray-400'
+                                : 'text-gray-500 hover:text-violet-700'
                         }`}
                     >
                         ✖
@@ -98,8 +99,8 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                                 errors.username
                                     ? 'border-red-500'
                                     : isLoading
-                                    ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-                                    : 'border-gray-300 focus:border-violet-600'
+                                      ? 'cursor-not-allowed border-gray-200 bg-gray-50'
+                                      : 'border-gray-300 focus:border-violet-600'
                             }`}
                             autoComplete="username"
                             required
@@ -130,8 +131,8 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                                 errors.password
                                     ? 'border-red-500'
                                     : isLoading
-                                    ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-                                    : 'border-gray-300 focus:border-violet-600'
+                                      ? 'cursor-not-allowed border-gray-200 bg-gray-50'
+                                      : 'border-gray-300 focus:border-violet-600'
                             }`}
                             autoComplete="current-password"
                             required
@@ -150,18 +151,20 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full rounded py-2 text-white font-medium transition-all duration-300 ${
+                    className={`w-full rounded py-2 font-medium text-white transition-colors duration-300 ${
                         isLoading
-                            ? 'bg-violet-400 cursor-not-allowed'
+                            ? 'cursor-not-allowed bg-violet-400'
                             : 'bg-violet-600 hover:bg-violet-700 active:scale-95'
-                    } ${!isLoading ? 'hover:shadow-lg transform hover:-translate-y-0.5' : ''}`}
+                    }`}
                 >
                     Sign In
                 </button>
 
-                <p className={`mt-4 text-center transition-opacity ${
-                    isLoading ? 'text-gray-400' : 'text-gray-600'
-                }`}>
+                <p
+                    className={`mt-4 text-center transition-opacity ${
+                        isLoading ? 'text-gray-400' : 'text-gray-600'
+                    }`}
+                >
                     Don't have an account?{' '}
                     <span
                         onClick={() => {
@@ -172,8 +175,8 @@ function Login({ onClose, onLoginSuccess, onSwitchToRegister }) {
                         }}
                         className={`cursor-pointer font-medium transition-colors ${
                             isLoading
-                                ? 'text-gray-400 cursor-not-allowed'
-                                : 'text-violet-600 hover:underline hover:text-violet-700'
+                                ? 'cursor-not-allowed text-gray-400'
+                                : 'text-violet-600 hover:text-violet-700 hover:underline'
                         }`}
                     >
                         Register

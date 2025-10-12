@@ -1,3 +1,4 @@
+// pages/users/myorders/MyOrders.jsx
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import PendingOrders from './PendingOrders';
@@ -7,17 +8,13 @@ import Loading from '../../../components/common/Loading';
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function MyOrders() {
-    const { user, fetchWithAuth } = useAuth();
+    const { fetchWithAuth } = useAuth();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (user) {
-            loadOrders();
-        } else {
-            setLoading(false);
-        }
-    }, [user]);
+        loadOrders();
+    }, []);
 
     const loadOrders = async () => {
         setLoading(true);
@@ -50,23 +47,6 @@ export default function MyOrders() {
         }
     };
 
-    if (!user)
-        return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <div className="-mt-30">
-                    <img
-                        src="/img/emptyorder.png"
-                        alt="Login required"
-                        className="mb-4 h-64 w-64"
-                        loading="lazy"
-                    />
-                    <p className="text-center text-lg font-semibold text-gray-600">
-                        Login to view your orders
-                    </p>
-                </div>
-            </div>
-        );
-
     if (loading) {
         return <Loading />;
     }
@@ -89,7 +69,6 @@ export default function MyOrders() {
         );
     }
 
-    // Orders available
     return (
         <div className="flex min-h-screen justify-center bg-gray-100">
             <div className="w-full max-w-6xl">
