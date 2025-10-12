@@ -73,15 +73,7 @@ export const OrdersProvider = ({ children }) => {
     );
 
     const getOrdersByUser = useCallback(
-        (userId) =>
-            allOrders.filter(
-                (o) =>
-                    o.user?.toString() === userId.toString() ||
-                    (o.user &&
-                        typeof o.user === 'object' &&
-                        o.user.id?.toString() === userId.toString()) ||
-                    o.user_id?.toString() === userId.toString()
-            ),
+        (userId) => allOrders.filter((o) => o.user_id?.toString() === userId.toString()),
         [allOrders]
     );
 
