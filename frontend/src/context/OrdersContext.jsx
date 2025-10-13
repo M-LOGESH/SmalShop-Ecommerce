@@ -24,7 +24,6 @@ export const OrdersProvider = ({ children }) => {
 
     const fetchOrders = useCallback(
         async (force = false) => {
-            // Skip if not logged in
             if (!user?.access) {
                 setAllOrders([]);
                 setHasFetched(false);
@@ -40,10 +39,11 @@ export const OrdersProvider = ({ children }) => {
                 setError(null);
 
                 const res = await fetchWithAuth(`${API_BASE}/api/orders/`);
-
                 if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
 
                 const data = await res.json();
+                console.log('API Response - Orders data:', data); // Debug log
+                
                 if (!Array.isArray(data)) throw new Error('Invalid orders data format');
 
                 setAllOrders(data);
@@ -59,7 +59,6 @@ export const OrdersProvider = ({ children }) => {
         [user, fetchWithAuth, allOrders.length, lastFetchTime]
     );
 
-    // Fetch only when user logs in
     useEffect(() => {
         if (user?.access) {
             fetchOrders();
@@ -67,30 +66,38 @@ export const OrdersProvider = ({ children }) => {
             setAllOrders([]);
             setHasFetched(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, fetchOrders]);
 
     const refetchOrders = useCallback(() => {
         fetchOrders(true);
     }, [fetchOrders]);
 
-    // --- Helper functions ---
+    // Helper functions
     const getOrderById = useCallback(
         (id) => allOrders.find((o) => o.id === parseInt(id)),
         [allOrders]
     );
 
-    const getOrdersByUser = useCallback(
-        (userId) => {
-            if (!userId) return [];
-            return allOrders.filter((o) => {
-                // Handle different user ID formats
-                const orderUserId = o.user_id || o.user?.id || o.user;
-                return orderUserId?.toString() === userId.toString();
-            });
-        },
-        [allOrders]
-    );
+    // Since your API already filters orders by current user for non-staff users,
+    // we can just return all orders for regular users
+    const getMyOrders = useCallback(() => {
+        console.log('getMyOrders - User:', user); // Debug log
+        console.log('getMyOrders - All orders:', allOrders); // Debug log
+        
+        if (!user) return [];
+        
+        // For regular users, API returns only their orders, so return all
+        if (!user.is_staff && !user.is_superuser) {
+            return allOrders;
+        }
+        
+        // For staff/admin users, filter by user_id to show only their own orders
+        return allOrders.filter(order => {
+            const orderUserId = order.user_id;
+            console.log('Filtering staff order - Order user_id:', orderUserId, 'Current user id:', user.id); // Debug log
+            return orderUserId === user.id;
+        });
+    }, [allOrders, user]);
 
     const getOrdersByStatus = useCallback(
         (status) => allOrders.filter((o) => o.status === status),
@@ -112,23 +119,17 @@ export const OrdersProvider = ({ children }) => {
         [allOrders]
     );
 
-    const getMyOrders = useCallback(() => {
-        if (!user?.id) return [];
-        return getOrdersByUser(user.id);
-    }, [user, getOrdersByUser]);
-
     const value = {
         allOrders,
         loading,
         error,
         hasFetched,
         getOrderById,
-        getOrdersByUser,
+        getMyOrders,
         getOrdersByStatus,
         getCompletedOrders,
         getCancelledOrders,
         getPendingOrders,
-        getMyOrders,
         refetchOrders,
         updateOrderLocally,
     };
