@@ -76,6 +76,17 @@ export const OrdersProvider = ({ children }) => {
         [allOrders]
     );
 
+    const getOrdersByUser = useCallback(
+        (userId) => {
+            if (!userId) return [];
+            return allOrders.filter(order => {
+                const orderUserId = order.user_id || order.user?.id;
+                return orderUserId?.toString() === userId.toString();
+            });
+        },
+        [allOrders]
+    );
+
     const getMyOrders = useCallback(() => {
         if (!user) return [];
         
@@ -114,6 +125,7 @@ export const OrdersProvider = ({ children }) => {
         error,
         hasFetched,
         getOrderById,
+        getOrdersByUser, // ADD THIS TO THE EXPORTED VALUE
         getMyOrders,
         getOrdersByStatus,
         getCompletedOrders,

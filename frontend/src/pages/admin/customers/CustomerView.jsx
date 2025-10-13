@@ -30,6 +30,15 @@ function CustomerView() {
 
     // Calculate order statistics
     const calculateOrderStats = (orders) => {
+        if (!orders || !Array.isArray(orders)) {
+            return {
+                completedCount: 0,
+                cancelledCount: 0,
+                totalCompletedPrice: 0,
+                totalOrders: 0,
+            };
+        }
+
         const completedOrders = orders.filter((order) => order.status === 'completed');
         const cancelledOrders = orders.filter((order) => order.status === 'cancelled');
 
@@ -67,7 +76,16 @@ function CustomerView() {
                 }
 
                 // Get orders for this customer from context
-                const customerOrders = getOrdersByUser(id);
+                let customerOrders = [];
+                if (typeof getOrdersByUser === 'function') {
+                    customerOrders = getOrdersByUser(id);
+                } else {
+                    console.warn('getOrdersByUser is not available, filtering manually');
+                    customerOrders = allOrders.filter((order) => {
+                        const orderUserId = order.user_id || order.user?.id;
+                        return orderUserId?.toString() === id.toString();
+                    });
+                }
                 setOrders(customerOrders);
             } catch (err) {
                 console.error('Error loading customer data:', err);
@@ -78,13 +96,9 @@ function CustomerView() {
         };
 
         // Only load when contexts have data
-        if (id && !usersLoading && !ordersLoading && allUsers.length > 0 && allOrders.length > 0) {
+        if (id && !usersLoading && !ordersLoading && allUsers.length > 0) {
             loadCustomerData();
-        } else if (
-            id &&
-            (!usersLoading || !ordersLoading) &&
-            (allUsers.length === 0 || allOrders.length === 0)
-        ) {
+        } else if (id && (!usersLoading || !ordersLoading) && allUsers.length === 0) {
             // If contexts are done loading but no data found
             setError('Customer not found in system');
             setLoading(false);
