@@ -1,4 +1,3 @@
-// src/components/orders/PendingOrders.jsx
 import { FaClock, FaCog, FaBoxOpen, FaCheckCircle } from 'react-icons/fa';
 
 const STATUS_STEPS = [

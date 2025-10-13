@@ -17,16 +17,14 @@ export default function MyOrders() {
         hasFetched
     } = useOrders();
     
-    const { fetchWithAuth, user } = useAuth();
+    const { fetchWithAuth } = useAuth();
     const orders = getMyOrders();
 
     useEffect(() => {
-        console.log('MyOrders - Current user:', user);
-        console.log('MyOrders - Filtered orders:', orders);
         if (!hasFetched) {
             refetchOrders();
         }
-    }, [refetchOrders, hasFetched, orders, user]);
+    }, [refetchOrders, hasFetched]);
 
     const cancelOrder = async (orderId) => {
         try {
@@ -50,8 +48,6 @@ export default function MyOrders() {
     if (loading && !hasFetched) {
         return <Loading />;
     }
-
-    console.log('Rendering - Orders length:', orders?.length); // Debug log
 
     if (!orders || orders.length === 0) {
         return (

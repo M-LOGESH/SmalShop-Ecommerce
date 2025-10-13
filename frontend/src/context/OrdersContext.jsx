@@ -42,8 +42,6 @@ export const OrdersProvider = ({ children }) => {
                 if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`);
 
                 const data = await res.json();
-                console.log('API Response - Orders data:', data); // Debug log
-                
                 if (!Array.isArray(data)) throw new Error('Invalid orders data format');
 
                 setAllOrders(data);
@@ -78,12 +76,7 @@ export const OrdersProvider = ({ children }) => {
         [allOrders]
     );
 
-    // Since your API already filters orders by current user for non-staff users,
-    // we can just return all orders for regular users
     const getMyOrders = useCallback(() => {
-        console.log('getMyOrders - User:', user); // Debug log
-        console.log('getMyOrders - All orders:', allOrders); // Debug log
-        
         if (!user) return [];
         
         // For regular users, API returns only their orders, so return all
@@ -92,11 +85,7 @@ export const OrdersProvider = ({ children }) => {
         }
         
         // For staff/admin users, filter by user_id to show only their own orders
-        return allOrders.filter(order => {
-            const orderUserId = order.user_id;
-            console.log('Filtering staff order - Order user_id:', orderUserId, 'Current user id:', user.id); // Debug log
-            return orderUserId === user.id;
-        });
+        return allOrders.filter(order => order.user_id === user.id);
     }, [allOrders, user]);
 
     const getOrdersByStatus = useCallback(
