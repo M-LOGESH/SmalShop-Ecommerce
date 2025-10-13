@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { FaPlus, FaMinus, FaCheck } from 'react-icons/fa';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import { useOrders } from '../../context/OrdersContext';
 import { toast } from 'react-toastify';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function Cart({ isOpen, onClose }) {
     const { user, cart, updateCartQuantity, fetchWithAuth, setCart } = useAuth();
+    const { refetchOrders } = useOrders(); 
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
 
@@ -75,7 +77,6 @@ function Cart({ isOpen, onClose }) {
                 setOrderSuccess(true);
                 setIsPlacingOrder(false);
                 
-                // Wait for animation to complete before closing
                 setTimeout(() => {
                     toast.success(data.message || 'Order placed successfully!');
                     
@@ -83,8 +84,11 @@ function Cart({ isOpen, onClose }) {
                     setCart((prevCart) =>
                         prevCart.filter((item) => item.product_detail?.stock_status === 'out_of_stock')
                     );
+                    
+                    refetchOrders();
+                    
                     onClose();
-                }, 1500); // Show success state for 1.5 seconds
+                }, 1500); 
                 
             } else {
                 const err = await res.json();
@@ -105,7 +109,6 @@ function Cart({ isOpen, onClose }) {
         (item) => item.product_detail?.stock_status === 'out_of_stock'
     );
 
-    // Determine button state and content
     const getButtonContent = () => {
         if (orderSuccess) {
             return (
