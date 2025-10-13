@@ -21,7 +21,6 @@ export default function PendingOrders({ orders, cancelOrder }) {
                         src="/img/emptyorder.png"
                         alt="Orders not found"
                         className="mb-2 h-64 w-64"
-                        loading="lazy"
                     />
                     <p className="text-center text-lg font-semibold text-gray-600">
                         No Pending Orders

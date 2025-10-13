@@ -1,10 +1,10 @@
-// pages/users/myorders/MyOrders.jsx
 import { useEffect } from 'react';
 import { useOrders } from '../../../context/OrdersContext';
 import { useAuth } from '../../../context/AuthContext';
 import PendingOrders from './PendingOrders';
 import CompletedOrders from './CompletedOrders';
 import Loading from '../../../components/common/Loading';
+import { toast } from 'react-toastify';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,6 +36,7 @@ export default function MyOrders() {
             
             if (res.ok) {
                 updateOrderLocally(orderId, 'cancelled');
+                toast.success('Order cancelled successfully')
             } else {
                 alert('Failed to cancel order');
             }

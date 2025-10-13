@@ -31,7 +31,6 @@ function Wishlist() {
                         src="/img/emptywishlist.png"
                         alt="Wishlist"
                         className="mb-4 h-64 w-64"
-                        loading="lazy"
                     />
                     <p className="text-center text-lg font-semibold text-gray-600">
                         No items in Wishlist
@@ -68,7 +67,6 @@ function Wishlist() {
                                             src={p.image_url}
                                             alt={p.name}
                                             className="h-full w-auto object-contain"
-                                            loading="lazy"
                                         />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">
