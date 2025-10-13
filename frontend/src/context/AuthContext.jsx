@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [wishlistData, setWishlistData] = useState([]);
+    const [updatingItems, setUpdatingItems] = useState(new Set()); // Track updating items
 
     const saveUser = (userData) => {
         setUser(userData);
@@ -36,30 +37,20 @@ export const AuthProvider = ({ children }) => {
         setCart([]);
         setWishlist([]);
         setWishlistData([]);
+        setUpdatingItems(new Set());
         localStorage.removeItem('user');
     };
 
-    // Check if user is staff or admin
     const isStaffOrAdmin = () => {
         if (!user) return false;
-
-        // Check from decoded token
         const payload = decodeJWT(user.access);
-        if (payload?.is_staff || payload?.is_superuser) {
-            return true;
-        }
-
-        // Check from user object (fallback)
-        if (user.is_staff || user.is_superuser) {
-            return true;
-        }
-
+        if (payload?.is_staff || payload?.is_superuser) return true;
+        if (user.is_staff || user.is_superuser) return true;
         return false;
     };
 
     const refreshAccessToken = async () => {
         if (!user?.refresh) return null;
-
         try {
             const response = await fetch(`${API_BASE}/api/users/token/refresh/`, {
                 method: 'POST',
@@ -106,8 +97,6 @@ export const AuthProvider = ({ children }) => {
 
     const loadCart = async () => {
         if (!user?.access) return;
-
-        // Skip cart loading for staff/admin
         if (isStaffOrAdmin()) {
             setCart([]);
             return;
@@ -126,8 +115,6 @@ export const AuthProvider = ({ children }) => {
 
     const loadWishlist = async () => {
         if (!user?.access) return;
-
-        // Skip wishlist loading for staff/admin
         if (isStaffOrAdmin()) {
             setWishlist([]);
             setWishlistData([]);
@@ -148,11 +135,21 @@ export const AuthProvider = ({ children }) => {
 
     const addToCart = async (productId, quantity = 1) => {
         if (!user) return toast.error('Login to add to cart');
-
         if (isStaffOrAdmin()) {
             toast.error('Staff and admin users cannot use cart functionality');
             return;
         }
+
+        // Immediate UI update
+        const tempCartItem = {
+            id: `temp-${Date.now()}`,
+            product: productId,
+            quantity: quantity,
+            product_detail: { id: productId }, // Minimal product detail for immediate UI
+            isTemp: true
+        };
+
+        setCart((prev) => [...prev, tempCartItem]);
 
         try {
             const res = await fetchWithAuth(`${API_BASE}/api/cart/`, {
@@ -163,40 +160,80 @@ export const AuthProvider = ({ children }) => {
 
             if (res.ok) {
                 const data = await res.json();
-                setCart((prev) => [...prev, data]);
+                // Replace temp item with real item
+                setCart((prev) => 
+                    prev.map(item => item.id === tempCartItem.id ? data : item)
+                );
                 toast.success('Added to cart');
+            } else {
+                // Rollback on error
+                setCart((prev) => prev.filter(item => item.id !== tempCartItem.id));
+                toast.error('Failed to add to cart');
             }
         } catch (err) {
             console.error('Cart error:', err);
+            setCart((prev) => prev.filter(item => item.id !== tempCartItem.id));
             toast.error('Error adding to cart');
         }
     };
 
-    const updateCartQuantity = async (cartId, quantity) => {
+    const updateCartQuantity = async (cartId, newQuantity) => {
         if (isStaffOrAdmin()) {
             toast.error('Staff and admin users cannot modify cart');
             return;
         }
 
+        // Prevent multiple simultaneous updates for same item
+        if (updatingItems.has(cartId)) return;
+        
+        setUpdatingItems(prev => new Set(prev).add(cartId));
+
+        // Immediate UI update
+        const previousCart = [...cart];
+        setCart((prev) =>
+            prev.map((item) =>
+                item.id === cartId ? { ...item, quantity: newQuantity } : item
+            )
+        );
+
         try {
-            if (quantity < 1) {
+            if (newQuantity < 1) {
                 const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'DELETE',
                 });
-                if (res.ok) setCart((prev) => prev.filter((item) => item.id !== cartId));
+                if (res.ok) {
+                    setCart((prev) => prev.filter((item) => item.id !== cartId));
+                } else {
+                    // Rollback on error
+                    setCart(previousCart);
+                    toast.error('Failed to remove item');
+                }
             } else {
                 const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity }),
+                    body: JSON.stringify({ quantity: newQuantity }),
                 });
                 if (res.ok) {
                     const data = await res.json();
                     setCart((prev) => prev.map((item) => (item.id === cartId ? data : item)));
+                } else {
+                    // Rollback on error
+                    setCart(previousCart);
+                    toast.error('Failed to update quantity');
                 }
             }
         } catch (err) {
             console.error('Error updating cart:', err);
+            // Rollback on error
+            setCart(previousCart);
+            toast.error('Error updating cart');
+        } finally {
+            setUpdatingItems(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(cartId);
+                return newSet;
+            });
         }
     };
 
@@ -215,13 +252,20 @@ export const AuthProvider = ({ children }) => {
             const existingItem = wishlistData.find((w) => w.product === productId);
 
             if (existingItem) {
+                // Immediate UI update
+                setWishlist((prev) => prev.filter((pid) => pid !== productId));
+                setWishlistData((prev) => prev.filter((w) => w.product !== productId));
+                
                 await fetchWithAuth(`${API_BASE}/api/wishlist/${existingItem.id}/`, {
                     method: 'DELETE',
                 });
-                setWishlist((prev) => prev.filter((pid) => pid !== productId));
-                setWishlistData((prev) => prev.filter((w) => w.product !== productId));
                 toast.success('Removed from wishlist');
             } else {
+                // Immediate UI update
+                setWishlist((prev) => [...prev, productId]);
+                const tempWishlistItem = { id: `temp-${Date.now()}`, product: productId, isTemp: true };
+                setWishlistData((prev) => [...prev, tempWishlistItem]);
+
                 const res = await fetchWithAuth(`${API_BASE}/api/wishlist/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -229,10 +273,12 @@ export const AuthProvider = ({ children }) => {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setWishlist((prev) => [...prev, productId]);
-                    setWishlistData((prev) => [...prev, data]);
+                    setWishlistData((prev) => prev.map(item => item.id === tempWishlistItem.id ? data : item));
                     toast.success('Added to wishlist');
                 } else {
+                    // Rollback on error
+                    setWishlist((prev) => prev.filter((pid) => pid !== productId));
+                    setWishlistData((prev) => prev.filter((w) => w.id !== tempWishlistItem.id));
                     toast.error('Failed to add to wishlist');
                 }
             }
@@ -242,7 +288,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // proactive refresh every 55 min
     useEffect(() => {
         if (!user?.refresh) return;
         const interval = setInterval(
@@ -263,6 +308,7 @@ export const AuthProvider = ({ children }) => {
             setCart([]);
             setWishlist([]);
             setWishlistData([]);
+            setUpdatingItems(new Set());
         }
     }, [user]);
 
@@ -282,6 +328,7 @@ export const AuthProvider = ({ children }) => {
                 addToCart,
                 updateCartQuantity,
                 isStaffOrAdmin,
+                updatingItems, 
             }}
         >
             {children}

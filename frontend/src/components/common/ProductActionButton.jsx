@@ -10,9 +10,10 @@ export default function ProductActionButton({
     size = 'normal',
     className = '',
 }) {
-    const { user } = useAuth();
+    const { user, updatingItems } = useAuth();
 
     const baseBtn = size === 'small' ? 'px-2 py-1 text-xs gap-2 max-w-21' : 'px-2 py-1 text-sm';
+    const isUpdating = cartItem && updatingItems.has(cartItem.id);
 
     if (user?.is_staff) {
         return (
@@ -41,20 +42,38 @@ export default function ProductActionButton({
     if (cartItem) {
         return (
             <div
-                className={`flex items-center justify-between rounded bg-violet-900 font-bold text-white ${baseBtn} ${className}`}
+                className={`flex items-center justify-between rounded font-bold text-white ${
+                    isUpdating ? 'bg-violet-700 cursor-wait' : 'bg-violet-900'
+                } ${baseBtn} ${className}`}
             >
                 <button
-                    onClick={() => updateCartQuantity(cartItem.id, cartItem.quantity - 1)}
-                    className="flex items-center justify-center px-2"
+                    onClick={() => !isUpdating && updateCartQuantity(cartItem.id, cartItem.quantity - 1)}
+                    disabled={isUpdating}
+                    className={`flex items-center justify-center px-2 ${
+                        isUpdating ? 'cursor-wait opacity-70' : ''
+                    }`}
                 >
-                    <FaMinus size={size === 'small' ? 10 : 12} />
+                    {isUpdating ? (
+                        <div className="h-3 w-3 animate-spin rounded-full border border-white border-t-transparent"></div>
+                    ) : (
+                        <FaMinus size={size === 'small' ? 10 : 12} />
+                    )}
                 </button>
-                <span className="px-1">{cartItem.quantity}</span>
+                <span className={`px-1 ${isUpdating ? 'opacity-70' : ''}`}>
+                    {cartItem.quantity}
+                </span>
                 <button
-                    onClick={() => updateCartQuantity(cartItem.id, cartItem.quantity + 1)}
-                    className="flex items-center justify-center px-2"
+                    onClick={() => !isUpdating && updateCartQuantity(cartItem.id, cartItem.quantity + 1)}
+                    disabled={isUpdating}
+                    className={`flex items-center justify-center px-2 ${
+                        isUpdating ? 'cursor-wait opacity-70' : ''
+                    }`}
                 >
-                    <FaPlus size={size === 'small' ? 10 : 12} />
+                    {isUpdating ? (
+                        <div className="h-3 w-3 animate-spin rounded-full border border-white border-t-transparent"></div>
+                    ) : (
+                        <FaPlus size={size === 'small' ? 10 : 12} />
+                    )}
                 </button>
             </div>
         );
