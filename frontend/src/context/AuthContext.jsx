@@ -109,7 +109,6 @@ export const AuthProvider = ({ children }) => {
 
         // Skip cart loading for staff/admin
         if (isStaffOrAdmin()) {
-            console.log('Skipping cart load for staff/admin user');
             setCart([]);
             return;
         }
@@ -130,7 +129,6 @@ export const AuthProvider = ({ children }) => {
 
         // Skip wishlist loading for staff/admin
         if (isStaffOrAdmin()) {
-            console.log('Skipping wishlist load for staff/admin user');
             setWishlist([]);
             setWishlistData([]);
             return;

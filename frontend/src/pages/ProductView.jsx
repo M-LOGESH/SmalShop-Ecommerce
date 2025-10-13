@@ -32,13 +32,11 @@ function ProductView() {
             // First try to get product from cache
             const cachedProduct = getProductById(id);
             if (cachedProduct) {
-                console.log('🔄 ProductView: Using cached product');
                 setProduct(cachedProduct);
                 setLoading(false);
                 return;
             }
 
-            console.log('🚀 ProductView: Fetching individual product');
             // If not in cache, fetch individually
             const res = user?.access
                 ? await fetchWithAuth(`${API_BASE}/api/products/${id}/`)
