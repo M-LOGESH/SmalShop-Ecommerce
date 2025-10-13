@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [wishlistData, setWishlistData] = useState([]);
-    const [updatingItems, setUpdatingItems] = useState(new Set()); // Track updating items
 
     const saveUser = (userData) => {
         setUser(userData);
@@ -37,7 +36,6 @@ export const AuthProvider = ({ children }) => {
         setCart([]);
         setWishlist([]);
         setWishlistData([]);
-        setUpdatingItems(new Set());
         localStorage.removeItem('user');
     };
 
@@ -145,7 +143,7 @@ export const AuthProvider = ({ children }) => {
             id: `temp-${Date.now()}`,
             product: productId,
             quantity: quantity,
-            product_detail: { id: productId }, // Minimal product detail for immediate UI
+            product_detail: { id: productId },
             isTemp: true
         };
 
@@ -183,12 +181,7 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
-        // Prevent multiple simultaneous updates for same item
-        if (updatingItems.has(cartId)) return;
-        
-        setUpdatingItems(prev => new Set(prev).add(cartId));
-
-        // Immediate UI update
+        // Immediate UI update - update optimistically
         const previousCart = [...cart];
         setCart((prev) =>
             prev.map((item) =>
@@ -201,9 +194,7 @@ export const AuthProvider = ({ children }) => {
                 const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'DELETE',
                 });
-                if (res.ok) {
-                    setCart((prev) => prev.filter((item) => item.id !== cartId));
-                } else {
+                if (!res.ok) {
                     // Rollback on error
                     setCart(previousCart);
                     toast.error('Failed to remove item');
@@ -214,10 +205,7 @@ export const AuthProvider = ({ children }) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ quantity: newQuantity }),
                 });
-                if (res.ok) {
-                    const data = await res.json();
-                    setCart((prev) => prev.map((item) => (item.id === cartId ? data : item)));
-                } else {
+                if (!res.ok) {
                     // Rollback on error
                     setCart(previousCart);
                     toast.error('Failed to update quantity');
@@ -228,12 +216,6 @@ export const AuthProvider = ({ children }) => {
             // Rollback on error
             setCart(previousCart);
             toast.error('Error updating cart');
-        } finally {
-            setUpdatingItems(prev => {
-                const newSet = new Set(prev);
-                newSet.delete(cartId);
-                return newSet;
-            });
         }
     };
 
@@ -308,7 +290,6 @@ export const AuthProvider = ({ children }) => {
             setCart([]);
             setWishlist([]);
             setWishlistData([]);
-            setUpdatingItems(new Set());
         }
     }, [user]);
 
@@ -328,7 +309,6 @@ export const AuthProvider = ({ children }) => {
                 addToCart,
                 updateCartQuantity,
                 isStaffOrAdmin,
-                updatingItems, 
             }}
         >
             {children}
