@@ -11,7 +11,6 @@ const STATUS_STEPS = [
 export default function PendingOrders({ orders, cancelOrder }) {
     const getStepIndex = (status) => STATUS_STEPS.findIndex((s) => s.key === status);
 
-    // Only show pending, preparing, or ready orders
     const visibleOrders = orders.filter(
         (order) => order.status !== 'cancelled' && order.status !== 'completed'
     );

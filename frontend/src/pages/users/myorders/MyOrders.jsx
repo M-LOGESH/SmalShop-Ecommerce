@@ -1,5 +1,6 @@
 // pages/users/myorders/MyOrders.jsx
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useOrders } from '../../../context/OrdersContext';
 import { useAuth } from '../../../context/AuthContext';
 import PendingOrders from './PendingOrders';
 import CompletedOrders from './CompletedOrders';
@@ -8,30 +9,19 @@ import Loading from '../../../components/common/Loading';
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function MyOrders() {
+    const { 
+        getMyOrders, 
+        loading, 
+        refetchOrders,
+        updateOrderLocally 
+    } = useOrders();
+    
     const { fetchWithAuth } = useAuth();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const orders = getMyOrders();
 
     useEffect(() => {
-        loadOrders();
-    }, []);
-
-    const loadOrders = async () => {
-        setLoading(true);
-        try {
-            const res = await fetchWithAuth(`${API_BASE}/api/orders/`);
-            if (res.ok) {
-                const data = await res.json();
-                setOrders(data);
-            } else {
-                setOrders([]);
-            }
-        } catch (err) {
-            console.error('Error loading orders:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+        refetchOrders();
+    }, [refetchOrders]);
 
     const cancelOrder = async (orderId) => {
         try {
@@ -40,14 +30,18 @@ export default function MyOrders() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'cancelled' }),
             });
-            if (res.ok) loadOrders();
-            else alert('Failed to cancel order');
+            
+            if (res.ok) {
+                updateOrderLocally(orderId, 'cancelled');
+            } else {
+                alert('Failed to cancel order');
+            }
         } catch (err) {
             console.error('Error cancelling order:', err);
         }
     };
 
-    if (loading) {
+    if (loading && orders.length === 0) {
         return <Loading />;
     }
 
