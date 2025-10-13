@@ -181,16 +181,13 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
-        // Immediate UI update - update optimistically
-        const previousCart = [...cart];
-        setCart((prev) =>
-            prev.map((item) =>
-                item.id === cartId ? { ...item, quantity: newQuantity } : item
-            )
-        );
+        // If quantity reaches 0 or below, remove from cart immediately
+        if (newQuantity < 1) {
+            // Immediate UI update - remove from cart
+            const previousCart = [...cart];
+            setCart((prev) => prev.filter((item) => item.id !== cartId));
 
-        try {
-            if (newQuantity < 1) {
+            try {
                 const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'DELETE',
                 });
@@ -199,7 +196,22 @@ export const AuthProvider = ({ children }) => {
                     setCart(previousCart);
                     toast.error('Failed to remove item');
                 }
-            } else {
+            } catch (err) {
+                console.error('Error removing from cart:', err);
+                // Rollback on error
+                setCart(previousCart);
+                toast.error('Error removing from cart');
+            }
+        } else {
+            // Immediate UI update - update quantity optimistically
+            const previousCart = [...cart];
+            setCart((prev) =>
+                prev.map((item) =>
+                    item.id === cartId ? { ...item, quantity: newQuantity } : item
+                )
+            );
+
+            try {
                 const res = await fetchWithAuth(`${API_BASE}/api/cart/${cartId}/`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
@@ -210,12 +222,12 @@ export const AuthProvider = ({ children }) => {
                     setCart(previousCart);
                     toast.error('Failed to update quantity');
                 }
+            } catch (err) {
+                console.error('Error updating cart:', err);
+                // Rollback on error
+                setCart(previousCart);
+                toast.error('Error updating cart');
             }
-        } catch (err) {
-            console.error('Error updating cart:', err);
-            // Rollback on error
-            setCart(previousCart);
-            toast.error('Error updating cart');
         }
     };
 
