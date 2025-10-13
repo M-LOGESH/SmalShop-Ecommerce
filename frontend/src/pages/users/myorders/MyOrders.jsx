@@ -1,48 +1,55 @@
-import { useEffect } from 'react';
-import { useOrders } from '../../../context/OrdersContext';
+// pages/users/myorders/MyOrders.jsx
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 import PendingOrders from './PendingOrders';
 import CompletedOrders from './CompletedOrders';
 import Loading from '../../../components/common/Loading';
 
-export default function MyOrders() {
-    const {
-        getMyOrders,
-        loading,
-        hasFetched,
-        refetchOrders,
-        updateOrderLocally,
-    } = useOrders();
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-    const orders = getMyOrders();
+export default function MyOrders() {
+    const { fetchWithAuth } = useAuth();
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Ensures fetching if not yet fetched
-        if (!hasFetched) {
-            refetchOrders();
+        loadOrders();
+    }, []);
+
+    const loadOrders = async () => {
+        setLoading(true);
+        try {
+            const res = await fetchWithAuth(`${API_BASE}/api/orders/`);
+            if (res.ok) {
+                const data = await res.json();
+                setOrders(data);
+            } else {
+                setOrders([]);
+            }
+        } catch (err) {
+            console.error('Error loading orders:', err);
+        } finally {
+            setLoading(false);
         }
-    }, [hasFetched, refetchOrders]);
+    };
 
     const cancelOrder = async (orderId) => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/${orderId}/`, {
+            const res = await fetchWithAuth(`${API_BASE}/api/orders/${orderId}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'cancelled' }),
-                credentials: 'include', // optional, depending on your fetchWithAuth setup
             });
-
-            if (res.ok) {
-                // ✅ Instant UI update
-                updateOrderLocally(orderId, 'cancelled');
-            } else {
-                alert('Failed to cancel order');
-            }
+            if (res.ok) loadOrders();
+            else alert('Failed to cancel order');
         } catch (err) {
             console.error('Error cancelling order:', err);
         }
     };
 
-    if (loading && !hasFetched) return <Loading />;
+    if (loading) {
+        return <Loading />;
+    }
 
     if (!orders || orders.length === 0) {
         return (
