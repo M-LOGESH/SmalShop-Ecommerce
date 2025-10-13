@@ -13,15 +13,18 @@ export default function MyOrders() {
         getMyOrders, 
         loading, 
         refetchOrders,
-        updateOrderLocally 
+        updateOrderLocally,
+        hasFetched
     } = useOrders();
     
     const { fetchWithAuth } = useAuth();
     const orders = getMyOrders();
 
     useEffect(() => {
-        refetchOrders();
-    }, [refetchOrders]);
+        if (!hasFetched) {
+            refetchOrders();
+        }
+    }, [refetchOrders, hasFetched]);
 
     const cancelOrder = async (orderId) => {
         try {
@@ -41,7 +44,8 @@ export default function MyOrders() {
         }
     };
 
-    if (loading && orders.length === 0) {
+    // Show loading only on initial load when no orders exist
+    if (loading && !hasFetched) {
         return <Loading />;
     }
 

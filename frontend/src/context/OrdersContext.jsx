@@ -68,7 +68,7 @@ export const OrdersProvider = ({ children }) => {
             setHasFetched(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]); // runs when login/logout occurs
+    }, [user]);
 
     const refetchOrders = useCallback(() => {
         fetchOrders(true);
@@ -81,7 +81,14 @@ export const OrdersProvider = ({ children }) => {
     );
 
     const getOrdersByUser = useCallback(
-        (userId) => allOrders.filter((o) => o.user_id?.toString() === userId.toString()),
+        (userId) => {
+            if (!userId) return [];
+            return allOrders.filter((o) => {
+                // Handle different user ID formats
+                const orderUserId = o.user_id || o.user?.id || o.user;
+                return orderUserId?.toString() === userId.toString();
+            });
+        },
         [allOrders]
     );
 
@@ -94,6 +101,7 @@ export const OrdersProvider = ({ children }) => {
         () => getOrdersByStatus('completed'),
         [getOrdersByStatus]
     );
+    
     const getCancelledOrders = useCallback(
         () => getOrdersByStatus('cancelled'),
         [getOrdersByStatus]
@@ -105,7 +113,7 @@ export const OrdersProvider = ({ children }) => {
     );
 
     const getMyOrders = useCallback(() => {
-        if (!user) return [];
+        if (!user?.id) return [];
         return getOrdersByUser(user.id);
     }, [user, getOrdersByUser]);
 
