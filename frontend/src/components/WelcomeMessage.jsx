@@ -19,7 +19,7 @@ function WelcomeMessage() {
             <div className="mb-6 text-center">
                 <p className="text-sm text-gray-700 sm:text-lg">
                     <span className="font-bold sm:text-lg">⚠️ Note:</span> Hosted on a free plan.
-                    The server may take up to a minute to start if idle.Please be patient while the
+                    The server may take up to a minute to start if idle. Please be patient while the
                     server spins up!
                 </p>
             </div>
