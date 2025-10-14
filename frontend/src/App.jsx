@@ -126,6 +126,7 @@ function App() {
                 </Routes>
             </Suspense>
 
+            {/* Toast Notifications */}
             <ToastContainer
                 position="top-center"
                 autoClose={2000}
@@ -135,16 +136,18 @@ function App() {
                 pauseOnFocusLoss={false}
                 draggable={false}
                 pauseOnHover={false}
-                theme="dark"
+                theme="colored"
                 closeButton={false}
-                toastClassName={({ type }) => {
-                    const baseClasses =
-                        'flex items-center max-w-xs md:max-w-sm rounded-lg shadow-lg p-3 space-x-3';
-                    if (!type) {
-                        return `${baseClasses} bg-black text-white`;
-                    }
-                    return baseClasses;
-                }}
+                toastClassName={({ type }) =>
+                    `flex items-center max-w-xs md:max-w-sm rounded-lg shadow-lg p-3 space-x-3
+                    ${
+                        type === 'success'
+                            ? 'bg-green-500 text-white'
+                            : type === 'error'
+                              ? 'bg-red-500 text-white'
+                              : 'bg-black text-white'
+                    }`
+                }
                 containerClassName="p-2 md:p-0"
             />
         </Router>
