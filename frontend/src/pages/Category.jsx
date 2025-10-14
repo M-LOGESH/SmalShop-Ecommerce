@@ -5,47 +5,26 @@ const categories = [
     {
         title: 'Biscuits, Drinks & Packaged Foods',
         items: [
-            {
-                name: 'Biscuits & Cookies',
-                img: '/img/categories/biscuits.png',
-                slug: 'biscuits',
-            },
-            {
-                name: 'Chips & Munchies',
-                img: '/img/categories/munchies.png',
-                slug: 'munchies',
-            },
-            {
-                name: 'Cold Drinks',
-                img: '/img/categories/colddrinks.png',
-                slug: 'colddrinks',
-            },
-            {
-                name: 'Biscuits & Cookies',
-                img: '/img/categories/biscuits.png',
-                slug: 'biscuits',
-            },
-            {
-                name: 'Chips & Munchies',
-                img: '/img/categories/munchies.png',
-                slug: 'munchies',
-            },
-            {
-                name: 'Cold Drinks',
-                img: '/img/categories/colddrinks.png',
-                slug: 'colddrinks',
-            },
+            { name: 'Biscuits & Cookies', img: '/img/categories/biscuits.webp', slug: 'biscuits' },
+            { name: 'Chips & Munchies', img: '/img/categories/munchies.webp', slug: 'munchies' },
+            { name: 'Cold Drinks', img: '/img/categories/colddrinks.webp', slug: 'colddrinks' },
+            { name: 'Chocolates', img: '/img/categories/chocolate.webp', slug: 'chocolates' },
         ],
     },
     {
         title: 'Fruits & Vegetables',
         items: [
-            { name: 'Fresh Fruits', img: '/img/categories/fruits.png', slug: 'fruits' },
-            {
-                name: 'Basic Vegetables',
-                img: '/img/categories/vegetables.png',
-                slug: 'vegetables',
-            },
+            { name: 'Fresh Fruits', img: '/img/categories/fruits.webp', slug: 'fruits' },
+            { name: 'Basic Vegetables', img: '/img/categories/vegetables.webp', slug: 'vegetables' },
+        ],
+    },
+    {
+        title: 'Home Essentials',
+        items: [
+            { name: 'Detergents & Cleaners', img: '/img/categories/detergent.webp', slug: 'detergents' },
+            { name: 'Dishwash', img: '/img/categories/dishwash.webp', slug: 'dishwash' },
+            { name: 'Fresheners & Repellents', img: '/img/categories/repellant.webp', slug: 'repellents' },
+            { name: 'Pooja Needs', img: '/img/categories/poojaitems.webp', slug: 'poojaitems' },
         ],
     },
 ];

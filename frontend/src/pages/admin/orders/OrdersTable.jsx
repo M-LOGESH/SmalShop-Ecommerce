@@ -99,7 +99,7 @@ function OrdersTable({ orders }) {
                     }`}
                 >
                     <FaCheckCircle />
-                    Completed ({orderCounts.completedOrders})
+                    Complete ({orderCounts.completedOrders})
                 </button>
                 <button
                     onClick={() => setActiveMode('cancelled')}
@@ -110,7 +110,7 @@ function OrdersTable({ orders }) {
                     }`}
                 >
                     <FaTimesCircle />
-                    Cancelled ({orderCounts.cancelledOrders})
+                    Cancel ({orderCounts.cancelledOrders})
                 </button>
             </div>
 

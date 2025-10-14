@@ -55,12 +55,12 @@ export default function MyOrders() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <div className="-mt-30">
                     <img
-                        src="/img/emptyorder.png"
+                        src="/img/emptyorder.webp"
                         alt="Orders not found"
-                        className="mb-4 h-64 w-64"
+                        className="mb-4 h-40 w-40 sm:h-64 sm:w-64"
                         loading="lazy"
                     />
-                    <p className="text-center text-lg font-semibold text-gray-600">
+                    <p className="text-center text-md sm:text-lg font-semibold text-gray-600">
                         No Orders Found
                     </p>
                 </div>

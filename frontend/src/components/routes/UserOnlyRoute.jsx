@@ -18,17 +18,17 @@ function UserOnlyRoute({ children, pageType = "default" }) {
             switch (pageType) {
                 case "wishlist":
                     return {
-                        image: "/img/emptywishlist.png",
+                        image: "/img/emptywishlist.webp",
                         message: "Login to view your Wishlist"
                     };
                 case "orders":
                     return {
-                        image: "/img/emptyorder.png", 
+                        image: "/img/emptyorder.webp", 
                         message: "Login to view your orders"
                     };
                 default:
                     return {
-                        image: "/img/emptyorder.png",
+                        image: "/img/emptyorder.webp",
                         message: "Login to view this page"
                     };
             }
@@ -37,15 +37,15 @@ function UserOnlyRoute({ children, pageType = "default" }) {
         const content = getPageContent();
         
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <div className="-mt-30">
+            <div className="flex h-screen -my-25 lg:my-0 flex-col items-center justify-center p-4 overflow-hidden">
+                <div className="flex flex-col items-center justify-center text-center">
                     <img
                         src={content.image}
                         alt="Login required"
-                        className="mb-4 h-64 w-64"
+                        className="mb-4 h-40 w-40 sm:h-64 sm:w-64 max-w-full object-contain"
                         loading="lazy"
                     />
-                    <p className="text-center text-lg font-semibold text-gray-600">
+                    <p className="text-md sm:text-lg font-semibold text-gray-600 px-4">
                         {content.message}
                     </p>
                 </div>
