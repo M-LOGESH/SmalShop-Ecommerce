@@ -56,7 +56,7 @@ export default function CompletedOrders({ orders }) {
                         alt="Orders not found"
                         className="mb-2 h-40 w-40 sm:h-64 sm:w-64"
                     />
-                    <p className="text-center text-md sm:text-lg font-semibold text-gray-600">
+                    <p className="text-md text-center font-semibold text-gray-600 sm:text-lg">
                         No Orders Found
                     </p>
                 </div>
@@ -71,6 +71,7 @@ export default function CompletedOrders({ orders }) {
                 <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                     {/* Search */}
                     <input
+                        name="search"
                         type="text"
                         placeholder="Search"
                         value={searchTerm}

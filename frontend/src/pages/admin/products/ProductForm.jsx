@@ -317,7 +317,7 @@ function ProductForm({
                     accept="image/*"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                    Supported formats: JPG, PNG, WebP. Max size: 5MB
+                    Supported formats: JPG, PNG, WebP. Max size: 1MB
                 </p>
             </div>
 

@@ -76,6 +76,7 @@ function ProductTable({ products, onEdit, onDelete, user }) {
             {/* Search and Filters - Modern Design */}
             <div className="mb-4 flex flex-wrap items-center gap-4">
                 <input
+                    name="productsearch"
                     type="text"
                     placeholder="Search products..."
                     value={searchTerm}

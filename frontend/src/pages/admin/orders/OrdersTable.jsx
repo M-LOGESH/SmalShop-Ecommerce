@@ -117,6 +117,7 @@ function OrdersTable({ orders }) {
             {/* Search and Sort Controls */}
             <div className="mb-4 flex flex-wrap items-center gap-4">
                 <input
+                    name="ordersearch"
                     type="text"
                     placeholder="Search by order number or username..."
                     value={searchTerm}

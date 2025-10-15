@@ -142,6 +142,7 @@ function CustomersTable({ users }) {
             {/* Search and Sort Controls */}
             <div className="mb-4 flex flex-wrap items-center gap-4">
                 <input
+                    name="customersearch"
                     type="text"
                     placeholder="Search by username, name, or email..."
                     value={searchTerm}

@@ -263,6 +263,7 @@ function Dashboard() {
                 </div>
                 <div className="mt-4 sm:mt-0">
                     <select
+                        name="timeRange"
                         value={timeRange}
                         onChange={(e) => setTimeRange(e.target.value)}
                         className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none"
