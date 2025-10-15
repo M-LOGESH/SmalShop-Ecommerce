@@ -52,7 +52,7 @@ function Header({ user, onLoginClick, cartOpen, setCartOpen }) {
 
                         {(!user || (user && !user.is_staff)) && (
                             <button
-                                onClick={() => setCartOpen(true)}
+                                onClick={() => navigate('/cart')}
                                 className="relative mr-4 text-white transition hover:text-violet-200"
                             >
                                 <FiShoppingCart size={22} />

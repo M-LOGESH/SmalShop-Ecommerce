@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout.jsx';
 import ProtectedRoute from './components/routes/ProtectedRoute.jsx';
@@ -18,6 +18,7 @@ const Account = lazy(() => import('./pages/myaccount/Account.jsx'));
 const Profile = lazy(() => import('./pages/myaccount/Profile.jsx'));
 const MyOrders = lazy(() => import('./pages/users/myorders/MyOrders.jsx'));
 const Wishlist = lazy(() => import('./pages/Wishlist.jsx'));
+const CartWrapper = lazy(() => import('./pages/CartWrapper.jsx'));
 const About = lazy(() => import('./pages/About.jsx'));
 const Contact = lazy(() => import('./pages/Contact.jsx'));
 const OrdersPage = lazy(() => import('./pages/admin/OrdersPage.jsx'));
@@ -34,13 +35,14 @@ const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 function App() {
     const { user, logout } = useAuth();
+    const [cartOpen, setCartOpen] = useState(false);
 
     return (
         <Router>
             <ScrollToTop />
             <Suspense fallback={<Loading />}>
                 <Routes>
-                    <Route element={<MainLayout />}>
+                    <Route element={<MainLayout cartOpen={cartOpen} setCartOpen={setCartOpen} />}>
                         {/* Public Routes */}
                         <Route path="/" element={<Home />} />
                         <Route path="/category" element={<Category />} />
@@ -48,6 +50,7 @@ function App() {
                         <Route path="/product/:id" element={<ProductView />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
+                        <Route path="/cart" element={<CartWrapper setCartOpen={setCartOpen} />} />
 
                         {/* Protected Routes - Any Authenticated User */}
                         <Route

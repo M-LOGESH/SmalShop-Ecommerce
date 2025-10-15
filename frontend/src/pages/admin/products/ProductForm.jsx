@@ -306,7 +306,7 @@ function ProductForm({
 
             {/* File Input */}
             <div className="mt-3">
-                <label className="block text-sm font-medium mb-2">
+                <label htmlFor="productImage" className="block text-sm font-medium mb-2">
                     {editingProduct ? 'Update Image' : 'Upload Image'}
                 </label>
                 <input 

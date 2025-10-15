@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; 
 import Header from '../components/header/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import MobileHeader from '../components/header/MobileHeader.jsx';
@@ -9,7 +9,7 @@ import Register from '../components/forms/Register.jsx';
 import Cart from '../pages/users/Cart.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
-function MainLayout() {
+function MainLayout({ cartOpen, setCartOpen }) { 
     const location = useLocation();
     const { user, login, register, logout } = useAuth();
 
@@ -19,7 +19,12 @@ function MainLayout() {
     const [showLogin, setShowLogin] = useState(() => {
         return localStorage.getItem('showLogin') === 'true';
     });
-    const [cartOpen, setCartOpen] = useState(false);
+
+    useEffect(() => {
+        if (cartOpen && location.pathname !== '/cart') {
+            setCartOpen(false);
+        }
+    }, [location.pathname, cartOpen, setCartOpen]);
 
     const mobileHeaderPages = ['/account', '/profile', '/my-orders', '/view-orders'];
     const showMobileHeader = mobileHeaderPages.some(
@@ -58,7 +63,12 @@ function MainLayout() {
             />
 
             {/* Fixed Mobile Header for specific pages */}
-            {showMobileHeader && <MobileHeader title={getPageTitle()} setCartOpen={setCartOpen} />}
+            {showMobileHeader && (
+                <MobileHeader 
+                    title={getPageTitle()} 
+                    setCartOpen={setCartOpen} 
+                />
+            )}
 
             {/* Cart Component - Always available in layout */}
             {(!user || (user && !user.is_staff)) && (

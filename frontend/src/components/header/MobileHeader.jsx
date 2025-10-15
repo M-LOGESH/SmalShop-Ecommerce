@@ -17,9 +17,9 @@ function MobileHeader({ title, setCartOpen }) {
                 <FiArrowLeft size={20} />
             </button>
             <h1 className="text-xl font-medium">{title}</h1>
-            
+
             {shouldShowCart ? (
-                <button onClick={() => setCartOpen(true)}>
+                <button onClick={() => navigate('/cart')}>
                     <FiShoppingCart size={20} />
                 </button>
             ) : (
