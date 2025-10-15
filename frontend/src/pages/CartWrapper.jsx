@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext';
 
 function CartWrapper({ setCartOpen }) {
     const { cart, user } = useAuth();
