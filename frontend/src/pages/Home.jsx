@@ -26,9 +26,9 @@ function Home() {
 
             {!user && <WelcomeMessage />}
 
-            <div className="mx-auto flex w-full max-w-6xl justify-center px-4 py-4 sm:py-6">
+            {/* <div className="mx-auto flex w-full max-w-6xl justify-center px-4 py-4 sm:py-6">
                 <img src={banner} alt="Banner" className="rounded-lg" />
-            </div>
+            </div> */}
 
             <CategoryProducts
                 categoryName="Vegetables"
