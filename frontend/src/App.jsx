@@ -18,7 +18,6 @@ const Account = lazy(() => import('./pages/myaccount/Account.jsx'));
 const Profile = lazy(() => import('./pages/myaccount/Profile.jsx'));
 const MyOrders = lazy(() => import('./pages/users/myorders/MyOrders.jsx'));
 const Wishlist = lazy(() => import('./pages/Wishlist.jsx'));
-const CartWrapper = lazy(() => import('./pages/CartWrapper.jsx'));
 const About = lazy(() => import('./pages/About.jsx'));
 const Contact = lazy(() => import('./pages/Contact.jsx'));
 const OrdersPage = lazy(() => import('./pages/admin/OrdersPage.jsx'));
@@ -50,8 +49,7 @@ function App() {
                         <Route path="/product/:id" element={<ProductView />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/cart" element={<CartWrapper setCartOpen={setCartOpen} />} />
-
+                        
                         {/* Protected Routes - Any Authenticated User */}
                         <Route
                             path="/account"
@@ -69,7 +67,6 @@ function App() {
                                 </ProtectedRoute>
                             }
                         />
-
                         {/* User Only Routes - Regular Users Only */}
                         <Route
                             path="/my-orders"
@@ -95,7 +92,6 @@ function App() {
                                 </UserOnlyRoute>
                             }
                         />
-
                         {/* Admin Only Routes */}
                         <Route
                             path="/view-orders"
@@ -105,7 +101,6 @@ function App() {
                                 </AdminRoute>
                             }
                         />
-
                         {/* Nested Admin Routes */}
                         <Route
                             path="/admin"

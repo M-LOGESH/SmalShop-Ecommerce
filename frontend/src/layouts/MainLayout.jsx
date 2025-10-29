@@ -20,11 +20,11 @@ function MainLayout({ cartOpen, setCartOpen }) {
         return localStorage.getItem('showLogin') === 'true';
     });
 
-    useEffect(() => {
-        if (cartOpen && location.pathname !== '/cart') {
-            setCartOpen(false);
-        }
-    }, [location.pathname, cartOpen, setCartOpen]);
+    // useEffect(() => {
+    //     if (cartOpen && location.pathname !== '/cart') {
+    //         setCartOpen(false);
+    //     }
+    // }, [location.pathname, cartOpen, setCartOpen]);
 
     const mobileHeaderPages = ['/account', '/profile', '/my-orders', '/view-orders'];
     const showMobileHeader = mobileHeaderPages.some(
