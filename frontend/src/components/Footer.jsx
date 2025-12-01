@@ -83,7 +83,7 @@ function Footer() {
                         <div className="flex gap-3">
                             {/* Keep regular <a> tags for external links */}
                             <a 
-                                href="https://instagram.com/smalshop" 
+                                href="https://instagram.com" 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="bg-gradient-to-br from-purple-600 to-pink-600 p-2 rounded-full text-white hover:scale-110 transition-transform"
@@ -101,7 +101,7 @@ function Footer() {
                                 <FaWhatsapp className="text-lg" />
                             </a>
                             <a 
-                                href="https://facebook.com/smalshop" 
+                                href="https://facebook.com" 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition-transform"
@@ -110,7 +110,7 @@ function Footer() {
                                 <FaFacebook className="text-lg" />
                             </a>
                             <a 
-                                href="https://twitter.com/smalshop" 
+                                href="https://twitter.com" 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="bg-gray-800 p-2 rounded-full text-white hover:scale-110 transition-transform"
