@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from .models import Wishlist, Cart
-from products.serializers import ProductListSerializer
+from products.serializers import ProductSerializer
 from products.models import Product
 
 class WishlistSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-    product_detail = ProductListSerializer(source='product', read_only=True)
+    product_detail = ProductSerializer(source='product', read_only=True)
 
     class Meta:
         model = Wishlist
@@ -16,7 +16,7 @@ class WishlistSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-    product_detail = ProductListSerializer(source='product', read_only=True)
+    product_detail = ProductSerializer(source='product', read_only=True)
 
     class Meta:
         model = Cart
