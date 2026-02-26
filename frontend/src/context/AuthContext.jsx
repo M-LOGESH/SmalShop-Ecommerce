@@ -305,24 +305,27 @@ export const AuthProvider = ({ children }) => {
         }
     }, [user]);
 
+    const isStaffOrAdminCheck = isStaffOrAdmin();
+
+    const value = React.useMemo(() => ({
+        user,
+        login,
+        logout,
+        register,
+        fetchWithAuth,
+        cart,
+        setCart,
+        cartSet: new Set(cart.map(item => item.product)),
+        wishlist,
+        wishlistData,
+        toggleWishlist,
+        addToCart,
+        updateCartQuantity,
+        isStaffOrAdmin: () => isStaffOrAdminCheck,
+    }), [user, cart, wishlist, wishlistData]);
+
     return (
-        <AuthContext.Provider
-            value={{
-                user,
-                login,
-                logout,
-                register,
-                fetchWithAuth,
-                cart,
-                setCart,
-                wishlist,
-                wishlistData,
-                toggleWishlist,
-                addToCart,
-                updateCartQuantity,
-                isStaffOrAdmin,
-            }}
-        >
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

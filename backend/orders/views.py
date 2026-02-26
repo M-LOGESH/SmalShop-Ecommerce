@@ -10,9 +10,14 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        queryset = Order.objects.all().prefetch_related(
+            'items__product__category', 
+            'items__product__subcategories'
+        ).select_related('user')
+        
         if user.is_staff or user.is_superuser:
-            return Order.objects.all().order_by("-created_at")
-        return Order.objects.filter(user=user).order_by("-created_at")
+            return queryset.order_by("-created_at")
+        return queryset.filter(user=user).order_by("-created_at")
 
     def perform_create(self, serializer):
         # Create order from user's cart - only in-stock products

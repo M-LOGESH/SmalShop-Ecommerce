@@ -155,7 +155,8 @@ function CategoryProducts({ categoryName, title, slug }) {
                         onPointerLeave={handlePointerLeave}
                     >
                         {products.map((p) => {
-                            const cartItem = cart.find((c) => c.product === p.id);
+                            const isInCart = cartSet.has(p.id);
+                            const cartItem = isInCart ? cart.find((c) => c.product === p.id) : null;
                             return (
                                 <div
                                     key={p.id}
@@ -172,7 +173,7 @@ function CategoryProducts({ categoryName, title, slug }) {
                                                     src={p.image_url}
                                                     alt={p.name}
                                                     className="h-full max-h-40 w-auto object-contain"
-                                                    loading="lazy"                                                    
+                                                    loading="lazy"
                                                 />
                                             ) : (
                                                 <div className="flex h-32 w-full items-center justify-center rounded">
@@ -208,7 +209,7 @@ function CategoryProducts({ categoryName, title, slug }) {
                                                         {Math.round(
                                                             ((p.retail_price - p.selling_price) /
                                                                 p.retail_price) *
-                                                                100
+                                                            100
                                                         )}
                                                         % OFF
                                                     </span>

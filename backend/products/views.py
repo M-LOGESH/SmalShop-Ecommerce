@@ -16,7 +16,7 @@ class SubCategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all().order_by("-created_at")
+    queryset = Product.objects.all().select_related('category').prefetch_related('subcategories').order_by("-created_at")
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
