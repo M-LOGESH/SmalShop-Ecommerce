@@ -8,7 +8,7 @@ import WishlistIcon from '../components/common/WishlistIcon';
 function CategoryPage() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const { cart, cartSet, addToCart, updateCartQuantity } = useAuth();
+    const { cart, addToCart, updateCartQuantity } = useAuth();
     const { getProductsByCategorySlug, loading, hasFetched } = useProducts();
 
     const categoryMap = {
@@ -22,7 +22,7 @@ function CategoryPage() {
 
     const products = getProductsByCategorySlug(slug);
 
-    const getCartItem = (productId) => cartSet.has(productId) ? cart.find((item) => item.product === productId) : null;
+    const getCartItem = (productId) => cart.find((item) => item.product === productId);
 
     if (loading && !hasFetched) {
         return (
@@ -112,7 +112,7 @@ function CategoryPage() {
                                                         {Math.round(
                                                             ((p.retail_price - p.selling_price) /
                                                                 p.retail_price) *
-                                                            100
+                                                                100
                                                         )}
                                                         % OFF
                                                     </span>

@@ -79,7 +79,7 @@ export const ProductsProvider = ({ children }) => {
         [allProducts]
     );
 
-    const value = React.useMemo(() => ({
+    const value = {
         allProducts,
         loading,
         error,
@@ -88,7 +88,7 @@ export const ProductsProvider = ({ children }) => {
         getProductsByCategorySlug,
         getProductById,
         refetchProducts
-    }), [allProducts, loading, error, hasFetched, getProductsByCategory, getProductsByCategorySlug, getProductById, refetchProducts]);
+    };
 
     return (
         <ProductsContext.Provider value={value}>
